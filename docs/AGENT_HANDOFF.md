@@ -20,6 +20,125 @@ Read [DISPLAY_MODEL_PLAN.md](DISPLAY_MODEL_PLAN.md), [CONTROL_OBJECTS.md](CONTRO
 [SHARED_APPLICATION_PLAN.md](SHARED_APPLICATION_PLAN.md) and
 [LIBRARY_BOUNDARY_CLEANUP.md](LIBRARY_BOUNDARY_CLEANUP.md) before changing these contracts.
 
+## Menu examples (2026-10-17)
+
+The current menu work is in the public development checkout, in two independent applications:
+
+- `examples/stm32h750b-dk-menu-1-complete`: completed Home (Play/Pause, Stop, Record, Settings), Settings (Volume/Storage/Back), Storage (Save/Load/Back).
+- `examples/stm32l4r9i-disco-menu-1`: blank step-by-step round-display tutorial; same behavior at the end. No separate L4 completed companion, per owner direction.
+
+Both compile the same FreeRTOS application on Windows and STM32. Display/input drivers are
+application-owned; the library has no STM32 or RTOS dependency. L4 uses the full 390 x 390
+bounding-square canvas with circular engine clipping, native RGB888 tiles and the recovered
+revision-C DSI/GFXMMU adapter. No STemWin is linked. Tutorial page creation copies locked
+profiles; handler hookup preserves named generated callbacks and application-owned FSM state.
+
+The existing starter-1 and starter-1-complete are preserved (174 private and 155 public
+baseline file hashes unchanged). The unrelated DEVTO article remains untouched/untracked.
+The owner suggested a future workspace + standalone example repositories + library repository
+layout; no repository migration was performed in this pass.
+
+Read each new example's VALIDATION.md before claiming hardware completion. Both final
+firmwares are programmed and host tests pass, but L4 idle touch reads show HAL I2C arbitration
+errors; retained GDB evidence isolates the FT3X67 status-read path. On 2026-10-17 the owner
+confirmed both boards navigate correctly for SETTINGS -> STORAGE -> BACK -> BACK, including
+the requested L4R9 joystick directions and center check. Physical navigation is confirmed;
+the idle arbitration errors remain unexplained. Keep failed evidence and do not silently
+change bus timing.
+The guided L4 source folder has been returned to blank. Its verified exercise forms are in
+that application's ignored `build/completed-tutorial-validation/Tasks/`; exact flashed ELFs
+are in root `build/menu-validation/20261017-113756-nested/`. Its current build output is blank.
+Both ST-LINK/GDB launch backends were tested through download/reset/break-at-main/detach;
+the programmer junction preserves the installation root so its device database resolves.
+
+Volume is now implemented (2026-10-17): H750 has a fourth persistent form; L4R9 README
+step 10 adds it after the three-page lesson with the same presets. The application-owned
+value starts at 50%, steps by 5%, clamps at 0/100 and survives Back/reopen. Horizontal
+keys adjust only on Volume; vertical keys move focus and center activates. H750 hardware
+uses touch; the L4R9 has the physical joystick. No audio backend or persistent setting.
+
+Windows tests pass 4/4 on both completed applications; L4's pre-Volume stage passes 3/3
+and its restored blank stage passes 1/1. Both final MCU builds and re-established blank
+L4 MCU build pass. Both boards were backed up, programmed and verified with Volume;
+startup reads show ready=1, assertion=0 and advancing task heartbeats. On 2026-10-17 the
+owner confirmed both Volume builds work correctly: +/- updates percentage and shading,
+Back/reopen retains the value, and L4R9 joystick left/right adjusts while up/down and
+center control focus/activation. This closes the physical Volume interaction check;
+the idle touch-bus and transparent-sibling redraw issues remain open. Exact loaded ELFs/hashes/logs are in
+`build/menu-validation/volume-20261017/hardware-run/`. The L4 exercise sources are in
+its ignored `build/volume-tutorial-validation/Tasks/`; its source and build output are
+blank again. The prior evidence above is preserved. No dependency pins changed.
+
+A core redraw issue was exposed: a transparent label dirties a bounded root region that
+can clip away an independently dirty progress sibling and clear its dirty flag. The Volume
+lesson explicitly gives the changing label an opaque background matching the panel;
+its native progress-pixel tests pass. The core transparent-sibling case remains open,
+with a minimal reproduction at `build/menu-validation/volume-20261017/transparent-sibling-repro.md`.
+Existing starter work is unchanged against all 331 files inventoried for this pass.
+
+Playback is now implemented (2026-10-17): Home has a custom PlayPauseButton and separate
+StopButton, with compile-time 16x16 alpha1 triangle/pause/stop masks (96 bytes of mask data).
+Application/playback.hpp owns the three-state model; handwritten Home callbacks mutate
+it and refresh controls. Generated named widget overrides select the subclasses with
+typed accessors and no casts. Base ButtonView retains input/focus/cancellation behavior.
+No library changes, RGB staging assets or runtime symbol scaling were needed.
+
+H750 is the completed reference. L4 README step 11 teaches layout, custom types and
+handwritten handlers; Lessons/Playback contains the advanced reference. The designer
+shows the base button, not execution of application subclasses. Windows runtime renders
+are in each example's docs/playback-*.png. Both completed Windows applications pass 5/5;
+the L4 preceding Volume stage passes 4/4 and restored blank passes 1/1 plus its ARM build.
+Both completed ARM builds pass (H750 flash 73,120 bytes, L4 79,276 bytes).
+Both boards were backed up, programmed and verified; startup health is ready=1/assertion=0
+with advancing task ticks. On 2026-10-17 the owner confirmed both boards work correctly:
+Play/Pause symbols, captions and status change, Stop resets to STOPPED, Settings/Back
+retains state, and L4R9 joystick-center activates the focused control. Physical playback
+acceptance is complete; the previously recorded idle I2C and sibling redraw issues remain open.
+Exact loaded firmware, hashes and logs: build/menu-validation/playback-20261017/hardware-run/.
+L4 completed exercise: build/playback-tutorial-validation/Tasks/ inside that application;
+published source and current build output are blank again. All 331 original starter
+file hashes remain unchanged. No commits or pushes were made in this pass.
+
+On 2026-10-17 the owner also confirmed the H750 Windows hands-on checklist passes:
+mouse/keyboard, menus, Volume, playback and retained state. See its VALIDATION.md for
+the exact executable hash; this is separate from automatic tests and physical boards.
+
+Load is implemented (2026-10-17): application-owned SelectionList derives ControlView,
+uses a generated named Panel override and a borrowed typed ListEvents observer. It has
+selection vs activation, bounded Up/Down scrolling, explicit touch arrow targets,
+Left/Right focus traversal and center/Enter activation. No radio controls, filesystem,
+heap-per-row allocation or new library widget catalog entry. Eight fixed entries occupy
+three visible rows. Designer preview shows the base Panel; native application renders
+show the actual list. L4 README step 12 teaches this and step 13 teaches the board photo.
+
+The owner confirmed the H750 Win32 walkthrough, completed L4R9 simulator/photo, and both
+physical boards with the initial three-entry list. Expanded eight-entry scrolling is now
+programmed/verified on both boards, with ready=1/assertion=0. On 2026-10-17 the owner confirmed scrolling works correctly on both boards;
+physical scrolling acceptance is complete. Both completed Windows applications pass 7/7, including touch
+photo mapping, list scrolling/cancellation and hidden-entry activation. ARM FLASH is
+79,844 bytes (H750) and 85,988 bytes (L4); native framebuffer/workspaces are unchanged.
+Evidence and exact images: root build/menu-validation/load-20261017/scroll-hardware-run/.
+The preceding accepted firmware is retained in the sibling hardware-run/ directory.
+The original radio prototype logs/renders are historical, superseded by final docs PNGs.
+
+Both completed simulators use board photographs. H750 reuses the existing starter image
+and sidecar; the blue B1 hotspot activates the focused control. L4 uses the owner-supplied
+STM32L4R9AI-DISCO.png as board-front.png, clips the display/hit test to the circle and maps
+the pictured joystick center. Its printed photo revision is not the hardware configuration.
+Photo decoding stays in Windows. Completed executables plus matching images are retained
+in root build/menu-validation/load-20261017/scroll-completed-{h750,l4r9}/.
+The guided L4 source/build is blank again (1/1 Windows test and ARM build pass), while the
+board remains on completed firmware. Its completed exercise sources are in the application's
+build/load-tutorial-validation/Tasks/. All 331 original starter hashes remain unchanged.
+The owner authorized publishing the menu examples and tutorials after physical scrolling
+acceptance. No library/vendor dependency pins changed during validation. Existing I2C and redraw issues
+remain open. Next work can assess promoting the demonstrated list contract into the core;
+TableView currently remains a ScrollView subclass, not a selectable multi-column table.
+
+Use H750 as the completed reference and extend the guided round-display L4R9 lessons in
+small steps. Existing starter-1 work stays intact. These lessons do not imply real audio or
+storage operations; the application owns those services and their platform adapters.
+
 ## Starter publication pass (2026-10-17)
 
 The owner authorized inclusion of the previously held-local button work. The guided
@@ -100,7 +219,7 @@ for a good pause point. This is that completed control increment. Both local H75
 starter baseline is unchanged. No hardware was accessed and no Git history reset was performed.
 
 `DropDownView` is an extensible `ControlView` with immutable caller-owned, pipe-delimited items
-(1â€“255 entries), index identity and typed selection/edit notifications. Selection is tentative while
+(1Ã¢â‚¬â€œ255 entries), index identity and typed selection/edit notifications. Selection is tentative while
 open; commit accepts it, cancellation restores the initial index, and application refresh is silent.
 It shares the synchronous, guarded control-hook-before-form-handler contract. Pointer/touch and
 keyboard input use the same model. A bounded five-row popup opens above or below its anchor; pointer

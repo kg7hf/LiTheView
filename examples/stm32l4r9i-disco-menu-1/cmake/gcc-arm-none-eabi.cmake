@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 Paul R. Decker
+# SPDX-License-Identifier: GPL-3.0-only
+
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(STARTER_PLATFORM STM32)
+include("${CMAKE_CURRENT_LIST_DIR}/host_tools.cmake")
+set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
+set(CMAKE_OBJCOPY "${STARTER_COMPILER_BIN}/arm-none-eabi-objcopy.exe")
+set(CMAKE_SIZE "${STARTER_COMPILER_BIN}/arm-none-eabi-size.exe")
+set(arch "-mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard")
+set(CMAKE_C_FLAGS_INIT "${arch} -ffunction-sections -fdata-sections -fstack-usage")
+set(CMAKE_CXX_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} -fno-exceptions -fno-rtti -fno-threadsafe-statics")
+set(CMAKE_ASM_FLAGS_INIT "${arch} -x assembler-with-cpp")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${arch}")
+set(CMAKE_C_FLAGS_DEBUG "-Og -g3" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "-Og -g3" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "-Os -g3 -DNDEBUG" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "-Os -g3 -DNDEBUG" CACHE STRING "" FORCE)

@@ -1,0 +1,4 @@
+{
+  "device": "STM32L4R9AI",
+  "core": "Cortex-M4"
+}

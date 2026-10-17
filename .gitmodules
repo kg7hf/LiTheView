@@ -34,3 +34,51 @@
 [submodule "examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/LiTheView"]
 	path = examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/LiTheView
 	url = https://github.com/kg7hf/LiTheView.git
+[submodule "examples/stm32h750b-dk-menu-1-complete/Drivers/CMSIS_6"]
+	path = examples/stm32h750b-dk-menu-1-complete/Drivers/CMSIS_6
+	url = https://github.com/ARM-software/CMSIS_6.git
+[submodule "examples/stm32h750b-dk-menu-1-complete/Drivers/CMSIS/Device/ST/STM32H7xx"]
+	path = examples/stm32h750b-dk-menu-1-complete/Drivers/CMSIS/Device/ST/STM32H7xx
+	url = https://github.com/STMicroelectronics/cmsis-device-h7.git
+[submodule "examples/stm32h750b-dk-menu-1-complete/Drivers/STM32H7xx_HAL_Driver"]
+	path = examples/stm32h750b-dk-menu-1-complete/Drivers/STM32H7xx_HAL_Driver
+	url = https://github.com/STMicroelectronics/stm32h7xx-hal-driver.git
+[submodule "examples/stm32h750b-dk-menu-1-complete/Middlewares/Third_Party/FreeRTOS"]
+	path = examples/stm32h750b-dk-menu-1-complete/Middlewares/Third_Party/FreeRTOS
+	url = https://github.com/STMicroelectronics/stm32-mw-freertos.git
+[submodule "examples/stm32h750b-dk-menu-1-complete/Middlewares/Third_Party/FreeRTOS-Kernel"]
+	path = examples/stm32h750b-dk-menu-1-complete/Middlewares/Third_Party/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "examples/stm32h750b-dk-menu-1-complete/Middlewares/Third_Party/LiTheView"]
+	path = examples/stm32h750b-dk-menu-1-complete/Middlewares/Third_Party/LiTheView
+	url = https://github.com/kg7hf/LiTheView.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/CMSIS_6"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/CMSIS_6
+	url = https://github.com/ARM-software/CMSIS_6.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/CMSIS/Device/ST/STM32L4xx"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/CMSIS/Device/ST/STM32L4xx
+	url = https://github.com/STMicroelectronics/cmsis_device_l4.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/STM32L4xx_HAL_Driver"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/STM32L4xx_HAL_Driver
+	url = https://github.com/STMicroelectronics/stm32l4xx_hal_driver.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/BSP/STM32L4R9I-Discovery"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/BSP/STM32L4R9I-Discovery
+	url = https://github.com/STMicroelectronics/32l4r9idiscovery-bsp.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/BSP/Components/ft3x67"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/BSP/Components/ft3x67
+	url = https://github.com/STMicroelectronics/stm32-ft3x67.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/BSP/Components/mfxstm32l152"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/BSP/Components/mfxstm32l152
+	url = https://github.com/STMicroelectronics/stm32-mfxstm32l152.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/LiTheView"]
+	path = examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/LiTheView
+	url = https://github.com/kg7hf/LiTheView.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Drivers/BSP/Components/Common"]
+	path = examples/stm32l4r9i-disco-menu-1/Drivers/BSP/Components/Common
+	url = https://github.com/STMicroelectronics/stm32-bsp-common.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/FreeRTOS"]
+	path = examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/FreeRTOS
+	url = https://github.com/STMicroelectronics/stm32-mw-freertos.git
+[submodule "examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/FreeRTOS-Kernel"]
+	path = examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git

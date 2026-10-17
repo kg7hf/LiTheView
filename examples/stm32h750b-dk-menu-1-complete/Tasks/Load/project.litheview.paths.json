@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "applicationRoot": "../..",
+  "libraryRoot": "Middlewares/Third_Party/LiTheView",
+  "componentDirectory": "Tasks/Load/Generated",
+  "buildDirectory": "build"
+}

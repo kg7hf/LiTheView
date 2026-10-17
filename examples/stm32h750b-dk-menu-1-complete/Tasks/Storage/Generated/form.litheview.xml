@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.main" displayName="Storage Menu" surfaceProfileId="litheview.menu.h750.surface"-->
+<!--litheview-component id="component.main.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00303030" borderWidth="0">
+  <!--litheview-component id="component.main.title" name="titleLabel"-->
+  <label frame="120,20,240,40" textColor="0x00ffffff" textScale="3" text="STORAGE" />
+  <!--litheview-component id="component.main.save" name="saveButton"-->
+  <button frame="120,80,240,48" backgroundColor="0x00805020" textColor="0x00ffffff" textScale="2" text="SAVE" />
+  <!--litheview-component id="component.main.load" name="loadButton"-->
+  <button frame="120,140,240,48" backgroundColor="0x00805020" textColor="0x00ffffff" textScale="2" text="LOAD" />
+  <!--litheview-component id="component.main.back" name="backButton"-->
+  <button frame="120,200,240,48" backgroundColor="0x00805020" textColor="0x00ffffff" textScale="2" text="BACK" />
+</panel>

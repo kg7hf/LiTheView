@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+#include "Platform/Win32/front_panel_geometry.hpp"
+#include <array>
+
+namespace starter::host::front
+{
+inline constexpr bool enabled{@front_enabled@};
+inline constexpr FrontPanelTransform transform{@front_image_width@, @front_image_height@,
+                                               @front_window_width@, @front_window_height@};
+inline constexpr Area display{@front_display@};
+inline constexpr std::array<NamedButton, @front_button_count@> buttons{{@front_buttons@}};
+} // namespace starter::host::front

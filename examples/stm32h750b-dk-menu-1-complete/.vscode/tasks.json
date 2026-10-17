@@ -1,0 +1,43 @@
+{
+  "tasks": [
+    {
+      "type": "process",
+      "group": "build",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/build.ps1",
+        "-Preset",
+        "win32-debug"
+      ],
+      "label": "H750 menu: build win32-debug",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "command": "pwsh"
+    },
+    {
+      "type": "process",
+      "group": "build",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/build.ps1",
+        "-Preset",
+        "stm32-debug"
+      ],
+      "label": "H750 menu: build stm32-debug",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "command": "pwsh"
+    }
+  ],
+  "version": "2.0.0"
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="510" viewBox="0 0 560 510">
+<rect width="560" height="510" fill="#101820"/>
+<g font-family="sans-serif" font-size="16" fill="#fff"><text x="40" y="28">390 x 390 logical canvas: full bounding square</text>
+<rect x="65" y="60" width="390" height="390" fill="#080b0e" stroke="#47b5ff" stroke-width="2"/>
+<circle cx="260" cy="255" r="195" fill="#303030" stroke="#fff" stroke-width="2"/>
+<rect x="125" y="120" width="270" height="270" fill="none" stroke="#ffd46a" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="155" y="245">Visible circular display</text><text x="158" y="275" fill="#ffd46a">270 x 270 safe-area guide</text>
+<text x="68" y="80" font-size="12">clipped</text><text x="402" y="440" font-size="12">clipped</text>
+<text x="40" y="485">Root panel remains (0, 0, 390, 390).</text></g></svg>

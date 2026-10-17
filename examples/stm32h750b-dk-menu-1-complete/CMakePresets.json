@@ -1,0 +1,59 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "win32-debug",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/mingw32.cmake",
+      "cacheVariables": {
+        "STARTER_PLATFORM": "Win32"
+      }
+    },
+    {
+      "name": "stm32-debug",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/gcc-arm-none-eabi.cmake",
+      "cacheVariables": {
+        "STARTER_PLATFORM": "STM32"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "win32-debug",
+      "configurePreset": "win32-debug",
+      "targets": [
+        "starter",
+        "starter_input_checks",
+        "volume_checks",
+        "playback_checks",
+        "load_checks"
+      ]
+    },
+    {
+      "name": "stm32-debug",
+      "configurePreset": "stm32-debug",
+      "targets": [
+        "starter"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "win32-debug",
+      "configurePreset": "win32-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

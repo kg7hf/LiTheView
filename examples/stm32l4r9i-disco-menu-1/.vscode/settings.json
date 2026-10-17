@@ -1,0 +1,5 @@
+{
+  "litheview.libraryRoot": "Middlewares/Third_Party/LiTheView",
+  "cmake.configureOnOpen": false,
+  "cmake.useCMakePresets": "always"
+}

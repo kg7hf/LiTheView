@@ -5,7 +5,7 @@ LitheView is a small, retained-mode C++ graphics and menu framework extracted fr
 focus and pointer navigation, controller stacking, delegate actions, and XML-defined layoutsâ€”without
 bringing along the product settings, filesystem, message bus, or target OS.
 
-The maintained H750 starter applications build the same application logic and generated UI for
+The maintained STM32 starter applications build the same application logic and generated UI for
 Windows and STM32, selecting their device implementations at build time. Internal rendering fixtures
 separately check native formats, controls and constrained-memory Cortex-M33 rendering. The library
 itself is standard C++23 and has no Win32, STM32, or FreeRTOS dependency.
@@ -52,6 +52,7 @@ window, VS Code designer setup and the additional H750 application requirements.
 | Build or integrate the portable library | [Build Core and run a consumer](docs/BUILD_ENVIRONMENT.md#3-build-core-and-run-a-consumer); no STM32, FreeRTOS or .NET required |
 | Edit forms inside your existing application | [Prepare the VS Code designer](docs/BUILD_ENVIRONMENT.md#5-prepare-the-vs-code-designer), then [application integration](docs/APPLICATION_INTEGRATION.md) |
 | Follow the Windows/STM32 lesson | [H750 starter](examples/stm32h750b-dk-starter-1/README.md), after its application prerequisites |
+| Build a menu with volume, playback and a selectable Load list | [Completed H750 menu](examples/stm32h750b-dk-menu-1-complete/README.md) and [blank-to-menu round L4R9 tutorial](examples/stm32l4r9i-disco-menu-1/README.md); both use FreeRTOS on Windows and STM32 |
 
 The starter pair includes the physical-button bonus, native RGB565 rendering and
 portable application tool discovery. The guided starter remains blank; the completed
