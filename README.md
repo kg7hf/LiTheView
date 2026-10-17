@@ -10,6 +10,12 @@ Windows and STM32, selecting their device implementations at build time. Interna
 separately check native formats, controls and constrained-memory Cortex-M33 rendering. The library
 itself is standard C++23 and has no Win32, STM32, or FreeRTOS dependency.
 
+![LiTheView form designer in VS Code with the H750 starter running in the Windows simulator](docs/images/designer-and-windows-simulator.png)
+
+*Design the form in VS Code, then build and debug the application in Windows.
+The foreground window is the simulator using a board photograph; the Windows
+and STM32 targets share the application logic and generated UI.*
+
 ## Getting started
 
 **New machine? Start with [Install tools, build and run LiTheView](docs/BUILD_ENVIRONMENT.md).**

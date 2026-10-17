@@ -110,13 +110,12 @@ $developmentExtension = Join-Path $repository 'tools/vscode'
 $originalPath = $env:PATH
 $removedPathEntries = @()
 if ($PackagedExtensionPath) {
-    if (!$SourceOnlyPackage) {
-        $removedPathEntries = @($env:PATH -split ';' | Where-Object {
-            $_ -and ((Test-Path -LiteralPath (Join-Path $_ 'libstdc++-6.dll') -PathType Leaf) -or
-                     (Test-Path -LiteralPath (Join-Path $_ 'libwinpthread-1.dll') -PathType Leaf))
-        })
-        $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -and $_ -notin $removedPathEntries }) -join ';'
-    }
+    # Both package forms must launch without compiler runtime directories on PATH.
+    $removedPathEntries = @($env:PATH -split ';' | Where-Object {
+        $_ -and ((Test-Path -LiteralPath (Join-Path $_ 'libstdc++-6.dll') -PathType Leaf) -or
+                 (Test-Path -LiteralPath (Join-Path $_ 'libwinpthread-1.dll') -PathType Leaf))
+    })
+    $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -and $_ -notin $removedPathEntries }) -join ';'
     $developmentExtension = Join-Path $run 'integration-harness'
     New-Item -ItemType Directory -Force -Path $developmentExtension | Out-Null
     @{name='litheview-integration-harness'; publisher='litheview-tests'; version='0.0.1'; engines=@{vscode='^1.95.0'};

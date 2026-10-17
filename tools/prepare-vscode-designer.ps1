@@ -53,6 +53,31 @@ try {
     }
     $worker = Join-Path $repository "build/$preset/$workerName"
     if (!(Test-Path -LiteralPath $worker -PathType Leaf)) { throw 'Native worker is missing; run without -SkipNative.' }
+    if ($IsWindows) {
+        # Local preparation must work when VS Code has no compiler on PATH.
+        # Resolve the runtimes from the compiler that actually built this worker.
+        $cache = Get-Content -LiteralPath (Join-Path $repository "build/$preset/CMakeCache.txt")
+        $compilerEntry = $cache | Where-Object { $_ -match '^CMAKE_CXX_COMPILER:(FILEPATH|STRING)=' } | Select-Object -First 1
+        if (!$compilerEntry) { throw 'Cannot resolve the preview worker compiler from CMakeCache.txt.' }
+        $compiler = $compilerEntry -replace '^CMAKE_CXX_COMPILER:(FILEPATH|STRING)=', ''
+        $runtimeFiles = foreach ($name in @('libgcc_s_seh-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll')) {
+            $resolved = Join-Path (Split-Path -Parent $compiler) $name
+            if (!(Test-Path -LiteralPath $resolved -PathType Leaf)) {
+                $resolved = & $compiler "-print-file-name=$name"
+                if ($LASTEXITCODE -ne 0) { throw "Worker compiler runtime lookup failed for $name." }
+            }
+            if (!$resolved -or $resolved -eq $name -or
+                !(Test-Path -LiteralPath $resolved -PathType Leaf)) {
+                throw "The worker compiler cannot locate $name. Repair that compiler installation and prepare again."
+            }
+            Get-Item -LiteralPath $resolved
+        }
+        foreach ($runtimeFile in $runtimeFiles) {
+            Copy-Item -LiteralPath $runtimeFile.FullName -Destination (Join-Path (Split-Path -Parent $worker) $runtimeFile.Name) -Force
+        }
+        # These are local build outputs. Binary redistribution remains subject to
+        # the separate notice/provenance checks in package-vscode-designer.ps1.
+    }
     [ordered]@{
         protocolVersion = 1
         service = Join-Path $service 'LitheView.Designer.Service.dll'
