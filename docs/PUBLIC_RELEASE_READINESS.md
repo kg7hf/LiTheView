@@ -15,7 +15,8 @@ starter is local exercise output. Vendor dependencies remain application-owned.
 
 Build and validation commands are in [BUILD_ENVIRONMENT.md](BUILD_ENVIRONMENT.md),
 [CONFORMANCE.md](CONFORMANCE.md), and each starter's README and VALIDATION.md.
-The publication validation record is added after checks on the clean history.
+See [the clean-history validation record](PUBLICATION_VALIDATION.md) for results
+and the precise source and test scope.
 
 STM32CubeMX is downloaded directly from
 [STMicroelectronics](https://www.st.com/en/development-tools/stm32cubemx.html).

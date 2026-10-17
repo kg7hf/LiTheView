@@ -4,7 +4,8 @@
 
 This checkout belongs to the new public source history. Older checkpoint hashes
 below refer to private development history and must not be fetched as dependencies.
-Use the current `.gitmodules`, build presets and publication record. The owner's
+Use the current `.gitmodules`, build presets and
+[publication validation record](PUBLICATION_VALIDATION.md). The owner's
 retained local exercise work is outside this public snapshot.
 
 ## Current direction

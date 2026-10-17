@@ -1,5 +1,19 @@
 # Completed starter 1 validation, 2026-10-03
 
+## Clean-history validation — October 17, 2026
+
+This public starter pins LiTheView to
+`8ca00c0ba4f80ea4e7e73b72c07a329ed48092b6`. A fresh recursive GitHub clone passed
+both Windows and STM32 Debug builds, Windows CTest 2/2, the guided progression,
+and completed-form interaction and physical-button simulation checks.
+The blank STM32 image uses 27,444 bytes of flash and 13,256 bytes of DTCM;
+the completed image uses 61,236 bytes of flash, 14,576 bytes of DTCM and
+522,240 bytes of SDRAM. No hardware was accessed in this pass.
+
+See [the publication validation record](../../docs/PUBLICATION_VALIDATION.md).
+The older checkpoints below describe private development history; their hashes
+and local evidence directories are not public dependencies or current pins.
+
 ## Publication validation — October 17, 2026
 
 Both starter source trees include the shared physical-button adapter, Windows photo
