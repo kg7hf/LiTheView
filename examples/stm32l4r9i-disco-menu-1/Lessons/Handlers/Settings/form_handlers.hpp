@@ -4,6 +4,7 @@
 // LiTheView handwritten form: form.main
 #pragma once
 #include "Application/navigation.hpp"
+#include "menu_features.hpp"
 #include "menu_form_types.hpp"
 namespace menu
 {
@@ -19,9 +20,10 @@ protected:
     // litheview-handler component.main.volume onVolumeButtonClicked
     void onVolumeButtonClicked() noexcept override
     {
-#if MENU_HAS_VOLUME
-        mRequests.offer(Event::openVolume);
-#endif
+        if constexpr (features::hasVolume)
+        {
+            mRequests.offer(Event::openVolume);
+        }
     }
     // litheview-handler component.main.storage onStorageButtonClicked
     void onStorageButtonClicked() noexcept override

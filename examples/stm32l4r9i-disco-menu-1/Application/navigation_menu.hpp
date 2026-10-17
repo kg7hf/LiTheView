@@ -2,28 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #pragma once
+#include "Application/load_selection.hpp"
 #include "Application/navigation.hpp"
-#include "Tasks/Settings/form_handlers.hpp"
-#include "Tasks/Storage/form_handlers.hpp"
-#include "Tasks/UI/form_handlers.hpp"
-#if MENU_HAS_VOLUME
-#include "Tasks/Volume/form_handlers.hpp"
-#endif
-#if MENU_HAS_LOAD
-#include "Tasks/Load/form_handlers.hpp"
-#endif
+#include "Application/playback.hpp"
 #include "lithe/application.hpp"
 #include "lithe/tiled_renderer.hpp"
+#include "menu_composition.hpp"
 namespace menu
 {
-class Menu final
+template <typename Pages> class MenuRuntime final
 {
 public:
-    explicit Menu(lithe::Display& display, lithe::Viewport viewport = {}) noexcept
+    explicit MenuRuntime(lithe::Display& display, lithe::Viewport viewport = {}) noexcept
         : mApplication{display, viewport}
     {
     }
-    explicit Menu(lithe::Viewport viewport) noexcept : mApplication{viewport}
+    explicit MenuRuntime(lithe::Viewport viewport) noexcept : mApplication{viewport}
     {
     }
     [[nodiscard]] bool
@@ -32,36 +26,42 @@ public:
         return mInitialized &&
                lithe::TiledRenderer::render(mApplication, size, workspace, sink).ok();
     }
-    Menu(const Menu&) = delete;
-    Menu& operator=(const Menu&) = delete;
-    Menu(Menu&&) = delete;
-    Menu& operator=(Menu&&) = delete;
-    [[nodiscard]] bool initialize(const lithe::ResourceProvider* resources = nullptr) noexcept
+    ~MenuRuntime() = default;
+    MenuRuntime(const MenuRuntime&) = delete;
+    MenuRuntime& operator=(const MenuRuntime&) = delete;
+    MenuRuntime(MenuRuntime&&) = delete;
+    MenuRuntime& operator=(MenuRuntime&&) = delete;
+    [[nodiscard]] bool initialize() noexcept
     {
-        if (mInitialized || !mHome.build(lithe::font5x7(), resources) ||
-            !mSettings.build(lithe::font5x7(), resources) ||
-            !mStorage.build(lithe::font5x7(), resources) || mStorage.controller() == nullptr ||
-            mHome.controller() == nullptr || mSettings.controller() == nullptr)
+        if (mInitialized || !mHome.build(lithe::font5x7(), &mHomeResources) ||
+            !mSettings.build(lithe::font5x7(), &mSettingsResources) ||
+            !mStorage.build(lithe::font5x7(), &mStorageResources) ||
+            mStorage.controller() == nullptr || mHome.controller() == nullptr ||
+            mSettings.controller() == nullptr)
         {
             return false;
         }
-#if MENU_HAS_VOLUME
-        if (!mVolume.build(lithe::font5x7(), resources) || mVolume.controller() == nullptr)
+        if constexpr (Pages::hasVolume)
         {
-            return false;
+            if (!mVolume.build(lithe::font5x7(), &mVolumeResources) ||
+                mVolume.controller() == nullptr)
+            {
+                return false;
+            }
+            mVolume.refresh();
         }
-        mVolume.refresh();
-#endif
-#if MENU_HAS_LOAD
-        if (!mLoad.build(lithe::font5x7(), resources) || mLoad.controller() == nullptr ||
-            !mLoad.connect())
+        if constexpr (Pages::hasLoad)
         {
-            return false;
+            if (!mLoad.build(lithe::font5x7(), &mLoadResources) || mLoad.controller() == nullptr ||
+                !mLoad.connect())
+            {
+                return false;
+            }
         }
-#endif
-#if MENU_HAS_PLAYBACK
-        mHome.refreshPlayback();
-#endif
+        if constexpr (Pages::hasPlayback)
+        {
+            mHome.refreshPlayback();
+        }
         mInitialized = mApplication.pushScene(*mHome.controller());
         return mInitialized;
     }
@@ -71,16 +71,17 @@ public:
         {
             return false;
         }
-#if MENU_HAS_VOLUME
-        // On Volume only, horizontal directions adjust; vertical directions keep
-        // the normal focus traversal and center activates the focused control.
-        if (page() == Page::volume && (key == lithe::Key::left || key == lithe::Key::right))
+        if constexpr (Pages::hasVolume)
         {
-            mVolume.adjust(key == lithe::Key::right ? VolumeChange::increase
-                                                    : VolumeChange::decrease);
-            return true;
+            // On Volume only, horizontal directions adjust; vertical directions keep
+            // the normal focus traversal and center activates the focused control.
+            if (page() == Page::volume && (key == lithe::Key::left || key == lithe::Key::right))
+            {
+                mVolume.adjust(key == lithe::Key::right ? VolumeChange::increase
+                                                        : VolumeChange::decrease);
+                return true;
+            }
         }
-#endif
         (void)mApplication.handleKey(key);
         return applyRequests();
     }
@@ -124,18 +125,23 @@ public:
         {
             changed = mApplication.pushScene(*mStorage.controller());
         }
-#if MENU_HAS_VOLUME
-        else if (*next == Page::volume)
+        else
         {
-            changed = mApplication.pushScene(*mVolume.controller());
+            if constexpr (Pages::hasVolume)
+            {
+                if (*next == Page::volume)
+                {
+                    changed = mApplication.pushScene(*mVolume.controller());
+                }
+            }
+            if constexpr (Pages::hasLoad)
+            {
+                if (*next == Page::load)
+                {
+                    changed = mApplication.pushScene(*mLoad.controller());
+                }
+            }
         }
-#endif
-#if MENU_HAS_LOAD
-        else if (*next == Page::load)
-        {
-            changed = mApplication.pushScene(*mLoad.controller());
-        }
-#endif
         if (!changed)
         {
             return false;
@@ -151,28 +157,29 @@ public:
     {
         return mNavigation.page();
     }
-#if MENU_HAS_VOLUME
     [[nodiscard]] std::int32_t volume() const noexcept
+        requires(Pages::hasVolume)
     {
         return mVolumeState.value();
     }
-#endif
-#if MENU_HAS_PLAYBACK
+
     [[nodiscard]] PlaybackState playbackState() const noexcept
+        requires(Pages::hasPlayback)
     {
         return mHome.playbackState();
     }
-#endif
-#if MENU_HAS_LOAD
+
     [[nodiscard]] EntryId selectedEntry() const noexcept
+        requires(Pages::hasLoad)
     {
         return mLoad.selectedEntry();
     }
     [[nodiscard]] std::optional<EntryId> loadedEntry() const noexcept
+        requires(Pages::hasLoad)
     {
         return mLoad.loadedEntry();
     }
-#endif
+
     [[nodiscard]] std::size_t depth() const noexcept
     {
         return mApplication.controllerDepth();
@@ -188,20 +195,24 @@ private:
         const auto event = mRequests.take();
         return !event || navigate(*event);
     }
+    typename Pages::HomeResources mHomeResources;
     Requests mRequests;
     Navigation mNavigation;
-    HomeMenuForm mHome{mRequests};
-    SettingsMenuForm mSettings{mRequests};
-    StorageMenuForm mStorage{mRequests};
-#if MENU_HAS_VOLUME
+    typename Pages::Home mHome{mRequests};
+    typename Pages::SettingsResources mSettingsResources;
+    typename Pages::Settings mSettings{mRequests};
+    typename Pages::StorageResources mStorageResources;
+    typename Pages::Storage mStorage{mRequests};
+    typename Pages::VolumeResources mVolumeResources;
     Volume mVolumeState;
-    VolumeMenuForm mVolume{mRequests, mVolumeState};
-#endif
-#if MENU_HAS_LOAD
-    LoadMenuForm mLoad{mRequests};
-#endif
+    typename Pages::Volume mVolume{mRequests, mVolumeState};
+
+    typename Pages::LoadResources mLoadResources;
+    typename Pages::Load mLoad{mRequests};
+
     // Destroy Application first: it borrows the persistent controllers above.
     lithe::Application mApplication;
     bool mInitialized{};
 };
+using Menu = MenuRuntime<PageComposition>;
 } // namespace menu

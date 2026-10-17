@@ -41,7 +41,9 @@ public:
     [[nodiscard]] std::string_view loadedText() const noexcept
     {
         if (!mLoaded)
+        {
             return "LOADED: NONE";
+        }
         switch (*mLoaded)
         {
         case EntryId::sessionA:

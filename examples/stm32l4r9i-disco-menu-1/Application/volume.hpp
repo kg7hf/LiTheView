@@ -34,7 +34,8 @@ public:
     }
     [[nodiscard]] std::string_view text() const noexcept
     {
-        // The private value starts on a step and adjust preserves that invariant.
+        // LITHEVIEW_CAST_BOUNDARY: mValue is a multiple of kStep in [0,100]; index
+        // is [0,20].
         return kLabels[static_cast<std::size_t>(mValue / kStep)];
     }
 

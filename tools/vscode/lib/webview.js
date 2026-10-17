@@ -38,7 +38,14 @@ function renderWebview({ scriptUri, styleUri, cspSource, nonce }) {
         </div>
     </header>
     <main class="workspace">
-        <aside class="navigation" aria-label="Widgets and components">
+        <aside class="navigation" aria-label="Screens, widgets and components">
+            <section class="screens-section">
+                <h2>Screens <span id="screen-count" class="count">0</span></h2>
+                <ul id="screens" class="screens" aria-label="Application screens"></ul>
+                <button id="add-screen" class="secondary" type="button">Add screen</button>
+                <button id="refresh-screens" class="secondary" type="button">Refresh screens</button>
+                <p id="screens-status" class="hint" role="status">Finding application screens…</p>
+            </section>
             <section class="palette-section">
                 <h2>Widgets</h2>
                 <label class="visually-hidden" for="widget-filter">Filter widgets</label>

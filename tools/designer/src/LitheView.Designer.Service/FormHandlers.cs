@@ -19,9 +19,11 @@ internal sealed partial class DesignerService
             throw new ServiceException("InvalidForm", Messages(resolved.Diagnostics));
         }
         ResolvedDesignerProjectPaths paths = DesignerProjectPathService.Load(context.ManifestPath, _libraryRoot);
-        string directory = Path.GetDirectoryName(context.ManifestPath)!;
+        string handlerPath = DesignerProjectForms.HandlerPath(workspace, paths.ComponentDirectory);
+        string directory = Path.GetDirectoryName(handlerPath)!;
+        bool scoped = DesignerProjectForms.HasOwnDirectory(workspace, paths.ComponentDirectory);
         string include = Path.GetRelativePath(directory,
-            Path.Combine(paths.ComponentDirectory, "product_config.hpp")).Replace('\\', '/');
+            Path.Combine(DesignerProjectForms.OutputDirectory(workspace, paths.ComponentDirectory), scoped ? "form.hpp" : "product_config.hpp")).Replace('\\', '/');
         if (include.Contains('"') || include.Contains('\n') || include.Contains('\r'))
         {
             throw new ServiceException("InvalidPath", "The generated include path cannot be represented in C++.");
@@ -30,7 +32,9 @@ internal sealed partial class DesignerService
         {
             documentVersion,
             formId = workspace.Form.Id,
-            handlerPath = Path.Combine(directory, "form_handlers.hpp"),
+            handlerPath,
+            className = scoped ? resolved.Document.CppSymbol + "Form" : "Form",
+            baseType = scoped ? "lithe::generated::" + resolved.Document.CppSymbol : "lithe::simulator::Form",
             include,
             handlers = resolved.Document.Components.SelectMany(item =>
                 ControlEventCatalog.For(item.Widget.RuntimeKind).Select(descriptor => new

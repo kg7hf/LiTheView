@@ -4,6 +4,7 @@
 // LiTheView handwritten form: form.main
 #pragma once
 #include "Application/navigation.hpp"
+#include "menu_features.hpp"
 #include "menu_form_types.hpp"
 namespace menu
 {
@@ -18,14 +19,16 @@ protected:
     // <litheview-handlers>
     // litheview-handler component.main.save onSaveButtonClicked
     void onSaveButtonClicked() noexcept override
-    { /* Demonstration placeholder: no device operation or state change. */
+    { /* Demonstration placeholder: no device operation or state
+         change. */
     }
     // litheview-handler component.main.load onLoadButtonClicked
     void onLoadButtonClicked() noexcept override
     {
-#if MENU_HAS_LOAD
-        mRequests.offer(Event::openLoad);
-#endif
+        if constexpr (features::hasLoad)
+        {
+            mRequests.offer(Event::openLoad);
+        }
     }
     // litheview-handler component.main.back onBackButtonClicked
     void onBackButtonClicked() noexcept override

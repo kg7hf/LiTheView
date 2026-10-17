@@ -57,17 +57,20 @@ internal sealed partial class DesignerMainForm
         }
         ResolvedDesignerProjectPaths paths = DesignerProjectPathService.Load(
             reopened.Workspace.ManifestPath, _repository.RepositoryRoot);
-        ComponentExportResult result = ComponentProjectExporter.Export(
-            reopened.Workspace, paths.ComponentDirectory);
-        AppendDiagnostics(result.Diagnostics);
-        if (!result.IsValid || result.OutputDirectory is null)
+        foreach (var screen in DesignerProjectForms.LoadAll(reopened.Workspace))
         {
-            SetStatus("UI generation failed. See Output for the required correction.");
-            return;
+            ComponentExportResult result = ComponentProjectExporter.Export(
+                screen, paths.ComponentDirectory);
+            AppendDiagnostics(result.Diagnostics);
+            if (!result.IsValid || result.OutputDirectory is null)
+            {
+                SetStatus("UI generation failed. See Output for the required correction.");
+                return;
+            }
+            AppendOutput("info", "LVUI4001", $"Generated UI: {result.OutputDirectory}");
+            AppendOutput("info", "LVUI4002", "Build and debug your application with its existing IDE/CMake configuration.");
+            SetStatus($"UI component generated in {result.OutputDirectory}");
         }
-        AppendOutput("info", "LVUI4001", $"Generated UI: {result.OutputDirectory}");
-        AppendOutput("info", "LVUI4002", "Build and debug your application with its existing IDE/CMake configuration.");
-        SetStatus($"UI component generated in {result.OutputDirectory}");
     }
 
     private void EditProjectPaths(object? sender, EventArgs eventArgs)

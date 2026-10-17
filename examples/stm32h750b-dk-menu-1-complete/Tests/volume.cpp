@@ -5,6 +5,8 @@
 #include <array>
 #include <cstdio>
 
+namespace
+{
 class Display final : public lithe::Display
 {
 public:
@@ -27,6 +29,8 @@ private:
 };
 Display display;
 menu::Menu application{display};
+} // namespace
+
 int main()
 {
     const auto check = [](bool valid, const char* message)
@@ -104,7 +108,7 @@ int main()
     menu::Volume model;
     menu::Requests requests;
     menu::VolumeMenuForm form{requests, model};
-    if (!check(static_cast<bool>(form.build()), "standalone generated Volume form"))
+    if (!check(form.build().error == lithe::LayoutError::none, "standalone generated Volume form"))
         return 1;
     form.refresh();
     form.adjust(menu::VolumeChange::increase);

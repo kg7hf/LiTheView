@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.volume" displayName="Volume Menu" surfaceProfileId="litheview.menu.h750.surface"-->
+<!--litheview-component id="component.main.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00303030" borderWidth="0">
+  <!--litheview-component id="component.main.title" name="titleLabel"-->
+  <label frame="120,12,240,36" textColor="0x00ffffff" textScale="3" text="VOLUME" />
+  <!--litheview-component id="component.main.level" name="levelLabel"-->
+  <label frame="192,52,96,30" backgroundColor="0x00303030" textColor="0x00ffffff" textScale="2" text="50%" />
+  <!--litheview-component id="component.main.progress" name="volumeProgress"-->
+  <progress frame="90,88,300,28" value="50" backgroundColor="0x00101010" textColor="0x00ffffff" accentColor="0x0030b080" />
+  <!--litheview-component id="component.main.minus" name="minusButton"-->
+  <button frame="120,132,100,44" text="-" textScale="3" backgroundColor="0x00805020" textColor="0x00ffffff" />
+  <!--litheview-component id="component.main.plus" name="plusButton"-->
+  <button frame="260,132,100,44" text="+" textScale="3" backgroundColor="0x00805020" textColor="0x00ffffff" />
+  <!--litheview-component id="component.main.back" name="backButton"-->
+  <button frame="120,190,240,40" text="BACK" textScale="2" backgroundColor="0x00805020" textColor="0x00ffffff" />
+  <!--litheview-component id="component.main.hint" name="hintLabel"-->
+  <label frame="90,240,300,16" text="LEFT/RIGHT: LEVEL  UP/DOWN: FOCUS" textColor="0x00ffffff" />
+</panel>

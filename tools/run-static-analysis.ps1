@@ -4,10 +4,15 @@
 [CmdletBinding()]
 param(
     [string] $BuildDirectory = 'build/static-analysis',
+    [string] $ApplicationBuildDirectory = '',
     [string] $Generator = $(if ($env:OS -eq 'Windows_NT') { 'MinGW Makefiles' } else { 'Ninja' })
 )
 
 $ErrorActionPreference = 'Stop'
+if ($ApplicationBuildDirectory) {
+    & (Join-Path $PSScriptRoot 'analyze-application.ps1') -BuildDirectory $ApplicationBuildDirectory
+    return
+}
 $repositoryRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
 $analysisBuild = Join-Path $repositoryRoot $BuildDirectory
 

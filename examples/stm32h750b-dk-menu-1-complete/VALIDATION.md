@@ -1,5 +1,24 @@
 # Validation: completed H750 menu
 
+## Review-fix validation (2026-10-17)
+
+See [the complete review validation record](../../docs/MENU_REVIEW_VALIDATION.md).
+Windows CTest passes 7/7 and the STM32 target cross-build passes. Critical static
+analysis covers 11 first-party C++ translation units for this Windows application.
+The round tutorial was created from blank through the installed VS Code plug-in,
+including every intermediate build, callback hookup and regeneration. No board was
+accessed during this pass; earlier physical confirmations below apply to their named
+firmware, not automatically to these new binaries. Original starter work is unchanged.
+
+## Descriptive form names and Screens navigator (2026-10-17)
+
+All five renamed source forms resolve, render and Generate UI through the designer
+service. Handwritten handlers and generated C++ output are unchanged. The Windows
+application builds and CTest passes 7/7. Designer 0.2.12 discovers exactly these five
+screens for this application. Its packaged VS Code integration separately verifies
+native-preview switching while preserving unsaved source and undo history. No firmware
+or hardware change is part of this editor update.
+
 ## Eight-entry Load scrolling and board-photo validation (2026-10-17)
 
 - Completed Windows application: **7/7 CTest checks pass**, covering navigation,
@@ -135,3 +154,17 @@ junction now preserves its installation root so `bin/..` still finds the device 
 The VS Code GUI's F5 action itself has not been manually exercised in this validation run.
 The existing starter files match the retained pre-task hash inventory: 174 private-checkout
 files and 155 public-checkout files unchanged.
+
+## 2026-10-17: Shared UI project consolidation
+
+All menu XML forms and generated output now belong to `Tasks/UI`, with one shared
+project and display/input configuration. This is a source/tooling refactor; no RTOS
+task was added. Completed Win32: 7/7 checks; STM32 Debug cross-build passed.
+
+Evidence: repository `build/multi-form-validation/`. Existing physical acceptance
+still describes the earlier firmware; no flash or fresh hardware walkthrough was
+performed for this refactor. The original H750 starter pair remains untouched.
+
+## Review-fix flash check (2026-10-17)
+
+Programming/readback passed. An idle touch-I2C timeout stopped the task; restart recovered it, but the fault remains open. See [the retained review results](../../docs/MENU_REVIEW_VALIDATION.md#review-fix-hardware-flash-check-2026-10-17).

@@ -5,6 +5,8 @@
 
 #include <array>
 #include <cstdio>
+namespace
+{
 class Display final : public lithe::Display
 {
 public:
@@ -21,6 +23,8 @@ private:
 };
 Display display;
 menu::Menu application{display};
+} // namespace
+
 int main()
 {
     const auto check = [](bool value, const char* message)
@@ -53,30 +57,21 @@ int main()
                    "Home Settings handler") ||
             !check(application.navigate(menu::Event::openSettings) && application.depth() == 2U,
                    "duplicate Settings") ||
-#if MENU_HAS_VOLUME
             !check(click(0) && application.page() == menu::Page::volume &&
                        application.depth() == 3U,
                    "Settings Volume handler") ||
             !check(application.key(lithe::Key::back) && application.page() == menu::Page::settings,
                    "Volume Back to parent") ||
-#else
-            !check(click(0) && application.page() == menu::Page::settings,
-                   "Volume lesson not connected") ||
-#endif
             !check(click(1) && application.page() == menu::Page::storage &&
                        application.depth() == 3U,
                    "Storage handler") ||
             !check(click(0) && application.page() == menu::Page::storage, "Save placeholder") ||
-#if MENU_HAS_LOAD
             !check(click(1) && application.page() == menu::Page::load && application.depth() == 4U,
                    "Storage Load handler") ||
             !check(application.navigate(menu::Event::openLoad) && application.depth() == 4U,
                    "Repeated Load does not push") ||
             !check(application.key(lithe::Key::back) && application.page() == menu::Page::storage,
                    "Load Back to Storage") ||
-#else
-            !check(click(1) && application.page() == menu::Page::storage, "Load not connected") ||
-#endif
             !check(application.navigate(menu::Event::openStorage) && application.depth() == 3U,
                    "duplicate Storage") ||
             !check(click(2) && application.page() == menu::Page::settings &&

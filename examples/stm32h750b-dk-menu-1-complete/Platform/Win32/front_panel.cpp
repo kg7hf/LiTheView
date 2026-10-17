@@ -23,6 +23,11 @@ namespace
 // GDI+ owns its PNG decoder memory on the Windows thread, outside the shared UI task.
 struct FrontImage final
 {
+    FrontImage() = default;
+    FrontImage(const FrontImage&) = delete;
+    FrontImage& operator=(const FrontImage&) = delete;
+    FrontImage(FrontImage&&) = delete;
+    FrontImage& operator=(FrontImage&&) = delete;
     ULONG_PTR token{};
     std::optional<Gdiplus::Bitmap> bitmap;
     ~FrontImage()

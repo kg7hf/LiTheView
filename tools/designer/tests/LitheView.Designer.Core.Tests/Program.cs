@@ -74,6 +74,7 @@ internal static class Program
 
         TestCase[] tests =
         [
+            new("multi-form output and screen creation preserve ownership", () => MultiFormTests.Run(repositoryRoot)),
             new("component generation owns no application and migrates safely", () => ComponentExportTests.Run(repositoryRoot)),
             new("display definitions remain independent of targets", () => DisplayDefinitionTests.Run(repositoryRoot)),
             new("designer products persist independent display and input contracts", () => DesignerProductTests.Run(repositoryRoot)),

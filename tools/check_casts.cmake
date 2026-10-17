@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2026 Paul R. Decker
 # SPDX-License-Identifier: GPL-3.0-only
 
+cmake_policy(SET CMP0009 NEW)
+
 if(NOT DEFINED LITHEVIEW_ROOT)
     message(FATAL_ERROR "LITHEVIEW_ROOT is required")
 endif()
@@ -22,11 +24,13 @@ set(preview_boundary_cast_line_count 0)
 set(simulator_boundary_cast_line_count 0)
 set(starter_boundary_cast_line_count 0)
 set(completed_starter_boundary_cast_line_count 0)
+set(h750_menu_boundary_cast_line_count 0)
+set(l4r9_menu_boundary_cast_line_count 0)
 foreach(source IN LISTS litheview_sources)
     file(RELATIVE_PATH relative_source "${LITHEVIEW_ROOT}" "${source}")
     # The consuming starter applications contain real vendor/library submodules and local builds.
     # Audit its application/adapters, never a second checkout or generated build products.
-    if(relative_source MATCHES "^examples/stm32h750b-dk-(starter-1|starter-1-complete)/(Drivers|Middlewares|build)/")
+    if(relative_source MATCHES "^examples/[^/]+/(Drivers|Middlewares|build)/")
         continue()
     endif()
     # Old designer exports contain a copy of the Win32 simulator template.
@@ -54,7 +58,11 @@ foreach(source IN LISTS litheview_sources)
                 math(EXPR preview_boundary_cast_line_count
                     "${preview_boundary_cast_line_count} + 1")
             else()
-                if(relative_source MATCHES "^examples/stm32h750b-dk-starter-1-complete/")
+                if(relative_source MATCHES "^examples/stm32h750b-dk-menu-1-complete/")
+                    math(EXPR h750_menu_boundary_cast_line_count "${h750_menu_boundary_cast_line_count} + 1")
+                elseif(relative_source MATCHES "^examples/stm32l4r9i-disco-menu-1/")
+                    math(EXPR l4r9_menu_boundary_cast_line_count "${l4r9_menu_boundary_cast_line_count} + 1")
+                elseif(relative_source MATCHES "^examples/stm32h750b-dk-starter-1-complete/")
                     math(EXPR completed_starter_boundary_cast_line_count "${completed_starter_boundary_cast_line_count} + 1")
                 elseif(relative_source MATCHES "^examples/stm32h750b-dk-starter-1/")
                     math(EXPR starter_boundary_cast_line_count "${starter_boundary_cast_line_count} + 1")
@@ -83,6 +91,12 @@ endif()
 if(starter_boundary_cast_line_count GREATER 9)
     message(FATAL_ERROR "H750 starter cast footprint grew to ${starter_boundary_cast_line_count}; reviewed ceiling is 9")
 endif()
+
+# These are independent application/ABI budgets; they cannot consume Core's allowance.
+if(h750_menu_boundary_cast_line_count GREATER 11 OR l4r9_menu_boundary_cast_line_count GREATER 15)
+    message(FATAL_ERROR "Menu cast boundary grew: H750=${h750_menu_boundary_cast_line_count}/11, L4R9=${l4r9_menu_boundary_cast_line_count}/15")
+endif()
+message(STATUS "Reviewed menu cast boundaries: H750=${h750_menu_boundary_cast_line_count}, L4R9=${l4r9_menu_boundary_cast_line_count}")
 
 # Reductions are welcome; growth requires an explicit update and review of this ceiling.
 if(cast_line_count GREATER 13)

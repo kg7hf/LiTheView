@@ -20,9 +20,15 @@ namespace starter::host
 {
 namespace
 {
-// GDI+ owns its PNG decoder memory on the Windows thread, outside the shared UI task.
+// GDI+ owns its PNG decoder memory on the Windows thread, outside the shared UI
+// task.
 struct FrontImage final
 {
+    FrontImage() = default;
+    FrontImage(const FrontImage&) = delete;
+    FrontImage& operator=(const FrontImage&) = delete;
+    FrontImage(FrontImage&&) = delete;
+    FrontImage& operator=(FrontImage&&) = delete;
     ULONG_PTR token{};
     std::optional<Gdiplus::Bitmap> bitmap;
     ~FrontImage()
@@ -100,10 +106,14 @@ bool paintWindow(HDC context) noexcept
         return true;
     }
     if (!image.bitmap)
+    {
         return false;
+    }
     const auto saved = SaveDC(context);
     if (saved == 0)
+    {
         return false;
+    }
     const auto circle = CreateEllipticRgn(
         display.x, display.y, display.x + display.width, display.y + display.height);
     if (circle == nullptr)
@@ -128,13 +138,17 @@ bool paintWindow(HDC context) noexcept
     {
         ok = ExtSelectClipRgn(context, circle, RGN_AND) != ERROR && ok;
         if (ok)
+        {
             paint(
                 context,
                 RECT{display.x, display.y, display.x + display.width, display.y + display.height});
+        }
         ok = RestoreDC(context, displaySaved) != 0 && ok;
     }
     else
+    {
         ok = false;
+    }
     (void)DeleteObject(circle);
     return ok;
 }

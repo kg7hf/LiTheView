@@ -151,7 +151,7 @@ std::expected<void, Error> copyTile(const Rgb888Tile& tile) noexcept
     {
         return fail(Error::halFailure);
     }
-    // Reviewed hardware boundary: HAL DMA2D consumes a physical bus address.
+    // LITHEVIEW_CAST_BOUNDARY: HAL DMA2D consumes a physical bus address.
     const auto source = reinterpret_cast<std::uintptr_t>(tile.data.data());
     const auto status =
         display_hal_copy(source, tile.x, tile.y, tile.width, tile.height, tile.strideBytes / 3U);

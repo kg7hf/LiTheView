@@ -34,7 +34,9 @@ consteval auto mask(Shape shape)
                     ? (y >= 3U && y < 13U && ((x >= 3U && x < 7U) || (x >= 9U && x < 13U)))
                     : (x >= 3U && x < 13U && y >= 3U && y < 13U);
             if (on)
+            {
                 bits[y * 2U + x / 8U] |= std::byte{0x80} >> (x % 8U);
+            }
         }
     }
     return bits;

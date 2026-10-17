@@ -134,8 +134,10 @@ std::expected<Touch, Error> Controller::pollTouch() const noexcept
             // Match ST's old-firmware 45-degree correction, with float only.
             // Numeric conversions are confined to this device-coordinate boundary.
             constexpr float inverseRootTwo = 0.7071067811865475F;
+            // LITHEVIEW_CAST_BOUNDARY: 12-bit wire coordinates bound rotation to [-2896,5792].
             snapshot.x =
                 static_cast<std::int32_t>(static_cast<float>(x - y) * inverseRootTwo) + 195;
+            // LITHEVIEW_CAST_BOUNDARY: bounded float rotation truncates to signed pixel coordinates.
             snapshot.y =
                 static_cast<std::int32_t>(static_cast<float>(x + y - 390) * inverseRootTwo) + 195;
         }

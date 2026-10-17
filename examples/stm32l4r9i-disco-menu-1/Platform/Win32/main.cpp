@@ -10,6 +10,7 @@
 #include "Platform/Win32/window.hpp"
 #include "cmsis_os2.h"
 #include "front_panel_config.hpp"
+#include "menu_features.hpp"
 #include "task.h"
 
 #include <array>
@@ -95,38 +96,39 @@ LRESULT CALLBACK windowProcedure(HWND window, UINT message, WPARAM wParam, LPARA
         {
             return 0;
         }
-#if MENU_HAS_UI
-        switch (wParam)
+        if constexpr (menu::features::hasUi)
         {
-        case VK_RETURN:
-        case VK_SPACE:
-            starter::host::key(lithe::Key::select);
-            break;
-        case VK_ESCAPE:
-        case VK_BACK:
-            starter::host::key(lithe::Key::back);
-            break;
-        case VK_UP:
-            starter::host::key(lithe::Key::up);
-            break;
-        case VK_DOWN:
-            starter::host::key(lithe::Key::down);
-            break;
-        case VK_LEFT:
-            starter::host::key(lithe::Key::left);
-            break;
-        case VK_RIGHT:
-            starter::host::key(lithe::Key::right);
-            break;
-        default:
-            break;
+            switch (wParam)
+            {
+            case VK_RETURN:
+            case VK_SPACE:
+                starter::host::key(starter::host::Key::select);
+                break;
+            case VK_ESCAPE:
+            case VK_BACK:
+                starter::host::key(starter::host::Key::back);
+                break;
+            case VK_UP:
+                starter::host::key(starter::host::Key::up);
+                break;
+            case VK_DOWN:
+                starter::host::key(starter::host::Key::down);
+                break;
+            case VK_LEFT:
+                starter::host::key(starter::host::Key::left);
+                break;
+            case VK_RIGHT:
+                starter::host::key(starter::host::Key::right);
+                break;
+            default:
+                break;
+            }
         }
-#endif
         return 0;
     case WM_TIMER:
     {
         std::array<wchar_t, 120U> title{};
-        // LITHEVIEW_CAST_BOUNDARY: explicit types required by the Windows CRT varargs format.
+        // LITHEVIEW_CAST_BOUNDARY: Windows CRT varargs require unsigned long.
         const auto heartbeats = static_cast<unsigned long>(starter::status.heartbeats.load());
         const auto frames = static_cast<unsigned long>(starter::status.frames.load());
         swprintf_s(title.data(),
@@ -143,7 +145,9 @@ LRESULT CALLBACK windowProcedure(HWND window, UINT message, WPARAM wParam, LPARA
         PAINTSTRUCT paint{};
         const auto context = BeginPaint(window, &paint);
         if (!starter::host::paintWindow(context))
+        {
             PostQuitMessage(1);
+        }
         EndPaint(window, &paint);
         return 0;
     }
@@ -173,22 +177,28 @@ extern "C" void starterAssert(const char* file, std::uint32_t line)
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR commandLine, int show)
 {
     if (!starter::host::initializeFrontPanel())
+    {
         finishProcess(1U);
+    }
     const auto thread = CreateThread(nullptr, 0U, schedulerThread, nullptr, 0U, nullptr);
     if (thread == nullptr)
     {
         return 1;
     }
-    CloseHandle(thread); // Kernel threads have process lifetime; WM_CLOSE terminates the simulator.
+    CloseHandle(thread); // Kernel threads have process lifetime; WM_CLOSE
+                         // terminates the simulator.
     const bool frontPanelTest = std::string_view{commandLine} == "--front-panel-self-test";
     const bool interactionTest = std::string_view{commandLine} == "--interaction-self-test";
-#if !MENU_HAS_NAVIGATION
-    if (interactionTest)
+    if constexpr (!menu::features::hasNavigation)
     {
-        std::fputs("FAIL: finish the menu tutorial before running the interaction test.\n", stderr);
-        finishProcess(1U);
+        if (interactionTest)
+        {
+            std::fputs("FAIL: finish the menu tutorial before running the "
+                       "interaction test.\n",
+                       stderr);
+            finishProcess(1U);
+        }
     }
-#endif
     if (std::string_view{commandLine} == "--self-test" || interactionTest || frontPanelTest)
     {
         const auto started = GetTickCount64();
@@ -198,127 +208,139 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR commandLine, int show)
         }
         bool passed = starter::status.ready.load() && starter::status.heartbeats.load() >= 4U &&
                       starter::status.failureLine.load() == 0U && starter::host::checkDisplay();
-#if MENU_HAS_NAVIGATION
-        if (passed && frontPanelTest)
+        if constexpr (menu::features::hasNavigation)
         {
-            using namespace starter::host;
-            const auto lcd = front::transform.toWindow(front::display);
-            const auto click = [&](std::int32_t x, std::int32_t y)
+            if (passed && frontPanelTest)
             {
-                const auto wx = lcd.x + x * lcd.width / 390;
-                const auto wy = lcd.y + y * lcd.height / 390;
-                mouse(MousePhase::pressed, wx, wy);
-                Sleep(50U);
-                mouse(MousePhase::released, wx, wy);
-                Sleep(80U);
-            };
-            const auto initial = frameFingerprint();
-            click(2, 2); // Outside the circle: do not send a touch into the form.
-            passed = passed && frameFingerprint() == initial;
-            click(135, 284); // Settings.
-            const auto settings = frameFingerprint();
-            passed = passed && settings != initial;
-            key(lithe::Key::back);
-            Sleep(80U);
-            const auto home = frameFingerprint();
-            passed = passed && home != settings;
-            if constexpr (front::enabled)
-            {
-                for (const auto& button : front::buttons)
+                using namespace starter::host;
+                const auto lcd = front::transform.toWindow(front::display);
+                const auto click = [&](std::int32_t x, std::int32_t y)
                 {
-                    if (button.id != "userButton")
-                        continue;
-                    const auto area = front::transform.toWindow(button.bounds);
-                    mouse(MousePhase::pressed, area.x + area.width / 2, area.y + area.height / 2);
-                    Sleep(120U);
-                    mouse(MousePhase::released, area.x + area.width / 2, area.y + area.height / 2);
+                    const auto wx = lcd.x + x * lcd.width / 390;
+                    const auto wy = lcd.y + y * lcd.height / 390;
+                    mouse(MousePhase::pressed, wx, wy);
+                    Sleep(50U);
+                    mouse(MousePhase::released, wx, wy);
                     Sleep(80U);
-                    passed = passed && frameFingerprint() == settings;
-                    key(lithe::Key::back);
+                };
+                const auto initial = frameFingerprint();
+                click(2, 2); // Outside the circle: do not send a touch into the form.
+                passed = passed && frameFingerprint() == initial;
+                click(135, 284); // Settings.
+                const auto settings = frameFingerprint();
+                passed = passed && settings != initial;
+                key(starter::host::Key::back);
+                Sleep(80U);
+                const auto home = frameFingerprint();
+                passed = passed && home != settings;
+                if constexpr (front::enabled)
+                {
+                    for (const auto& button : front::buttons)
+                    {
+                        if (button.id != "userButton")
+                        {
+                            continue;
+                        }
+                        const auto area = front::transform.toWindow(button.bounds);
+                        mouse(
+                            MousePhase::pressed, area.x + area.width / 2, area.y + area.height / 2);
+                        Sleep(120U);
+                        mouse(MousePhase::released,
+                              area.x + area.width / 2,
+                              area.y + area.height / 2);
+                        Sleep(80U);
+                        passed = passed && frameFingerprint() == settings;
+                        key(starter::host::Key::back);
+                        Sleep(80U);
+                    }
+                }
+                // Cancelling a captured display press must not activate Settings.
+                const auto beforeCancel = frameFingerprint();
+                mouse(MousePhase::pressed,
+                      lcd.x + 135 * lcd.width / 390,
+                      lcd.y + 284 * lcd.height / 390);
+                mouse(MousePhase::moved, lcd.x, lcd.y);
+                mouse(MousePhase::released, lcd.x, lcd.y);
+                Sleep(80U);
+                passed = passed && frameFingerprint() == beforeCancel;
+                std::printf("%s: circular photo mapping, touch, center hotspot and "
+                            "cancellation\n",
+                            passed ? "PASS" : "FAIL");
+            }
+        }
+        if constexpr (menu::features::hasNavigation)
+        {
+            if (passed && interactionTest)
+            {
+                const auto original = starter::host::frameFingerprint();
+                const auto click = [](int row)
+                {
+                    starter::host::pointer(135, 154 + row * 65, true);
+                    Sleep(50U);
+                    starter::host::pointer(135, 154 + row * 65, false);
+                    Sleep(80U);
+                    return starter::host::frameFingerprint();
+                };
+                if constexpr (menu::features::hasPlayback)
+                {
+                    const auto playing = click(0);
+                    const auto paused = click(0);
+                    const auto resumed = click(0);
+                    starter::host::key(starter::host::Key::right); // Stop follows Play in the form.
+                    starter::host::key(starter::host::Key::select);
+                    Sleep(80U);
+                    passed = passed && playing != original && paused != playing &&
+                             resumed == playing && starter::host::frameFingerprint() != resumed;
+                }
+                const auto settings = click(2);
+                if constexpr (menu::features::hasVolume)
+                {
+                    const auto volume = click(0);
+                    starter::host::key(starter::host::Key::right);
+                    Sleep(80U);
+                    const auto louder = starter::host::frameFingerprint();
+                    starter::host::key(starter::host::Key::left);
+                    Sleep(80U);
+                    passed = passed && volume != settings && louder != volume &&
+                             starter::host::frameFingerprint() == volume;
+                    starter::host::key(starter::host::Key::back);
                     Sleep(80U);
                 }
-            }
-            // Cancelling a captured display press must not activate Settings.
-            const auto beforeCancel = frameFingerprint();
-            mouse(
-                MousePhase::pressed, lcd.x + 135 * lcd.width / 390, lcd.y + 284 * lcd.height / 390);
-            mouse(MousePhase::moved, lcd.x, lcd.y);
-            mouse(MousePhase::released, lcd.x, lcd.y);
-            Sleep(80U);
-            passed = passed && frameFingerprint() == beforeCancel;
-            std::printf("%s: circular photo mapping, touch, center hotspot and cancellation\n",
-                        passed ? "PASS" : "FAIL");
-        }
-#endif
-#if MENU_HAS_NAVIGATION
-        if (passed && interactionTest)
-        {
-            const auto original = starter::host::frameFingerprint();
-            const auto click = [](int row)
-            {
-                starter::host::pointer(135, 154 + row * 65, true);
-                Sleep(50U);
-                starter::host::pointer(135, 154 + row * 65, false);
+                const auto storage = click(1);
+                if constexpr (menu::features::hasLoad)
+                {
+                    const auto loadPage = click(1);
+                    starter::host::pointer(160, 174, true);
+                    Sleep(50U);
+                    starter::host::pointer(160, 174, false);
+                    Sleep(80U);
+                    const auto selected = starter::host::frameFingerprint();
+                    starter::host::pointer(140, 298, true);
+                    Sleep(50U);
+                    starter::host::pointer(140, 298, false);
+                    Sleep(80U);
+                    passed = passed && loadPage != storage && selected != loadPage &&
+                             starter::host::frameFingerprint() != selected;
+                    starter::host::key(starter::host::Key::back);
+                    Sleep(80U);
+                }
+                const auto settingsAgain = click(2);
+                const auto homeAgain = click(2);
+                passed = passed && original != settings && settings != storage &&
+                         storage != settingsAgain && settingsAgain != homeAgain;
+                starter::host::key(starter::host::Key::select);
                 Sleep(80U);
-                return starter::host::frameFingerprint();
-            };
-#if MENU_HAS_PLAYBACK
-            const auto playing = click(0);
-            const auto paused = click(0);
-            const auto resumed = click(0);
-            starter::host::key(lithe::Key::right); // Stop follows Play in the form.
-            starter::host::key(lithe::Key::select);
-            Sleep(80U);
-            passed = passed && playing != original && paused != playing && resumed == playing &&
-                     starter::host::frameFingerprint() != resumed;
-#endif
-            const auto settings = click(2);
-#if MENU_HAS_VOLUME
-            const auto volume = click(0);
-            starter::host::key(lithe::Key::right);
-            Sleep(80U);
-            const auto louder = starter::host::frameFingerprint();
-            starter::host::key(lithe::Key::left);
-            Sleep(80U);
-            passed = passed && volume != settings && louder != volume &&
-                     starter::host::frameFingerprint() == volume;
-            starter::host::key(lithe::Key::back);
-            Sleep(80U);
-#endif
-            const auto storage = click(1);
-#if MENU_HAS_LOAD
-            const auto loadPage = click(1);
-            starter::host::pointer(160, 174, true);
-            Sleep(50U);
-            starter::host::pointer(160, 174, false);
-            Sleep(80U);
-            const auto selected = starter::host::frameFingerprint();
-            starter::host::pointer(140, 298, true);
-            Sleep(50U);
-            starter::host::pointer(140, 298, false);
-            Sleep(80U);
-            passed = passed && loadPage != storage && selected != loadPage &&
-                     starter::host::frameFingerprint() != selected;
-            starter::host::key(lithe::Key::back);
-            Sleep(80U);
-#endif
-            const auto settingsAgain = click(2);
-            const auto homeAgain = click(2);
-            passed = passed && original != settings && settings != storage &&
-                     storage != settingsAgain && settingsAgain != homeAgain;
-            starter::host::key(lithe::Key::select);
-            Sleep(80U);
-            const auto keyboardSettings = starter::host::frameFingerprint();
-            starter::host::key(lithe::Key::back);
-            Sleep(80U);
-            passed = passed && keyboardSettings != homeAgain &&
-                     starter::host::frameFingerprint() == homeAgain;
-            std::printf("%s: mouse -> application task -> generated handlers -> "
-                        "Home/Settings/Storage/Settings/Home "
-                        "pixels\n",
-                        passed ? "PASS" : "FAIL");
+                const auto keyboardSettings = starter::host::frameFingerprint();
+                starter::host::key(starter::host::Key::back);
+                Sleep(80U);
+                passed = passed && keyboardSettings != homeAgain &&
+                         starter::host::frameFingerprint() == homeAgain;
+                std::printf("%s: mouse -> application task -> generated handlers -> "
+                            "Home/Settings/Storage/Settings/Home "
+                            "pixels\n",
+                            passed ? "PASS" : "FAIL");
+            }
         }
-#endif
         // LITHEVIEW_CAST_BOUNDARY: explicit CRT varargs argument types.
         const auto heartbeats = static_cast<unsigned long>(starter::status.heartbeats.load());
         const auto frames = static_cast<unsigned long>(starter::status.frames.load());

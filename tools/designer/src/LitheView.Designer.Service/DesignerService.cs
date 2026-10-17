@@ -17,7 +17,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
 {
     private static readonly StringComparison PathComparison = OperatingSystem.IsWindows()
         ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-    private static readonly string[] Capabilities = ["inspect", "edit", "render", "export", "handlers", "controlEvents", "project.options", "project.create", "project.createNative", "project.input", "project.setup"];
+    private static readonly string[] Capabilities = ["inspect", "edit", "render", "export", "handlers", "controlEvents", "project.options", "project.create", "project.createNative", "project.input", "project.setup", "project.addScreen"];
     private readonly string _libraryRoot;
     private readonly WidgetCatalog _catalog;
     private readonly string _catalogHash;
@@ -75,7 +75,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
                 return new(id, true, new
                 {
                     protocolVersion = Protocol.Version,
-                    serviceVersion = "0.2.9",
+                    serviceVersion = "0.2.14",
                     widgetCatalogSha256 = _catalogHash,
                     capabilities = Capabilities
                 });
@@ -89,7 +89,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
                 return new(id, true, CreateProject(request.Params.Project
                     ?? throw new ServiceException("InvalidRequest", "Project creation parameters are required.")));
             }
-            if (request.Method is not ("inspect" or "edit" or "render" or "export" or "handlers" or "project.input" or "project.setup"))
+            if (request.Method is not ("inspect" or "edit" or "render" or "export" or "handlers" or "project.input" or "project.setup" or "project.addScreen"))
             {
                 throw new ServiceException("UnknownMethod", "Unknown designer method: " + request.Method);
             }
@@ -103,6 +103,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
                 "handlers" => DescribeHandlers(context, request.Params.DocumentVersion!.Value),
                 "project.input" => ConfigureInput(context, request.Params),
                 "project.setup" => ConfigureProject(context, request.Params),
+                "project.addScreen" => AddScreen(context, request.Params),
                 _ => throw new ServiceException("UnknownMethod", "Unknown designer method.")
             };
             return new(id, true, result);
@@ -115,7 +116,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
         {
             return new(id, false, Error: new("InvalidRequest", exception.Message));
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or
             ArgumentException or InvalidOperationException or NotSupportedException or OverflowException or
             System.ComponentModel.Win32Exception)
         {
@@ -338,6 +339,16 @@ internal sealed partial class DesignerService : IAsyncDisposable
             status = frame.Status.ToString(),
             diagnostics
         };
+    }
+
+    private ScreenCreationPlan AddScreen(Context context, RequestParameters parameters)
+    {
+        DesignerWorkspace workspace = RequireForm(context);
+        var paths = DesignerProjectPathService.Load(context.ManifestPath, _libraryRoot);
+        if (!paths.ComponentDirectory.Contains("{form}", StringComparison.Ordinal) &&
+            !DesignerProjectForms.LoadAll(workspace).Any(item => item.Form.Id == "form.main"))
+            throw new ServiceException("ScreenOutputLayout", "Set componentDirectory to a per-screen path such as Tasks/UI/Generated/{form} before extending a project without a legacy form.main. Update its application includes to match.");
+        return DesignerProjectForms.PlanAdd(workspace, Required(parameters.ScreenName, "Screen name"));
     }
 
     private object Export(Context context, RequestParameters parameters)

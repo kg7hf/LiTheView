@@ -56,6 +56,7 @@ internal static partial class Program
             await CheckNativeProjectCreationAsync(service, library, Path.Combine(directory, "native-application"), worker is not null).ConfigureAwait(false);
             await CheckInputConfigurationAsync(service, library, Path.Combine(directory, "input-application")).ConfigureAwait(false);
             await CheckProjectSetupAsync(service, Path.Combine(directory, "setup-application")).ConfigureAwait(false);
+            await CheckMultiFormAsync(service, library, Path.Combine(directory, "multi-form")).ConfigureAwait(false);
             await CheckStreamingAsync(service).ConfigureAwait(false);
             CheckPixels();
             if (worker is not null)

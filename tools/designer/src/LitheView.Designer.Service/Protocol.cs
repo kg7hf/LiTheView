@@ -42,6 +42,7 @@ internal sealed record RequestParameters
     public int? DocumentVersion { get; init; }
     public EditOperation? Operation { get; init; }
     public ProjectCreationRequest? Project { get; init; }
+    public string? ScreenName { get; init; }
     public string? LogicalInput { get; init; }
     public ProjectSetupRequest? Setup { get; init; }
 }

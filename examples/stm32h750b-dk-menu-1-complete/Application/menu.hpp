@@ -3,15 +3,16 @@
 
 #pragma once
 #include "Application/navigation.hpp"
-#include "Tasks/Settings/form_handlers.hpp"
-#include "Tasks/Storage/form_handlers.hpp"
-#include "Tasks/UI/form_handlers.hpp"
-#if MENU_HAS_VOLUME
-#include "Tasks/Volume/form_handlers.hpp"
-#endif
-#if MENU_HAS_LOAD
-#include "Tasks/Load/form_handlers.hpp"
-#endif
+#include "Tasks/UI/Generated/Home/resources.hpp"
+#include "Tasks/UI/Generated/Load/resources.hpp"
+#include "Tasks/UI/Generated/Settings/resources.hpp"
+#include "Tasks/UI/Generated/Storage/resources.hpp"
+#include "Tasks/UI/Generated/Volume/resources.hpp"
+#include "Tasks/UI/handlers/Home.hpp"
+#include "Tasks/UI/handlers/Load.hpp"
+#include "Tasks/UI/handlers/Settings.hpp"
+#include "Tasks/UI/handlers/Storage.hpp"
+#include "Tasks/UI/handlers/Volume.hpp"
 #include "lithe/application.hpp"
 #include "lithe/tiled_renderer.hpp"
 namespace menu
@@ -32,36 +33,32 @@ public:
         return mInitialized &&
                lithe::TiledRenderer::render(mApplication, size, workspace, sink).ok();
     }
+    ~Menu() = default;
     Menu(const Menu&) = delete;
     Menu& operator=(const Menu&) = delete;
     Menu(Menu&&) = delete;
     Menu& operator=(Menu&&) = delete;
-    [[nodiscard]] bool initialize(const lithe::ResourceProvider* resources = nullptr) noexcept
+    [[nodiscard]] bool initialize() noexcept
     {
-        if (mInitialized || !mHome.build(lithe::font5x7(), resources) ||
-            !mSettings.build(lithe::font5x7(), resources) ||
-            !mStorage.build(lithe::font5x7(), resources) || mStorage.controller() == nullptr ||
-            mHome.controller() == nullptr || mSettings.controller() == nullptr)
+        if (mInitialized || !mHome.build(lithe::font5x7(), &mHomeResources) ||
+            !mSettings.build(lithe::font5x7(), &mSettingsResources) ||
+            !mStorage.build(lithe::font5x7(), &mStorageResources) ||
+            mStorage.controller() == nullptr || mHome.controller() == nullptr ||
+            mSettings.controller() == nullptr)
         {
             return false;
         }
-#if MENU_HAS_VOLUME
-        if (!mVolume.build(lithe::font5x7(), resources) || mVolume.controller() == nullptr)
+        if (!mVolume.build(lithe::font5x7(), &mVolumeResources) || mVolume.controller() == nullptr)
         {
             return false;
         }
         mVolume.refresh();
-#endif
-#if MENU_HAS_LOAD
-        if (!mLoad.build(lithe::font5x7(), resources) || mLoad.controller() == nullptr ||
+        if (!mLoad.build(lithe::font5x7(), &mLoadResources) || mLoad.controller() == nullptr ||
             !mLoad.connect())
         {
             return false;
         }
-#endif
-#if MENU_HAS_PLAYBACK
         mHome.refreshPlayback();
-#endif
         mInitialized = mApplication.pushScene(*mHome.controller());
         return mInitialized;
     }
@@ -71,7 +68,6 @@ public:
         {
             return false;
         }
-#if MENU_HAS_VOLUME
         // On Volume only, horizontal directions adjust; vertical directions keep
         // the normal focus traversal and center activates the focused control.
         if (page() == Page::volume && (key == lithe::Key::left || key == lithe::Key::right))
@@ -80,7 +76,6 @@ public:
                                                     : VolumeChange::decrease);
             return true;
         }
-#endif
         (void)mApplication.handleKey(key);
         return applyRequests();
     }
@@ -124,18 +119,14 @@ public:
         {
             changed = mApplication.pushScene(*mStorage.controller());
         }
-#if MENU_HAS_VOLUME
         else if (*next == Page::volume)
         {
             changed = mApplication.pushScene(*mVolume.controller());
         }
-#endif
-#if MENU_HAS_LOAD
         else if (*next == Page::load)
         {
             changed = mApplication.pushScene(*mLoad.controller());
         }
-#endif
         if (!changed)
         {
             return false;
@@ -151,19 +142,14 @@ public:
     {
         return mNavigation.page();
     }
-#if MENU_HAS_VOLUME
     [[nodiscard]] std::int32_t volume() const noexcept
     {
         return mVolumeState.value();
     }
-#endif
-#if MENU_HAS_PLAYBACK
     [[nodiscard]] PlaybackState playbackState() const noexcept
     {
         return mHome.playbackState();
     }
-#endif
-#if MENU_HAS_LOAD
     [[nodiscard]] EntryId selectedEntry() const noexcept
     {
         return mLoad.selectedEntry();
@@ -172,7 +158,6 @@ public:
     {
         return mLoad.loadedEntry();
     }
-#endif
     [[nodiscard]] std::size_t depth() const noexcept
     {
         return mApplication.controllerDepth();
@@ -188,18 +173,19 @@ private:
         const auto event = mRequests.take();
         return !event || navigate(*event);
     }
+    lithe::generated::assets::HomeMenu::SelectedResources mHomeResources;
     Requests mRequests;
     Navigation mNavigation;
     HomeMenuForm mHome{mRequests};
+    lithe::generated::assets::SettingsMenu::SelectedResources mSettingsResources;
     SettingsMenuForm mSettings{mRequests};
+    lithe::generated::assets::StorageMenu::SelectedResources mStorageResources;
     StorageMenuForm mStorage{mRequests};
-#if MENU_HAS_VOLUME
+    lithe::generated::assets::VolumeMenu::SelectedResources mVolumeResources;
     Volume mVolumeState;
     VolumeMenuForm mVolume{mRequests, mVolumeState};
-#endif
-#if MENU_HAS_LOAD
+    lithe::generated::assets::LoadMenu::SelectedResources mLoadResources;
     LoadMenuForm mLoad{mRequests};
-#endif
     // Destroy Application first: it borrows the persistent controllers above.
     lithe::Application mApplication;
     bool mInitialized{};

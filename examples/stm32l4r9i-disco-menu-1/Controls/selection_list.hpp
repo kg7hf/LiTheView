@@ -10,10 +10,16 @@
 #include <string_view>
 namespace menu::controls
 {
-// A borrowed synchronous interface. The owning form and catalog outlive the list.
+// A borrowed synchronous interface. The owning form and catalog outlive the
+// list.
 class ListEvents
 {
 public:
+    ListEvents() = default;
+    ListEvents(const ListEvents&) = delete;
+    ListEvents& operator=(const ListEvents&) = delete;
+    ListEvents(ListEvents&&) = delete;
+    ListEvents& operator=(ListEvents&&) = delete;
     virtual ~ListEvents() = default;
     virtual void onListSelectionChanged(lithe::SelectionChange event) noexcept = 0;
     virtual void onListActivated(std::size_t index) noexcept = 0;
@@ -35,7 +41,9 @@ public:
     {
         if (mEvents != nullptr || items.empty() || items.size() > kMaximumItems ||
             frame().height < kRowHeight || frame().width < 48)
+        {
             return false;
+        }
         mItems = items;
         mFont = &font;
         mEvents = &events;
@@ -54,14 +62,20 @@ public:
     {
         const InteractionGuard interaction{*this};
         if (!interaction || !interactionEnabled() || mItems.empty())
+        {
             return false;
+        }
         mSuppressActivation = false;
         if (key == lithe::Key::up || key == lithe::Key::down)
         {
             if (key == lithe::Key::up && mSelected != 0U)
+            {
                 change(mSelected - 1U);
+            }
             if (key == lithe::Key::down && mSelected + 1U < mItems.size())
+            {
                 change(mSelected + 1U);
+            }
             return true; // Clamp at the endpoints, never wrap unexpectedly.
         }
         return false; // Left/right traverse focus; center activates the selection.
@@ -70,7 +84,9 @@ public:
     {
         const InteractionGuard interaction{*this};
         if (!interaction || !interactionEnabled())
+        {
             return;
+        }
         View::handlePointerEvent(event);
         if (event.phase == lithe::PointerPhase::pressed)
         {
@@ -81,9 +97,13 @@ public:
         else if (event.phase == lithe::PointerPhase::moved)
         {
             if (rowAt(event.position) != mPressedRow)
+            {
                 mPressedRow.reset();
+            }
             if (scrollAt(event.position) != mPressedScroll)
+            {
                 mPressedScroll.reset();
+            }
         }
         else
         {
@@ -94,14 +114,20 @@ public:
             mPressedRow.reset();
             mSuppressActivation = event.phase == lithe::PointerPhase::released;
             if (event.phase == lithe::PointerPhase::released && pressed && released == pressed)
+            {
                 change(*released);
+            }
             if (event.phase == lithe::PointerPhase::released && scroll &&
                 scrollAt(event.position) == scroll)
             {
                 if (*scroll == lithe::Key::up && mSelected != 0U)
+                {
                     change(mSelected - 1U);
+                }
                 if (*scroll == lithe::Key::down && mSelected + 1U < mItems.size())
+                {
                     change(mSelected + 1U);
+                }
             }
         }
     }
@@ -109,7 +135,9 @@ public:
     {
         const InteractionGuard interaction{*this};
         if (!interaction || !interactionEnabled() || mEvents == nullptr)
+        {
             return;
+        }
         if (mSuppressActivation)
         {
             mSuppressActivation = false;
@@ -122,7 +150,9 @@ protected:
     void onSelectionChanged(lithe::SelectionChange event) noexcept override
     {
         if (mEvents != nullptr)
+        {
             mEvents->onListSelectionChanged(event);
+        }
     }
     void focusChanged() noexcept override
     {
@@ -137,15 +167,21 @@ protected:
         const auto base = style();
         painter.fillRect(bounds, base.background);
         if (mFont == nullptr)
+        {
             return;
+        }
         auto row = bounds;
         row.height = kRowHeight;
         if (mItems.size() > visibleRows())
+        {
             row.width -= kScrollWidth;
+        }
         for (auto index = mFirst; index < mItems.size() && row.bottom() <= bounds.bottom(); ++index)
         {
             if (index == mSelected)
+            {
                 painter.fillRect(row, enabled() ? base.accent : current.background);
+            }
             painter.drawText({row.x + 8, row.y, row.width - 20, row.height},
                              mItems[index],
                              *mFont,
@@ -154,7 +190,8 @@ protected:
                              base.textScale);
             row.y += kRowHeight;
         }
-        // Explicit touch targets also make off-screen entries reachable on a touch-only board.
+        // Explicit touch targets also make off-screen entries reachable on a
+        // touch-only board.
         if (mItems.size() > visibleRows())
         {
             const auto x = bounds.right() - kScrollWidth;
@@ -165,8 +202,10 @@ protected:
             {
                 const auto color = available && enabled() ? current.foreground : base.border;
                 for (std::int32_t n = 0; n < 6; ++n)
+                {
                     painter.fillRect({x + kScrollWidth / 2 - n, y + (up ? n : 5 - n), 2 * n + 1, 1},
                                      color);
+                }
             };
             arrow(bounds.y + 15, true, mSelected != 0U);
             arrow(bounds.bottom() - 21, false, mSelected + 1U < mItems.size());
@@ -177,8 +216,8 @@ protected:
 private:
     [[nodiscard]] std::size_t visibleRows() const noexcept
     {
-        // Height is validated by configure and a view's frame is a signed pixel extent.
         const auto rows = std::max(std::int32_t{1}, frame().height / kRowHeight);
+        // LITHEVIEW_CAST_BOUNDARY: rows is positive and fits size_t.
         return static_cast<std::size_t>(rows);
     }
     [[nodiscard]] std::optional<lithe::Key> scrollAt(lithe::Point point) const noexcept
@@ -186,35 +225,54 @@ private:
         if (mItems.size() <= visibleRows() ||
             !lithe::Rect{frame().width - kScrollWidth, 0, kScrollWidth, frame().height}.contains(
                 point))
+        {
             return std::nullopt;
+        }
         if (point.y < kRowHeight)
+        {
             return lithe::Key::up;
+        }
         if (point.y >= frame().height - kRowHeight)
+        {
             return lithe::Key::down;
+        }
         return std::nullopt;
     }
     [[nodiscard]] std::optional<std::size_t> rowAt(lithe::Point point) const noexcept
     {
         if (!lithe::Rect{0, 0, frame().width, frame().height}.contains(point))
+        {
             return std::nullopt;
+        }
         if (mItems.size() > visibleRows() && point.x >= frame().width - kScrollWidth)
+        {
             return std::nullopt;
-        // Bounds above prove point.y is nonnegative.
+        }
+        // LITHEVIEW_CAST_BOUNDARY: rectangle containment proves point.y is
+        // nonnegative.
         const auto row = static_cast<std::size_t>(point.y / kRowHeight);
         if (row >= visibleRows() || mFirst + row >= mItems.size())
+        {
             return std::nullopt;
+        }
         return mFirst + row;
     }
     void change(std::size_t index) noexcept
     {
         if (index >= mItems.size() || index == mSelected)
+        {
             return;
+        }
         const auto previous = mSelected;
         mSelected = index;
         if (mSelected < mFirst)
+        {
             mFirst = mSelected;
+        }
         else if (mSelected >= mFirst + visibleRows())
+        {
             mFirst = mSelected - visibleRows() + 1U;
+        }
         invalidate();
         notifySelectionChanged({previous, mSelected});
     }

@@ -6,6 +6,8 @@
 #include <array>
 #include <cstdio>
 
+namespace
+{
 class Display final : public lithe::Display
 {
 public:
@@ -28,13 +30,18 @@ private:
     std::array<lithe::Rgb888Pixel, 390U * 390U> mPixels{};
 };
 Display display;
-menu::Menu application{display, lithe::generated::DisplayConfiguration::kViewport};
+menu::Menu application{display,
+                       lithe::generated::assets::HomeMenuMainForm::DisplayConfiguration::kViewport};
+} // namespace
+
 int main()
 {
     const auto check = [](bool valid, const char* message)
     {
         if (!valid)
+        {
             std::printf("FAIL: %s\n", message);
+        }
         return valid;
     };
     const auto click = [](lithe::Point point)
@@ -46,7 +53,9 @@ int main()
                    application.navigate(menu::Event::openVolume) && application.volume() == 50 &&
                    application.render(),
                "open Volume at 50 percent"))
+    {
         return 1;
+    }
     const auto half = display.middle();
     if (!check(click({250, 223}) && application.volume() == 55 && application.render(),
                "plus generated handler") ||
@@ -62,32 +71,52 @@ int main()
         !check(application.key(lithe::Key::up) && application.key(lithe::Key::select) &&
                    application.volume() == 50,
                "up and center activate minus"))
+    {
         return 1;
+    }
     // A cancelled contact is not an activation.
     if (!check(application.pointer({{250, 223}, lithe::PointerPhase::pressed, 0U}), "press"))
+    {
         return 1;
+    }
     application.cancelPointer();
     if (!check(application.pointer({{250, 223}, lithe::PointerPhase::released, 0U}) &&
                    application.volume() == 50,
                "cancelled press leaves volume unchanged"))
+    {
         return 1;
+    }
     for (int n = 0; n < 30; ++n)
+    {
         if (!application.key(lithe::Key::right))
+        {
             return 1;
+        }
+    }
     if (!check(application.volume() == 100 && application.render(), "upper bound"))
+    {
         return 1;
+    }
     const auto full = display.middle();
     const auto fullFrames = display.frames;
     if (!check(application.key(lithe::Key::right) && application.render() &&
                    display.frames == fullFrames,
                "saturated adjustment does not invalidate unchanged controls"))
+    {
         return 1;
+    }
     for (int n = 0; n < 30; ++n)
+    {
         if (!application.key(lithe::Key::left))
+        {
             return 1;
+        }
+    }
     if (!check(application.volume() == 0 && application.render() && display.middle() != full,
                "lower bound and empty progress"))
+    {
         return 1;
+    }
     if (!check(application.key(lithe::Key::right) && application.volume() == 5 &&
                    click({135, 280}) && application.page() == menu::Page::settings &&
                    application.depth() == 2U,
@@ -102,27 +131,42 @@ int main()
         !check(application.key(lithe::Key::back) && application.key(lithe::Key::back) &&
                    application.depth() == 1U,
                "logical Back restores parent stack"))
+    {
         return 1;
+    }
     menu::Volume model;
     menu::Requests requests;
     menu::VolumeMenuForm form{requests, model};
-    if (!check(static_cast<bool>(form.build()), "standalone generated Volume form"))
+    if (!check(form.build().error == lithe::LayoutError::none, "standalone generated Volume form"))
+    {
         return 1;
+    }
     form.refresh();
     form.adjust(menu::VolumeChange::increase);
     if (!check(form.getLevelLabel()->text() == "55%" && form.getVolumeProgress()->value() == 55,
                "label and progress share application state"))
+    {
         return 1;
+    }
     for (int n = 0; n < 30; ++n)
+    {
         form.adjust(menu::VolumeChange::decrease);
+    }
     if (!check(form.getLevelLabel()->text() == "0%" && form.getVolumeProgress()->value() == 0,
                "short percentage text"))
+    {
         return 1;
+    }
     for (int n = 0; n < 30; ++n)
+    {
         form.adjust(menu::VolumeChange::increase);
+    }
     if (!check(form.getLevelLabel()->text() == "100%" && form.getVolumeProgress()->value() == 100,
                "three digit percentage text"))
+    {
         return 1;
-    std::puts("PASS: Volume generated handlers, joystick focus/activation, bounded shared value, "
+    }
+    std::puts("PASS: Volume generated handlers, joystick focus/activation, "
+              "bounded shared value, "
               "native progress pixels and persistence");
 }

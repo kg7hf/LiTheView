@@ -1,5 +1,15 @@
 # Validation: round-display menu tutorial
 
+## Review-fix validation (2026-10-17)
+
+See [the complete review validation record](../../docs/MENU_REVIEW_VALIDATION.md).
+Windows CTest passes 7/7 and the STM32 target cross-build passes. Critical static
+analysis covers 11 first-party C++ translation units for this Windows application.
+The round tutorial was created from blank through the installed VS Code plug-in,
+including every intermediate build, callback hookup and regeneration. No board was
+accessed during this pass; earlier physical confirmations below apply to their named
+firmware, not automatically to these new binaries. Original starter work is unchanged.
+
 ## Eight-entry Load scrolling and board-photo validation (2026-10-17)
 
 - Completed Windows application: **7/7 CTest checks pass**, covering navigation,
@@ -171,3 +181,17 @@ starter is blank again; an ordinary same-preset rebuild and Windows CTest (1/1) 
 the final blank STM32 build. The board still runs the retained completed exercise firmware;
 its ELF is in the evidence directory, not the now-blank build output.
 Original button/counter starter work is unchanged against the retained preservation inventory.
+
+## 2026-10-17: Shared UI project consolidation
+
+All menu XML forms and generated output now belong to `Tasks/UI`, with one shared
+project and display/input configuration. This is a source/tooling refactor; no RTOS
+task was added. Completed Win32 exercise: 7/7 checks; STM32 Debug cross-build passed. Restored blank Win32: 1/1; blank STM32 build passed.
+
+Evidence: repository `build/multi-form-validation/`. Existing physical acceptance
+still describes the earlier firmware; no flash or fresh hardware walkthrough was
+performed for this refactor. The original H750 starter pair remains untouched.
+
+## Review-fix flash check (2026-10-17)
+
+The completed plug-in tutorial firmware was programmed and verified. The task remains alive, but BSP errors still accumulate. See [the retained review results](../../docs/MENU_REVIEW_VALIDATION.md#review-fix-hardware-flash-check-2026-10-17).

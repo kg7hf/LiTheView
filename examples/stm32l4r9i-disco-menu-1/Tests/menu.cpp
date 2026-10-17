@@ -7,6 +7,8 @@
 
 #include <array>
 #include <cstdio>
+namespace
+{
 class Display final : public lithe::Display
 {
 public:
@@ -29,7 +31,10 @@ private:
     std::array<lithe::Rgb888Pixel, 390U * 390U> mPixels{};
 };
 Display display;
-menu::Menu application{display, lithe::generated::DisplayConfiguration::kViewport};
+menu::Menu application{display,
+                       lithe::generated::assets::HomeMenuMainForm::DisplayConfiguration::kViewport};
+} // namespace
+
 int main()
 {
     const auto check = [](bool value, const char* message)
@@ -64,30 +69,30 @@ int main()
                    "Home Settings handler") ||
             !check(application.navigate(menu::Event::openSettings) && application.depth() == 2U,
                    "duplicate Settings") ||
-#if MENU_HAS_VOLUME
-            !check(click(0) && application.page() == menu::Page::volume &&
-                       application.depth() == 3U,
-                   "Settings Volume handler") ||
-            !check(application.key(lithe::Key::back) && application.page() == menu::Page::settings,
-                   "Volume Back to parent") ||
-#else
-            !check(click(0) && application.page() == menu::Page::settings,
-                   "Volume lesson not connected") ||
-#endif
+            (menu::features::hasVolume
+                 ? (!check(click(0) && application.page() == menu::Page::volume &&
+                               application.depth() == 3U,
+                           "Settings Volume handler") ||
+                    !check(application.key(lithe::Key::back) &&
+                               application.page() == menu::Page::settings,
+                           "Volume Back to parent"))
+                 : (!check(click(0) && application.page() == menu::Page::settings,
+                           "Volume lesson not connected"))) ||
             !check(click(1) && application.page() == menu::Page::storage &&
                        application.depth() == 3U,
                    "Storage handler") ||
             !check(click(0) && application.page() == menu::Page::storage, "Save placeholder") ||
-#if MENU_HAS_LOAD
-            !check(click(1) && application.page() == menu::Page::load && application.depth() == 4U,
-                   "Storage Load handler") ||
-            !check(application.navigate(menu::Event::openLoad) && application.depth() == 4U,
-                   "Repeated Load does not push") ||
-            !check(application.key(lithe::Key::back) && application.page() == menu::Page::storage,
-                   "Load Back to Storage") ||
-#else
-            !check(click(1) && application.page() == menu::Page::storage, "Load not connected") ||
-#endif
+            (menu::features::hasLoad
+                 ? (!check(click(1) && application.page() == menu::Page::load &&
+                               application.depth() == 4U,
+                           "Storage Load handler") ||
+                    !check(application.navigate(menu::Event::openLoad) && application.depth() == 4U,
+                           "Repeated Load does not push") ||
+                    !check(application.key(lithe::Key::back) &&
+                               application.page() == menu::Page::storage,
+                           "Load Back to Storage"))
+                 : (!check(click(1) && application.page() == menu::Page::storage,
+                           "Load not connected"))) ||
             !check(application.navigate(menu::Event::openStorage) && application.depth() == 3U,
                    "duplicate Storage") ||
             !check(click(2) && application.page() == menu::Page::settings &&
@@ -97,12 +102,16 @@ int main()
                        application.depth() == 1U,
                    "logical Back to parent") ||
             !check(application.render(), "render current page"))
+        {
             return 1;
+        }
     }
     if (!check(application.key(lithe::Key::select) && application.page() == menu::Page::settings,
                "Home Settings focus restored") ||
         !check(click(2) && application.page() == menu::Page::home, "Settings Back handler"))
+    {
         return 1;
+    }
     menu::Requests requests;
     requests.offer(menu::Event::back);
     requests.offer(menu::Event::openSettings);
@@ -110,7 +119,7 @@ int main()
     {
         return 1;
     }
-    std::puts(
-        "PASS: generated handlers, Home/Settings/Storage/Back, repeated navigation, focus and "
-        "bounded requests");
+    std::puts("PASS: generated handlers, Home/Settings/Storage/Back, repeated "
+              "navigation, focus and "
+              "bounded requests");
 }

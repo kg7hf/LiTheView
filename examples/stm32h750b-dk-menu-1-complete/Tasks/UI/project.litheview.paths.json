@@ -2,6 +2,6 @@
   "schemaVersion": 1,
   "applicationRoot": "../..",
   "libraryRoot": "Middlewares/Third_Party/LiTheView",
-  "componentDirectory": "Tasks/UI/Generated",
+  "componentDirectory": "Tasks/UI/Generated/{form}",
   "buildDirectory": "build"
 }

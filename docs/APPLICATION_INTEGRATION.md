@@ -233,15 +233,28 @@ checks. Host and firmware need separate build directories and toolchains.
 `LitheView::GeneratedComponent` supplies Core, the generated include directory, C++23, and selected
 resource sources. Link CompactFont explicitly when using `font5x7()` or the default layout font;
 applications supplying their own font need no bundled font target.
-The current generated target/namespace supports one UI component per parent build.
+For multiple forms, use a component output such as `Tasks/UI/Generated/{form}`. Each form
+has its own generated C++ type and CMake target (`LitheView::Form<CppSymbol>`), while all forms
+share one manifest, display definition and input contract. Each form owns its selected resource
+provider; keep that provider alive for as long as its form. Identical native resource sources
+are compiled once even when several forms use them. The legacy single-form layout keeps
+`LitheView::GeneratedComponent` for existing consumers.
 
 ## Connect application behavior and devices
 
-Current controls report action IDs through the borrowed `ControllerDelegate` interface. A delegate
-can borrow devices, application state or a bounded command queue through typed references. The
-planned named-control/event-handler interface is documented in [VSCODE_DESIGNER_PLAN.md](VSCODE_DESIGNER_PLAN.md);
-this cleanup does not pretend that Create/Open Handler or custom derived-control construction is
-already implemented. There is no `void*` callback/context pair in the C++ application contract.
+Controls expose typed events and generated named accessors. Create/Open Handler connects a
+control event to a handwritten form method; Generate UI preserves that file and checks its
+binding markers. Derived controls are selected with the generated `WidgetOverrides` contract.
+See [CONTROL_OBJECTS.md](CONTROL_OBJECTS.md) for ownership and extension examples.
+`ControllerDelegate` remains available for action-ID dispatch. Handlers can borrow devices,
+application state or a bounded command queue through typed references. There is no `void*`
+callback/context pair in the C++ application contract.
+
+Navigation belongs to the application. The menu examples use a bounded FSM and defer scene
+changes until the input callback returns. They demonstrate that pattern, not a universal menu
+engine. Serialize backend notifications on the UI owner: an ISR or another task must enqueue
+an application event rather than mutate controls directly. The examples do not yet demonstrate
+a backend-to-UI ISR queue or an RTOS wakeup adapter.
 
 | Application boundary | Connection to LiTheView |
 | --- | --- |

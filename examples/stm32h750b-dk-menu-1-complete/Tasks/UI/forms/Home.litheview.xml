@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.home" displayName="Home Menu" surfaceProfileId="litheview.menu.h750.surface"-->
+<!--litheview-component id="component.main.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00303030" borderWidth="0">
+  <!--litheview-component id="component.main.title" name="titleLabel"-->
+  <label frame="120,12,240,36" textColor="0x00ffffff" textScale="3" text="HOME" />
+  <!--litheview-component id="component.main.playback" name="playbackLabel"-->
+  <label frame="120,52,240,18" text="STOPPED" backgroundColor="0x00303030" textColor="0x00ffffff" textScale="1" />
+  <!--litheview-component id="component.main.play" name="playButton"-->
+  <button frame="90,80,180,48" backgroundColor="0x00805020" textColor="0x00ffffff" textScale="2" text="PLAY" />
+  <!--litheview-component id="component.main.stop" name="stopButton"-->
+  <button frame="280,80,110,48" text="STOP" textScale="2" backgroundColor="0x00805020" textColor="0x00ffffff" />
+  <!--litheview-component id="component.main.record" name="recordButton"-->
+  <button frame="120,140,240,48" backgroundColor="0x00805020" textColor="0x00ffffff" textScale="2" text="RECORD" />
+  <!--litheview-component id="component.main.settings" name="settingsButton"-->
+  <button frame="120,200,240,48" backgroundColor="0x00805020" textColor="0x00ffffff" textScale="2" text="SETTINGS" />
+</panel>

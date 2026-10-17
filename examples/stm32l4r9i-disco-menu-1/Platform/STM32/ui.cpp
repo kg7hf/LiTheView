@@ -20,7 +20,7 @@ constexpr std::int32_t kWidth{390};
 constexpr std::int32_t kHeight{390};
 constexpr std::int32_t kTileHeight{4};
 constexpr std::size_t kStrideBytes{1170U};
-menu::Menu application{lithe::generated::DisplayConfiguration::kViewport};
+menu::Menu application{lithe::generated::assets::HomeMenuMainForm::DisplayConfiguration::kViewport};
 alignas(4) std::array<std::byte, kTileHeight * kStrideBytes> workspace{};
 std::optional<lithe::PointerEvent> contact{};
 bool contactBlocked{};
@@ -67,8 +67,11 @@ public:
         // Validated geometry is narrowed once at the 16-bit hardware-address boundary.
         const display::Rgb888Tile tile{pixels.data,
                                        0U,
+                                       // LITHEVIEW_CAST_BOUNDARY: validated tile coordinates/extents lie in [0,390].
                                        static_cast<std::uint16_t>(destination.y),
+                                       // LITHEVIEW_CAST_BOUNDARY: validated tile coordinates/extents lie in [0,390].
                                        static_cast<std::uint16_t>(destination.width),
+                                       // LITHEVIEW_CAST_BOUNDARY: validated tile coordinates/extents lie in [0,390].
                                        static_cast<std::uint16_t>(destination.height),
                                        pixels.strideBytes};
         if (!display::copyTile(tile))

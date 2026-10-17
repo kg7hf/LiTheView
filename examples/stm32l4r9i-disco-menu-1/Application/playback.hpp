@@ -12,7 +12,8 @@ enum class PlaybackState : std::uint8_t
     playing,
     paused
 };
-// Demonstration state owned by the application form, never by a button or driver.
+// Demonstration state owned by the application form, never by a button or
+// driver.
 class Playback final
 {
 public:

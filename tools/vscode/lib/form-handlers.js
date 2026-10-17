@@ -9,6 +9,7 @@ const eventId = handler => handler.eventId || 'clicked';
 const parameterType = handler => handler.parameterType || '';
 
 function validatePlan(plan) {
+  if ((plan?.className && !/^[A-Za-z][A-Za-z0-9]*$/.test(plan.className)) || (plan?.baseType && !/^lithe::(?:generated|simulator)::[A-Za-z][A-Za-z0-9]*$/.test(plan.baseType))) throw new Error('Invalid handler type.');
   const seen = new Set();
   if (!plan || !/^[A-Za-z][\w.-]{0,127}$/.test(plan.formId) || typeof plan.include !== 'string' ||
       !plan.include || /["\r\n]/.test(plan.include) || !Array.isArray(plan.handlers) || plan.handlers.length > 1536 ||
@@ -37,6 +38,7 @@ function validateBindings(text, plan) {
       !text.includes(`// LiTheView handwritten form: ${plan.formId}\r\n`)) {
     throw new Error('The existing form_handlers.hpp belongs to a different form or has no ownership marker. It has been preserved.');
   }
+  if ((plan?.className && !/^[A-Za-z][A-Za-z0-9]*$/.test(plan.className)) || (plan?.baseType && !/^lithe::(?:generated|simulator)::[A-Za-z][A-Za-z0-9]*$/.test(plan.baseType))) throw new Error('Invalid handler type.');
   const seen = new Set();
   for (const match of text.matchAll(bindingPattern)) {
     const fields = match[1].trim().split(/\s+/);
@@ -63,7 +65,7 @@ function planHandlerEdit(existing, plan, componentId, requestedEvent = 'clicked'
     text = `// LiTheView handwritten form: ${plan.formId}\n` +
       '// Application-owned. Generate UI never rewrites this file.\n#pragma once\n\n' +
       `#include "${plan.include}"\n\nnamespace application::ui\n{\n` +
-      'class Form : public lithe::simulator::Form::Instance<>\n{\nprotected:\n' +
+      `class ${plan.className || 'Form'} : public ${plan.baseType || 'lithe::simulator::Form'}::Instance<>\n{\nprotected:\n` +
       '    // <litheview-handlers>\n' + endMarker + '\n};\n} // namespace application::ui\n';
   }
   validateBindings(text, plan);

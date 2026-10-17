@@ -18,7 +18,8 @@ using Frame = std::array<lithe::Rgb888Pixel, pixelCount>;
 Frame renderBuffer;
 // Single producer (application task), single consumer (window/test thread).
 // Exchanging the middle slot transfers ownership; no Windows lock can be held
-// by a task suspended by the FreeRTOS port. The persistent render buffer retains damage.
+// by a task suspended by the FreeRTOS port. The persistent render buffer
+// retains damage.
 class Frames final
 {
 public:
@@ -110,7 +111,8 @@ std::uint32_t frameFingerprint() noexcept
 bool checkDisplay() noexcept
 {
     // Application smoke check: the first frame reached the platform driver.
-    // Layout colors and border widths are developer choices, not runtime invariants.
+    // Layout colors and border widths are developer choices, not runtime
+    // invariants.
     const auto pixels = frames.acquire();
     const auto corner = pixels.front();
     return status.frames.load(std::memory_order_acquire) != 0U && corner.red == 0U &&

@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdio>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -11,6 +12,8 @@ static_assert(std::is_same_v<decltype(std::declval<menu::HomeMenuForm&>().getPla
                              menu::controls::PlayPauseButton*>);
 static_assert(std::is_same_v<decltype(std::declval<menu::HomeMenuForm&>().getStopButton()),
                              menu::controls::StopButton*>);
+namespace
+{
 class Display final : public lithe::Display
 {
 public:
@@ -56,6 +59,8 @@ private:
 };
 Display display;
 menu::Menu application{display};
+} // namespace
+
 int main(int argc, char** argv)
 {
     const auto check = [](bool ok, const char* why)
@@ -71,7 +76,7 @@ int main(int argc, char** argv)
     };
     const auto snapshot = [&](const char* state)
     {
-        return argc < 2 || display.snapshot(std::string{argv[1]} + state + ".ppm");
+        return argc < 2 || display.snapshot(std::string{std::span{argv, 2U}[1]} + state + ".ppm");
     };
     using State = menu::PlaybackState;
     const lithe::Point play{160, 104};
@@ -123,7 +128,7 @@ int main(int argc, char** argv)
         return 1;
     menu::Requests requests;
     menu::HomeMenuForm form{requests};
-    if (!check(static_cast<bool>(form.build()), "custom form build"))
+    if (!check(form.build().error == lithe::LayoutError::none, "custom form build"))
         return 1;
     form.refreshPlayback();
     if (!check(form.getPlayButton()->text() == "PLAY" &&

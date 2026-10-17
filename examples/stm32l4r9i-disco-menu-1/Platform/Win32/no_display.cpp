@@ -9,6 +9,9 @@ namespace starter::host
 void pointer(std::int32_t, std::int32_t, bool, bool) noexcept
 {
 }
+void key(Key) noexcept
+{
+}
 void setUserButton(bool) noexcept
 {
 }

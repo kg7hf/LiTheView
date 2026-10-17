@@ -306,3 +306,83 @@ the source project remains untouched. `-Dotnet` and `-Code` select tool executab
 
 The repository's **LitheView: VS Code Designer Extension** launcher is for developing
 the extension. Install the VSIX for everyday use inside an application's workspace.
+
+## Screens in one application
+
+The Screens section groups forms listed in project.litheview.json manifests whose
+paths sidecars resolve to the same applicationRoot as the open form. Forms can live
+in Tasks/UI, a UI directory, or another application-owned layout. Library submodules,
+build outputs, generated folders and other application roots are excluded. Descriptive
+filenames become screen labels; existing main.litheview.xml files use their project
+display name. Hover a name for its relative path, and use Refresh screens after adding
+or renaming forms. Switching opens a normal persistent VS Code tab, preserving dirty
+documents and undo history. Discovery does not require trust or run native code; preview,
+editing through the service and generation still require workspace trust. It neither
+creates runtime navigation nor generates other forms automatically.
+
+## One UI project, multiple screens
+
+Keep the application as the workspace root. A typical UI subtree is:
+
+```text
+Tasks/UI/
+  project.litheview.json
+  project.litheview.paths.json
+  profiles/
+  forms/Home.litheview.xml
+  forms/Settings.litheview.xml
+  Generated/Home/
+  Generated/Settings/
+  handlers/Home.hpp
+  handlers/Settings.hpp
+```
+
+Set `componentDirectory` in the paths sidecar to `Tasks/UI/Generated/{form}`.
+`{form}` is the XML filename without `.litheview.xml`. It makes each generated path
+stable as more screens are added. Other application-relative base folders are supported.
+Use distinct portable filenames, form IDs and C++ display names for each screen.
+
+**Add screen** creates a blank panel with the project's display extent and registers
+it in the existing manifest. The editor applies the form and manifest edits together;
+it refuses existing files, duplicate names and changed/unsaved manifests. Display,
+input and resources remain shared. The application still owns navigation and tasks.
+
+**Generate UI** saves and generates the selected screen. The CLI command
+`component export-project <project.json> <absolute-library-checkout>` generates all
+registered screens. A failed screen reports failure; earlier successful exports are
+retained (this is not an all-project transaction). Generation never writes handlers.
+**Create/Open handler** uses a unique typed class and `handlers/<Screen>.hpp` for
+per-form output. No RTOS task, executable, simulator or build preset is created.
+
+Existing flat single-form projects remain compatible. When Add screen extends one,
+its original `form.main` output and `form_handlers.hpp` stay in place; additional
+screens get named output subdirectories and handler files. New multi-form layouts
+should use `{form}` from the first screen. Changing a filename changes its output
+path and requires updating application includes; changing a display name changes
+its generated C++ type. These are explicit source refactors, not runtime changes.
+
+After a shared Configure change, regenerate every affected screen. Screens may be
+edited independently, but each must satisfy the shared display contract. The example
+builds check generated contract consistency before compiling.
+
+Generated components use distinct C++ and CMake names. When multiple screens use
+the same native asset bytes, their generated resource CMake files resolve its hash
+to one source path, avoiding duplicate definitions in the application build.
+
+
+## Blank round-menu tutorial acceptance
+
+The integration runner can start with the blank L4 application instead of a prebuilt
+UI fixture. Use a prepared service/worker and a source-only VSIX:
+
+```powershell
+./tools/test-vscode-designer.ps1 -Dotnet dotnet -Code code -PackagedExtensionPath build/vscode-designer/litheview-designer-0.2.14-source.vsix -SourceOnlyPackage -BlankMenuTutorial -TimeoutSeconds 600
+```
+
+This uses a private VS Code profile and a fresh application copy. Initialized SDK and
+middleware source dependencies are reused through junctions; application outputs are
+new. The installed plug-in creates a custom 390 x 390 circular display, edits controls,
+adds screens, renders native previews and generates every lesson. The test then runs
+the application's existing Windows/STM32 presets and host tests after each step.
+No board access occurs. Failed runs and logs remain available for diagnosis. Your
+open VS Code windows and starter files are not used as test fixtures.

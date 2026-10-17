@@ -239,7 +239,6 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR commandLine, int show)
                 Sleep(80U);
                 return starter::host::frameFingerprint();
             };
-#if MENU_HAS_PLAYBACK
             const auto playing = click(0);
             const auto paused = click(0);
             const auto resumed = click(0);
@@ -248,9 +247,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR commandLine, int show)
             Sleep(80U);
             passed = passed && playing != original && paused != playing && resumed == playing &&
                      starter::host::frameFingerprint() != resumed;
-#endif
             const auto settings = click(2);
-#if MENU_HAS_VOLUME
             const auto volume = click(0);
             starter::host::key(lithe::Key::right);
             Sleep(80U);
@@ -261,9 +258,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR commandLine, int show)
                      starter::host::frameFingerprint() == volume;
             starter::host::key(lithe::Key::back);
             Sleep(80U);
-#endif
             const auto storage = click(1);
-#if MENU_HAS_LOAD
             const auto loadPage = click(1);
             starter::host::pointer(160, 132, true);
             Sleep(50U);
@@ -278,7 +273,6 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR commandLine, int show)
                      starter::host::frameFingerprint() != selected;
             starter::host::key(lithe::Key::back);
             Sleep(80U);
-#endif
             const auto settingsAgain = click(2);
             const auto homeAgain = click(2);
             passed = passed && original != settings && settings != storage &&

@@ -5,7 +5,7 @@ then build a three-level menu in the VS Code designer. Run the same application 
 before downloading it to **MB1311 C-02 / MB1314 C-01**.
 
 This example ships **without a UI project**. Its platform code and lesson support are ready;
-you create the forms under `Tasks/`. The [H750 menu](../stm32h750b-dk-menu-1-complete/README.md) is
+you create all forms under `Tasks/UI/forms/` in one designer project. The [H750 menu](../stm32h750b-dk-menu-1-complete/README.md) is
 the completed reference, using the same menu behavior on a rectangular RGB565 display.
 There is no separate completed L4R9 example.
 
@@ -24,7 +24,7 @@ stm32l4r9i-disco-menu-1/       <- application / VS Code workspace
     FreeRTOS/, FreeRTOS-Kernel/
     LiTheView/               <- library + designer submodule
   Platform/Win32/, STM32/    <- implementations selected at build time
-  Tasks/                     <- your forms and handwritten handlers go here
+  Tasks/UI/                  <- one UI project, all forms and handwritten handlers
   Lessons/Handlers/          <- code explained in step 7; not active yet
   CMakeLists.txt, CMakePresets.json, .vscode/
 ```
@@ -76,7 +76,7 @@ Run **LiTheView: Add LiTheView UI** from the Command Palette. Enter:
 | --- | --- |
 | UI name | `Home Menu` |
 | UI source folder | `Tasks/UI` |
-| Generated component folder | `Tasks/UI/Generated` |
+| Generated component folder | `Tasks/UI/Generated/{form}` |
 | Display configuration | **Custom display** |
 
 Enter the display specification yourself rather than choosing a board preset:
@@ -123,6 +123,18 @@ Only its intersection with the circle should be visible. Delete this test panel 
 The clipping rule applies to buttons, text and images too; place important controls where
 their complete rectangles fit inside the circle.
 
+Before the first Generate UI, rename `Tasks/UI/forms/main.litheview.xml` to
+`Home.litheview.xml` in Explorer and change the manifest's `forms` entry to
+`forms/Home.litheview.xml`. Keep the existing form display name and form ID.
+The output setting `Tasks/UI/Generated/{form}` substitutes the filename, so Home
+always generates into `Tasks/UI/Generated/Home/`. Do this before the first build
+with a UI; CMake expects that descriptive Home output directory.
+
+The **Screens** navigator lists the forms in the application. **Add screen** asks
+for a unique name, creates a blank panel at the shared display extent, adds its XML
+to this same project, and opens it. It creates no RTOS task, build preset or second
+project. Each screen gets its own generated directory and handwritten handler file.
+
 Save and click **Generate UI**. Build **win32-debug** again and use the same F5 launcher.
 The blank application now shows the round panel. CMake notices the new generated files
 without a separate UI preset. Build **stm32-debug** to check target integration as well.
@@ -149,17 +161,14 @@ and Escape/Backspace represents Back.
 
 ## 5. Add the Settings form
 
-The current designer exports one form component per project output directory. Keep one
-small designer project per page so generated headers and handwritten handlers do not collide.
-The tutorial provides a narrow application helper:
+In the designer's **Screens** section choose **Add screen**, enter `Settings`,
+and confirm. It creates `Tasks/UI/forms/Settings.litheview.xml` and registers it in
+`Tasks/UI/project.litheview.json`. The display, input, profiles and resource manifests
+are shared; nothing is copied. The form starts as one full-size blank panel.
 
-```powershell
-./tools/add-menu-page.ps1 -Name Settings
-```
-
-It creates `Tasks/Settings/` with a blank root, copies Home's locked display/input profiles,
-and selects `Tasks/Settings/Generated` as output. It does **not** copy generated code,
-compile anything or change your Home form. It refuses to replace an existing page.
+For a developer not using the designer, `./tools/add-menu-page.ps1 -Name Settings`
+shows the equivalent source edits: write the form XML and add its relative path to
+`forms` in the existing manifest. It does not create another project.
 
 Open the new form in the designer. Add the same title and three button frames:
 
@@ -175,11 +184,9 @@ connected. Use **Configure** to inspect this page's shared display/input definit
 
 ## 6. Add Storage, a third level
 
-```powershell
-./tools/add-menu-page.ps1 -Name Storage
-```
+Choose **Add screen**, enter `Storage`, and open it from **Screens**.
 
-Open `Tasks/Storage/forms/main.litheview.xml`, then add:
+Open `Tasks/UI/forms/Storage.litheview.xml`, then add:
 
 | Control name | Text | Frame |
 | --- | --- | --- |
@@ -188,11 +195,10 @@ Open `Tasks/Storage/forms/main.litheview.xml`, then add:
 | `loadButton` | `LOAD` | `95,195,200,48` |
 | `backButton` | `BACK` | `95,260,200,48` |
 
-Save and Generate UI. All three projects must use the same display and logical input;
-the build rejects mismatched generated contracts once navigation is connected. If you
-reconfigure Home afterward, copy its `profiles/`, `surfaceProfile`, `displayDefinition` and
-`logicalInput` manifest entries to the other pages, then Generate UI for each. Do not copy
-the entire manifest over a page: its identity and output paths belong to that page.
+Save and Generate UI. All three forms share one display/input definition.
+**Configure** changes that shared definition once. After changing it, Generate UI
+for each screen; the build rejects mismatched stale exports. The command-line
+`component export-project` command generates every form listed in this project.
 
 ## 7. Connect the application-owned handlers and FSM
 
@@ -220,8 +226,8 @@ After all three forms have been generated, install the lesson's handwritten code
 
 This validates all expected button names and generated callbacks before writing any file.
 It adapts comment markers to your designer's component IDs and refuses to replace existing
-handlers. Open `Tasks/UI/form_handlers.hpp`, `Tasks/Settings/form_handlers.hpp`, and
-`Tasks/Storage/form_handlers.hpp` to study or change the code. **Generate UI preserves them.**
+handlers. Open `Tasks/UI/handlers/Home.hpp`, `Tasks/UI/handlers/Settings.hpp`, and
+`Tasks/UI/handlers/Storage.hpp` to study or change the code. **Generate UI preserves them.**
 The application build provides typed aliases for your generated form names, so the wizard's
 `Home Menu Main Form` name works without editing generated headers.
 
@@ -287,6 +293,28 @@ The display definition can be valid before this MCU is chosen. Native storage/ge
 assertions, linker capacity and the board adapter are a separate target validation stage.
 A host build does not prove DSI timing, physical color ordering or touch calibration.
 
+### Touch polling and an observed hardware limitation
+
+This example polls the FT3X67 touch controller and joystick from the single UI FreeRTOS
+task. There is no separate touch task or enabled touch interrupt. Each iteration reads
+input, dispatches it to the active form, renders pending changes when the display is
+ready, then sleeps for 10 ms. The sampling interval is therefore 10 ms plus the time
+spent reading input and rendering, not a fixed 100 Hz rate.
+
+Touch felt less responsive during board testing, and the BSP error counter continued
+to increase. The blocking I2C transactions have a configured 20 ms timeout. Failed reads
+and bus recovery can delay sampling. A failed touch read also cancels the current contact;
+the application waits for a valid all-fingers-released sample before accepting another
+press. This prevents an uncertain contact from activating a control, but repeated failures
+can make taps appear ignored. These are plausible contributors, not a measured diagnosis
+of the response time or the bus fault's cause.
+
+For this tutorial, this remains a documented board-adapter limitation. Further investigation
+is deferred. For a product, measure input latency, identify the bus errors and validate
+recovery before accepting this behavior. Polling itself can remain a reasonable choice;
+an interrupt could instead wake the UI task, with I2C reads and control updates still
+performed in task context. See [the hardware validation record](VALIDATION.md).
+
 ## 10. Add a working Volume page
 
 Keep the same **win32-debug** and **stm32-debug** presets and F5 launchers. This lesson
@@ -294,13 +322,9 @@ extends your application with one persistent page at depth 3, alongside Storage.
 
 ### Create and design the form
 
-From the application root run:
+In the designer, choose **Add screen**, enter `Volume`, and open it from **Screens**.
 
-```powershell
-./tools/add-menu-page.ps1 -Name Volume
-```
-
-Open `Tasks/Volume/forms/main.litheview.xml` in the designer. The project copies Home's
+Open `Tasks/UI/forms/Volume.litheview.xml` in the designer. It uses the UI project's shared
 **390 x 390, circle, RGB888, touch and keys** contracts. The canvas remains the full square.
 Keep the root background `#00303030`, border width 0. Add these controls, using the exact
 **Name** properties for generated accessors and callbacks:
@@ -323,7 +347,7 @@ Value is a percentage from 0 through 100. Set button backgrounds to `#00805020`.
 
 ![Volume form rendered natively for the round display](docs/volume-preview.png)
 
-Save and click **Generate UI**. Inspect `Tasks/Volume/Generated/form.hpp`: it contains
+Save and click **Generate UI**. Inspect `Tasks/UI/Generated/Volume/form.hpp`: it contains
 `getVolumeProgress()`, `getLevelLabel()`, `onMinusButtonClicked()`,
 `onPlusButtonClicked()` and `onBackButtonClicked()`. Do not edit generated files.
 
@@ -335,17 +359,18 @@ Read `Application/volume.hpp` and `Lessons/Handlers/Volume/form_handlers.hpp`, t
 ./tools/connect-menu-handlers.ps1 -Volume
 ```
 
-This installs **only** `Tasks/Volume/form_handlers.hpp`, validates the named controls and
+This installs **only** `Tasks/UI/handlers/Volume.hpp`, validates the named controls and
 callbacks, and refuses to replace existing files. Home, Settings and Storage handlers stay
-intact. CMake detects the new handler and enables `MENU_HAS_VOLUME` in the same build.
+intact. CMake detects the new handler and selects the Volume page type and sets `menu::features::hasVolume` in the same build.
 The Settings handler supplied in step 7 already contains this conditional request:
 
 ```cpp
 void onVolumeButtonClicked() noexcept override
 {
-#if MENU_HAS_VOLUME
-    mRequests.offer(Event::openVolume);
-#endif
+    if constexpr (features::hasVolume)
+    {
+        mRequests.offer(Event::openVolume);
+    }
 }
 ```
 
@@ -390,7 +415,7 @@ retains it while another page is open. Record, Save and Load remain placeholders
 
 ### Change Home in the designer
 
-Open `Tasks/UI/forms/main.litheview.xml`. Keep the **390 x 390 circular display** and
+Open `Tasks/UI/forms/Home.litheview.xml`. Keep the **390 x 390 circular display** and
 existing Record and Settings buttons. Use these exact component names:
 
 | Control | Name | Text | Frame x,y,width,height | Text scale |
@@ -405,6 +430,12 @@ existing Record and Settings buttons. Use these exact component names:
 Use white text and the existing button background. Give `playbackLabel` an explicit
 background of `#00303030`, matching the panel, so changing text clears its previous pixels.
 The controls fit within the circle; the canvas and clipping contract stay unchanged.
+
+Set the keyboard order too. Focus follows component order, not screen coordinates.
+Select `stopButton` and use **Order > Back** until it appears immediately after
+`playButton` in Components (three clicks if you added the controls in the order above).
+The focusable order should be Play, Stop, Record, Settings. Labels do not take focus.
+This makes one Right press from Play focus Stop on the simulator and the joystick.
 
 Save and **Generate UI**. The generated Home form now exposes `getPlayButton()`,
 `getStopButton()`, `getPlaybackLabel()`, `onPlayButtonClicked()` and
@@ -424,19 +455,15 @@ Read these supplied application files:
    state and refresh the typed controls and status label.
 
 For the unchanged tutorial Home handler, install the reference implementation from the
-application root. The backup command refuses to overwrite an existing backup:
+application root. The helper resolves your designer-created button identities and
+keeps `Home.before-playback.hpp`; it refuses to overwrite an existing backup:
 
 ```powershell
-if (Test-Path Tasks/UI/form_handlers.before-playback.hpp) {
-    throw 'A previous handler backup exists; inspect it before continuing.'
-}
-Copy-Item Tasks/UI/form_handlers.hpp Tasks/UI/form_handlers.before-playback.hpp
-Copy-Item Lessons/Playback/playback_controls.hpp Tasks/UI/playback_controls.hpp
-Copy-Item Lessons/Playback/form_handlers.hpp Tasks/UI/form_handlers.hpp
+./tools/connect-menu-handlers.ps1 -Playback
 ```
 
 If you have added your own Home behavior, merge the reference changes into your handler
-instead: include `playback_controls.hpp` and `Application/playback.hpp`, derive Home from
+instead: include `../playback_controls.hpp` and `Application/playback.hpp`, derive Home from
 `HomePlaybackBase`, add its model and refresh method, and implement Play/Stop callbacks.
 Retain your other callbacks. The model belongs to the application form, not inside a
 generated file or the button control.
@@ -488,13 +515,11 @@ state. Navigation and playback state remain separate. Restarting resets this mod
 ## 12. Add Load with a selectable list
 
 This page extends Storage to a fourth navigation level. It demonstrates **selection versus
-activation** using three fixed demo entries, not files from a filesystem.
+activation** using eight fixed demo entries, not files from a filesystem.
 
-```powershell
-./tools/add-menu-page.ps1 -Name Load
-```
+Choose **Add screen**, enter `Load`, and open it from **Screens**.
 
-Open `Tasks/Load/forms/main.litheview.xml` in the designer, keep the copied circular RGB888
+Open `Tasks/UI/forms/Load.litheview.xml` in the designer, keep the shared circular RGB888
 display/input definitions, and add:
 
 | Control | Name | Text | Frame x,y,width,height |
@@ -532,9 +557,10 @@ only its formerly empty Load callback:
 ```cpp
 void onLoadButtonClicked() noexcept override
 {
-#if MENU_HAS_LOAD
-    mRequests.offer(Event::openLoad);
-#endif
+    if constexpr (features::hasLoad)
+    {
+        mRequests.offer(Event::openLoad);
+    }
 }
 ```
 
@@ -614,14 +640,14 @@ changes; the STM32 build does not link the photo decoder or include the PNG.
 
 Create the same files yourself:
 
-- `Tasks/<page>/forms/main.litheview.xml`: named controls and layout properties.
+- `Tasks/UI/forms/<Screen>.litheview.xml`: named controls and layout properties.
 - `profiles/display-surface.json`, `display-definition.json`, `logical-input.json`: graphics/input contracts.
-- `project.litheview.json`: page identity, form list and profile hash locks.
+- `project.litheview.json`: UI project identity, form list and profile hash locks.
 - `project.litheview.paths.json`: application root, library and output locations.
-- `form_handlers.hpp`: application behavior; never put it in `Generated/`.
+- `Tasks/UI/handlers/<Screen>.hpp`: application behavior; never put it in `Generated/`.
 
-The `add-menu-page.ps1` helper shows exactly how a page shares existing profile locks and
-gets independent paths. The designer CLI's `component export-project` produces the same
+The `add-menu-page.ps1` helper shows how a form is registered in the shared UI project and
+gets its own generated directory under the same UI folder. The designer CLI's `component export-project` produces the same
 C++ files as Generate UI. Neither path compiles or launches firmware from the designer.
 
 See [validation](VALIDATION.md), [third-party notices](THIRD_PARTY_NOTICES.md), and the

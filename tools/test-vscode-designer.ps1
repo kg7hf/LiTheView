@@ -9,6 +9,7 @@ param(
     [string] $FixtureProject = '',
     [string] $PackagedExtensionPath = '',
     [switch] $SourceOnlyPackage,
+    [switch] $BlankMenuTutorial,
     [ValidateRange(30, 600)][int] $TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -38,10 +39,25 @@ $run = Join-Path $repository ('build/vscode-designer/integration-' + [DateTime]:
 $application = Join-Path $run 'application with spaces'
 $project = Join-Path $application 'Tasks/UI'
 $managed = Join-Path $run 'managed'
-New-Item -ItemType Directory -Force -Path $project | Out-Null
+if ($BlankMenuTutorial) {
+    if (!$SourceOnlyPackage) { throw 'The blank application exercise requires the prepared source-only package.' }
+    $starter = Join-Path $repository 'examples/stm32l4r9i-disco-menu-1'
+    New-Item -ItemType Directory -Force -Path $application | Out-Null
+    foreach ($entry in Get-ChildItem -LiteralPath $starter -Force) {
+        if ($entry.Name -in @('build', 'Drivers', 'Middlewares', '.git', '.settings', 'CMakeUserPresets.json')) { continue }
+        Copy-Item -LiteralPath $entry.FullName -Destination $application -Recurse
+    }
+    # Reuse only initialized dependency sources; all application outputs are fresh.
+    foreach ($dependency in @('Drivers', 'Middlewares')) {
+        New-Item -ItemType Junction -Path (Join-Path $application $dependency) -Target (Join-Path $starter $dependency) | Out-Null
+    }
+    if (Test-Path (Join-Path $project 'project.litheview.json')) { throw 'Tutorial source is no longer blank.' }
+} else { New-Item -ItemType Directory -Force -Path $project | Out-Null }
 Copy-Item -LiteralPath (Join-Path $repository 'examples/stm32h750b-dk-starter-1/board-front.png') -Destination $application
 $cli = Join-Path $managed 'bin/LitheView.Designer.Cli/debug/LitheView.Designer.Cli.dll'
-if ($FixtureProject) {
+if ($BlankMenuTutorial) {
+    # The installed extension wizard creates the first manifest.
+} elseif ($FixtureProject) {
     $fixture = [IO.Path]::GetFullPath($FixtureProject)
     foreach ($name in @('project.litheview.json', 'forms', 'profiles', 'simulation')) {
         $inputPath = Join-Path $fixture $name
@@ -84,9 +100,11 @@ if ($PackagedExtensionPath -and !$SourceOnlyPackage) {
     foreach ($name in @('schema', 'profiles')) { Copy-Item -LiteralPath (Join-Path $repository $name) -Destination $projectLibrary -Recurse }
     Copy-Item -LiteralPath (Join-Path $repository 'tools/designer/templates') -Destination (Join-Path $projectLibrary 'tools/designer') -Recurse
 }
+if (!$BlankMenuTutorial) {
 @{schemaVersion=1; applicationRoot='../..'; libraryRoot=$projectLibrary;
   componentDirectory='Tasks/UI/Generated'; buildDirectory='out/simulator'} | ConvertTo-Json |
   Set-Content -LiteralPath (Join-Path $project 'project.litheview.paths.json') -Encoding utf8
+}
 New-Item -ItemType Directory -Force -Path (Join-Path $application '.vscode') | Out-Null
 $settings = @{'litheview.dotnetPath'=$dotnetCommand; 'litheview.libraryRoot'=$projectLibrary}
 if (!$PackagedExtensionPath) { $settings['litheview.servicePath'] = $service; $settings['litheview.previewWorkerPath'] = $worker }
@@ -98,12 +116,14 @@ param([string] $Project = '')
 $ErrorActionPreference = 'Stop'
 [IO.File]::AppendAllText((Join-Path $PSScriptRoot '../application-task-ran.txt'), "Application task ran: $Project`n")
 '@ | Set-Content -LiteralPath (Join-Path $application '.vscode/application-smoke.ps1') -Encoding utf8
+if (!$BlankMenuTutorial) {
 @{version='2.0.0'; tasks=@(@{label='Application integration smoke'; type='process';
     command=(Get-Command pwsh -CommandType Application | Select-Object -First 1 -ExpandProperty Source);
     args=@('-NoProfile', '-File', (Join-Path $application '.vscode/application-smoke.ps1'),
         '-Project', $manifest);
     problemMatcher=@(); presentation=@{reveal='never'; panel='dedicated'}})} |
     ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $application '.vscode/tasks.json') -Encoding utf8
+}
 # The private profile owns this bounded test process. Do not reuse or terminate
 # any developer VS Code window; only this exact process tree may be stopped.
 $developmentExtension = Join-Path $repository 'tools/vscode'
@@ -143,7 +163,7 @@ if ($PackagedExtensionPath) {
 $arguments = @('--new-window', '--disable-workspace-trust', '--skip-welcome', '--skip-release-notes',
     '--user-data-dir', (Join-Path $run 'user-data'), '--extensions-dir', (Join-Path $run 'extensions'),
     '--extensionDevelopmentPath', $developmentExtension,
-    '--extensionTestsPath', (Join-Path $repository 'tools/vscode/integration/run.js'), $application, '--wait')
+    '--extensionTestsPath', (Join-Path $repository $(if ($BlankMenuTutorial) { 'tools/vscode/integration/menu-tutorial.js' } else { 'tools/vscode/integration/run.js' })), $application, '--wait')
 $quotedArguments = ($arguments | ForEach-Object { '"' + $_.Replace('"', '\"') + '"' }) -join ' '
 try {
     $testProcess = Start-Process -FilePath $codeCommand -ArgumentList $quotedArguments -WindowStyle Hidden -PassThru `

@@ -18,11 +18,13 @@ protected:
     // <litheview-handlers>
     // litheview-handler component.main.play onPlayButtonClicked
     void onPlayButtonClicked() noexcept override
-    { /* Demonstration placeholder: no device operation or state change. */
+    { /* Demonstration placeholder: no device operation or state
+         change. */
     }
     // litheview-handler component.main.record onRecordButtonClicked
     void onRecordButtonClicked() noexcept override
-    { /* Demonstration placeholder: no device operation or state change. */
+    { /* Demonstration placeholder: no device operation or state
+         change. */
     }
     // litheview-handler component.main.settings onSettingsButtonClicked
     void onSettingsButtonClicked() noexcept override

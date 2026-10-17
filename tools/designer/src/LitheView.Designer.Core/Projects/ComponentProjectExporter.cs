@@ -33,6 +33,9 @@ public static class ComponentProjectExporter
         List<ProfileDiagnostic> diagnostics = [];
         try
         {
+            _ = DesignerProjectForms.LoadAll(workspace);
+            bool scoped = DesignerProjectForms.HasOwnDirectory(workspace, outputDirectory);
+            outputDirectory = DesignerProjectForms.OutputDirectory(workspace, outputDirectory);
             DesignerProductResolutionResult product = DesignerProductResolver.Resolve(workspace);
             diagnostics.AddRange(product.Diagnostics);
             if (!product.IsValid || product.Definition?.Profile is null || product.Input?.Configuration is null ||
@@ -57,15 +60,19 @@ public static class ComponentProjectExporter
             SortedDictionary<string, byte[]> files = new(StringComparer.Ordinal);
             foreach ((string name, byte[] bytes) in compiled.Files)
             {
-                files.Add(name, bytes);
+                files.Add(name, scoped && name is "display.hpp" or "resources.hpp"
+                    ? Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(bytes).Replace("namespace lithe::generated",
+                        "namespace lithe::generated::assets::" + product.ResolvedForm.CppSymbol, StringComparison.Ordinal))
+                    : bytes);
             }
             // Retain the existing aliases for source compatibility with applications
             // that already include product_config.hpp. These aliases own no runtime.
-            files.Add("product_config.hpp", ComponentExportSupport.ProductConfiguration(product.ResolvedForm.CppSymbol, requirements));
+            files.Add("product_config.hpp", ComponentExportSupport.ProductConfiguration(product.ResolvedForm.CppSymbol, requirements, scoped));
             files.Add("display-definition.json", product.Definition.CanonicalUtf8!);
             files.Add("logical-input.json", product.Input.CanonicalUtf8!);
             files.Add("form.litheview.xml", FormXmlWriter.Write(workspace.Form, workspace.Catalog).Utf8!);
             StringBuilder resources = new("# Generated native resources selected by this UI.\nset(LITHEVIEW_SELECTED_RESOURCE_SOURCES\n");
+            StringBuilder sharedResources = new();
             foreach (var resource in compiled.Resources)
             {
                 string source = GeneratedFileAccess.Contained(workspace.ProjectDirectory, resource.Variant.Output.Path);
@@ -78,12 +85,18 @@ public static class ComponentProjectExporter
                 string relative = $"assets/{hash}.cpp";
                 if (files.TryAdd(relative, bytes))
                 {
-                    resources.Append("    \"${CMAKE_CURRENT_LIST_DIR}/").Append(relative).Append("\"\n");
+                    // Every form can refer to the same converter output. Give CMake
+                        // one canonical source path per content hash to prevent duplicate
+                        // definitions when several generated components link into one app.
+                        sharedResources.Append("get_property(_lithe_resource GLOBAL PROPERTY LITHEVIEW_RESOURCE_").Append(hash).Append(" )\n")
+                            .Append("if(NOT _lithe_resource)\n    set(_lithe_resource \"${CMAKE_CURRENT_LIST_DIR}/").Append(relative).Append("\")\n")
+                            .Append("    set_property(GLOBAL PROPERTY LITHEVIEW_RESOURCE_").Append(hash).Append(" \"${_lithe_resource}\")\nendif()\n")
+                            .Append("list(APPEND LITHEVIEW_SELECTED_RESOURCE_SOURCES \"${_lithe_resource}\")\nunset(_lithe_resource)\n");
                 }
             }
-            resources.Append(")\n");
+            resources.Append(")\n").Append(sharedResources);
             files.Add("resources.cmake", Encoding.UTF8.GetBytes(resources.ToString()));
-            files.Add("CMakeLists.txt", Encoding.UTF8.GetBytes(ComponentCMake));
+            files.Add("CMakeLists.txt", Encoding.UTF8.GetBytes(scoped ? ComponentCMake.Replace("litheview_generated_component", "litheview_generated_" + product.ResolvedForm.CppSymbol, StringComparison.Ordinal).Replace("LitheView::GeneratedComponent", "LitheView::Form" + product.ResolvedForm.CppSymbol, StringComparison.Ordinal) : ComponentCMake));
             string directory = Path.TrimEndingDirectorySeparator(Path.GetFullPath(outputDirectory));
             ComponentExportSupport.GuardOutputLocation(workspace, directory);
             ComponentManifest manifest = new()

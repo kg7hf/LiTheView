@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "generationStatus": "complete",
+  "surfaceStatus": "passed",
+  "targetStatus": "unevaluated",
+  "destinationFormat": "Rgb565",
+  "formSha256": "00c272dd41e2069edb02c4f13fb1cb2bd5f27a5acd3dbe979c3307049b96d4b5",
+  "displayDefinitionSha256": "090a0326cd60197f4930d865154a04d962465855797a85428ef32ed12a9f2303",
+  "logicalInputSha256": "e4ccff1999985019cb1b6359221ab27f1804d6e417457e28df51d6a7708c9f3c",
+  "generatedFiles": {
+    "CMakeLists.txt": "a1b726e6c479afaacc2190c6b707d65c6cab7f03fd03e867174b88fe8777ec50",
+    "display-definition.json": "090a0326cd60197f4930d865154a04d962465855797a85428ef32ed12a9f2303",
+    "display.hpp": "1873f7411ce181f23083fd80a767d44f39a988f6bae17b84fc637544a632726a",
+    "form.hpp": "87423ef635cea95d437e415e880250e3f065f552e9cfec664c53c9791e890f4b",
+    "form.litheview.xml": "00c272dd41e2069edb02c4f13fb1cb2bd5f27a5acd3dbe979c3307049b96d4b5",
+    "logical-input.json": "e4ccff1999985019cb1b6359221ab27f1804d6e417457e28df51d6a7708c9f3c",
+    "product_config.hpp": "456bf850f1e7155b1d80c468df3eace427572533bce27f53ef85bb9da65e66a7",
+    "resources.cmake": "713e5d777e798a3f5bf29c37c3773d455cfe213e2b116042725d423e921a3bfe",
+    "resources.hpp": "1fbfabeca37ecf6990c2a6d1400245e58394e027cd48158e9eb3d578c90f2931"
+  }
+}

@@ -4,9 +4,12 @@
 
 #include <array>
 #include <cstdio>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <utility>
+namespace
+{
 class Display final : public lithe::Display
 {
 public:
@@ -53,6 +56,8 @@ private:
 Display display;
 menu::Menu application{display};
 
+} // namespace
+
 int main(int argc, char** argv)
 {
     const auto check = [](bool ok, const char* why)
@@ -68,7 +73,7 @@ int main(int argc, char** argv)
     };
     const auto snapshot = [&](const char* name)
     {
-        return argc < 2 || display.snapshot(std::string{argv[1]} + name + ".ppm");
+        return argc < 2 || display.snapshot(std::string{std::span{argv, 2U}[1]} + name + ".ppm");
     };
     const lithe::Point rowB{160, 132}, rowDemo{160, 168}, load{165, 230}, back{300, 230};
     using Id = menu::EntryId;

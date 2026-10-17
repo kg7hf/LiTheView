@@ -8,20 +8,24 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#if MENU_HAS_UI
-#include "lithe/types.hpp"
-#endif
 
 #include <cstdint>
 #include <windows.h>
 
 namespace starter::host
 {
+enum class Key
+{
+    select,
+    back,
+    up,
+    down,
+    left,
+    right
+};
 void paint(HDC context, const RECT& destination) noexcept;
 void pointer(std::int32_t x, std::int32_t y, bool pressed, bool cancelled = false) noexcept;
-#if MENU_HAS_UI
-void key(lithe::Key value) noexcept;
-#endif
+void key(Key value) noexcept;
 void setUserButton(bool pressed) noexcept;
 [[nodiscard]] bool checkDisplay() noexcept;
 [[nodiscard]] std::uint32_t frameFingerprint() noexcept;

@@ -8,16 +8,16 @@
 #include "Devices/display.hpp"
 #include "Devices/input.hpp"
 #include "Devices/user_button.hpp"
-#include "Tasks/UI/Generated/resources.hpp"
+#include "Tasks/UI/Generated/Home/resources.hpp"
 #include "lithe/application.hpp"
 
 namespace starter::ui
 {
 namespace
 {
-lithe::generated::SelectedResources resources;
 Display display;
-menu::Menu application{display, lithe::generated::DisplayConfiguration::kViewport};
+menu::Menu application{display,
+                       lithe::generated::assets::HomeMenuMainForm::DisplayConfiguration::kViewport};
 bool pressed{};
 UserButton userButton;
 } // namespace
@@ -31,7 +31,7 @@ std::expected<void, Error> initialize() noexcept
     {
         return result;
     }
-    if (!application.initialize(&resources))
+    if (!application.initialize())
     {
         return std::unexpected(Error::layout);
     }

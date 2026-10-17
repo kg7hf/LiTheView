@@ -78,9 +78,29 @@ void pointer(std::int32_t x, std::int32_t y, bool pressed, bool cancelled) noexc
 {
     enqueue({x, y, pressed, cancelled, std::nullopt});
 }
-void key(lithe::Key value) noexcept
+void key(Key value) noexcept
 {
-    enqueue({0, 0, false, false, value});
+    switch (value)
+    {
+    case Key::select:
+        enqueue({0, 0, false, false, lithe::Key::select});
+        break;
+    case Key::back:
+        enqueue({0, 0, false, false, lithe::Key::back});
+        break;
+    case Key::up:
+        enqueue({0, 0, false, false, lithe::Key::up});
+        break;
+    case Key::down:
+        enqueue({0, 0, false, false, lithe::Key::down});
+        break;
+    case Key::left:
+        enqueue({0, 0, false, false, lithe::Key::left});
+        break;
+    case Key::right:
+        enqueue({0, 0, false, false, lithe::Key::right});
+        break;
+    }
 }
 
 } // namespace host

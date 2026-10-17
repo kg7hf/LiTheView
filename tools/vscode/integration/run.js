@@ -79,6 +79,48 @@ async function run() {
     }, description, 30000, () => JSON.stringify(api.getDocumentState(uri)));
     await vscode.commands.executeCommand('vscode.openWith', uri, 'litheview.formDesigner');
     await waitForFrame('native frame in the real custom editor');
+    // Add screen shares one manifest/display; it must not scaffold another task/project.
+    const settingsUriAdded = await api.addScreen(uri, 'Settings');
+    await until(() => api.getDocumentState(settingsUriAdded)?.lastRenderStatus === 'Ok', 'added screen native preview', 30000);
+    await assert.rejects(() => api.addScreen(settingsUriAdded, 'settings'), /exists|conflict/i);
+    const sharedManifest = JSON.parse(await fs.readFile(path.join(root, 'Tasks/UI/project.litheview.json'), 'utf8'));
+    assert.deepEqual([...sharedManifest.forms].sort(), ['forms/Settings.litheview.xml', 'forms/main.litheview.xml']);
+    const settingsDocument = await vscode.workspace.openTextDocument(settingsUriAdded);
+    assert.equal(await api.editDocument(settingsUriAdded, settingsDocument.version,
+      { kind: 'add', parentId: 'component.settings.root', widgetId: 'lithe.widget.button', frame: { x: 100, y: 100, width: 80, height: 24 } }), true);
+    const settingsButton = [...settingsDocument.getText().matchAll(/litheview-component id="([^"]+)"/g)].map(item => item[1]).find(id => id !== 'component.settings.root');
+    assert.ok(settingsButton);
+    await settingsDocument.save();
+    await api.openHandler(settingsUriAdded, settingsButton, settingsDocument.version);
+    const settingsHandler = await vscode.workspace.openTextDocument(vscode.Uri.file(path.join(root, 'Tasks/UI/handlers/Settings.hpp')));
+    assert.match(settingsHandler.getText(), /class SettingsForm : public lithe::generated::Settings::Instance<>/);
+    await settingsHandler.save();
+    await vscode.commands.executeCommand('litheview.generateUi', settingsUriAdded);
+    await until(async () => {
+      try { await fs.access(path.join(root, 'Tasks/UI/Generated/Settings/form.hpp')); return true; }
+      catch { return false; }
+    }, 'Generate added screen in its own directory');
+    assert.equal(await fs.access(path.join(root, 'Tasks/Settings')).then(() => true, () => false), false);
+    await api.openScreen(settingsUriAdded, 'Tasks/UI/forms/main.litheview.xml');
+    const screens = await api.refreshScreens(uri);
+    assert.equal(screens.length, 2);
+    const settingsScreen = screens.find(screen => screen.label === 'Settings');
+    assert.ok(settingsScreen);
+    const pending = new vscode.WorkspaceEdit();
+    pending.insert(uri, document.positionAt(document.getText().length), '\n<!-- unsaved navigator check -->');
+    await vscode.workspace.applyEdit(pending);
+    assert.equal(document.isDirty, true);
+    await api.openScreen(uri, settingsScreen.id);
+    const settingsUri = vscode.Uri.file(settingsScreen.formPath);
+    await until(() => api.getDocumentState(settingsUri)?.lastRenderStatus === 'Ok', 'second screen native preview', 30000);
+    assert.equal(document.isDirty, true);
+    assert.ok(document.getText().includes('unsaved navigator check'));
+    await api.openScreen(settingsUri, screens.find(screen => screen.id === 'Tasks/UI/forms/main.litheview.xml').id);
+    await vscode.commands.executeCommand('undo');
+    assert.equal(document.getText(), original);
+    await waitForFrame('original screen after navigation and undo');
+    record('Add screen updates one UI project, generates independent output and preserves other screens and undo');
+
     record('Custom editor opens from application root and renders native pixels');
 
     assert.equal(document.isDirty, false);

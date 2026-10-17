@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paul R. Decker
 // SPDX-License-Identifier: GPL-3.0-only
 
+// LiTheView handwritten form: form.main
 #pragma once
 #include "Application/load_selection.hpp"
 #include "Application/navigation.hpp"
@@ -23,7 +24,9 @@ public:
         auto* list = getEntryList();
         if (list == nullptr || getLoadedLabel() == nullptr ||
             !list->configure(kEntries, lithe::font5x7(), *this))
+        {
             return false;
+        }
         refresh();
         return true;
     }
@@ -58,7 +61,9 @@ private:
     void onListSelectionChanged(lithe::SelectionChange event) noexcept override
     {
         if (event.index < kIds.size())
+        {
             mSelection.select(kIds[event.index]);
+        }
     }
     void onListActivated(std::size_t index) noexcept override
     {
@@ -76,7 +81,9 @@ private:
     void refresh() noexcept
     {
         if (auto* label = getLoadedLabel(); label != nullptr)
+        {
             label->setText(mSelection.loadedText());
+        }
     }
     inline static constexpr std::array<std::string_view, 8U> kEntries{"SESSION A",
                                                                       "SESSION B",

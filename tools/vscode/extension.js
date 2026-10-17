@@ -8,8 +8,10 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { ServiceClient } = require('./lib/service-client');
 const { resolveDotnet, listRuntimes } = require('./lib/dotnet');
-const { resolveProject, readManifestForms, submoduleRoots, isInside, exists } = require('./lib/project-paths');
+const { resolveProject, readManifestForms, submoduleRoots, isInside, exists, samePath } = require('./lib/project-paths');
 const { applyVersionedEdit, isCurrent } = require('./lib/document-version');
+const { discoverScreens } = require('./lib/screens');
+const { applyScreenPlan } = require('./lib/add-screen');
 const { renderWebview } = require('./lib/webview');
 const { openNewProject } = require('./lib/new-project-host');
 const { planHandlerEdit, validateBindings } = require('./lib/form-handlers');
@@ -322,10 +324,74 @@ class DesignerProvider {
     } catch (error) { finished(); throw error; }
   }
 
+  async refreshScreens(state) {
+    try {
+      const workspace = vscode.workspace.getWorkspaceFolder(state.document.uri);
+      if (!workspace) throw new Error('Open the application folder to browse screens.');
+      const project = await resolveProject(state.document.uri.fsPath, workspace.uri.fsPath, configuration(state.document.uri));
+      const result = await discoverScreens(project, workspace.uri.fsPath);
+      if (state.disposed) return [];
+      state.screens = result.screens;
+      this.post(state, { type: 'screens', screens: result.screens.map(({ id, label, detail, formPath }) =>
+        ({ id, label, detail, active: samePath(formPath, state.document.uri.fsPath) })),
+        warning: result.warnings.join('\n') });
+      return result.screens;
+    } catch (error) {
+      state.screens = [];
+      this.post(state, { type: 'screens', screens: [], warning: error.message });
+      return [];
+    }
+  }
+
+  async addScreen(state, suppliedName) {
+    assertSupported(state.document.uri);
+    if (state.disposed || state.editing) return;
+    state.editing = true;
+    this.post(state, { type: 'busy', busy: true });
+    let manifest;
+    try {
+      const client = await this.service(state);
+      if (!state.capabilities.includes('project.addScreen')) throw new Error('Rebuild the designer service to use Add screen.');
+      const name = suppliedName ?? await vscode.window.showInputBox({ title: 'Add screen', prompt: 'Screen name (for example About or Diagnostics)',
+        validateInput: value => /^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(value) ? undefined : 'Use letters, digits or underscores, starting with a letter.' });
+      if (name === undefined) return;
+      await assertSetupSaved(vscode, state.project);
+      manifest = state.project.manifestPath;
+      if (this.configurationWrites.has(manifest)) { manifest = undefined; throw new Error('Another screen is changing this project. Retry Add screen.'); }
+      this.configurationWrites.add(manifest);
+      const plan = await client.request('project.addScreen', { ...this.parameters(state), screenName: name });
+      if (state.disposed) return;
+      const form = await applyScreenPlan(vscode, state.project, plan);
+      this.configurationRevisions.set(manifest, (this.configurationRevisions.get(manifest) ?? 0) + 1);
+      await this.refreshScreens(state);
+      await vscode.commands.executeCommand('vscode.openWith', form, VIEW_TYPE, { viewColumn: state.panel.viewColumn, preview: false });
+      return form;
+    } finally {
+      if (manifest) this.configurationWrites.delete(manifest);
+      state.editing = false;
+      this.post(state, { type: 'busy', busy: false });
+      for (const other of this.states.values()) {
+        if (manifest && other.project?.manifestPath === manifest) { other.lastError = undefined; this.schedule(other); }
+      }
+    }
+  }
+
+  async openScreen(state, id) {
+    // Revalidate discovery; a webview cannot supply an arbitrary file to open.
+    const screens = await this.refreshScreens(state);
+    const screen = screens.find(item => item.id === id);
+    if (!screen) throw new Error('Screen no longer belongs to this application. Refresh Screens.');
+    await vscode.commands.executeCommand('vscode.openWith', vscode.Uri.file(screen.formPath), VIEW_TYPE,
+      { viewColumn: state.panel.viewColumn, preview: false });
+  }
+
   async handleMessage(state, message) {
     if (!message || typeof message.type !== 'string' || state.disposed) return;
     switch (message.type) {
-      case 'ready': state.ready = true; this.schedule(state); break;
+      case 'ready': state.ready = true; this.schedule(state); await this.refreshScreens(state); break;
+      case 'refreshScreens': await this.refreshScreens(state); break;
+      case 'addScreen': await this.addScreen(state); break;
+      case 'openScreen': await this.openScreen(state, message.id); break;
       case 'edit': await this.edit(state, message.documentVersion ?? message.version, message.operation); break;
       case 'generate': await this.generate(state); break;
       case 'handler': await this.openHandler(state, message.componentId, message.documentVersion, message.eventId); break;
@@ -412,6 +478,9 @@ function activate(context) {
     },
     async editDocument(uri, documentVersion, operation) { return provider.edit(requireState(uri), documentVersion, operation); },
     async projectSetup(uri) { return provider.projectSetup(requireState(uri)); },
+    async refreshScreens(uri) { return provider.refreshScreens(requireState(uri)); },
+    async addScreen(uri, name) { return provider.addScreen(requireState(uri), name); },
+    async openScreen(uri, id) { return provider.openScreen(requireState(uri), id); },
     async openHandler(uri, componentId, documentVersion, eventId) { return provider.openHandler(requireState(uri), componentId, documentVersion, eventId); }
   };
 }

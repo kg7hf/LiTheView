@@ -34,14 +34,20 @@ internal static class ComponentCommands
             {
                 return 1;
             }
-            var result = ComponentProjectExporter.Export(loaded.Workspace, paths.ComponentDirectory);
-            Print(result.Diagnostics);
-            if (result.IsValid)
+            bool valid = true;
+            foreach (var screen in DesignerProjectForms.LoadAll(loaded.Workspace))
             {
-                Console.WriteLine($"UI component generated: {result.OutputDirectory}");
-                Console.WriteLine("Surface passed; target unevaluated. Build your application with its existing CMake configuration.");
+                var result = ComponentProjectExporter.Export(screen, paths.ComponentDirectory);
+                Print(result.Diagnostics);
+                if (result.IsValid)
+                {
+                    Console.WriteLine($"UI component generated: {result.OutputDirectory}");
+                    Console.WriteLine("Surface passed; target unevaluated. Build your application with its existing CMake configuration.");
+                }
+                valid &= result.IsValid;
+                if (!valid) break;
             }
-            return result.IsValid ? 0 : 1;
+            return valid ? 0 : 1;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or
             InvalidDataException or ArgumentException or JsonException)

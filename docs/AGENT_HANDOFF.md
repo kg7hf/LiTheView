@@ -8,6 +8,19 @@ Use the current `.gitmodules`, build presets and
 [publication validation record](PUBLICATION_VALIDATION.md). The owner's
 retained local exercise work is outside this public snapshot.
 
+## Publication scope (2026-10-17)
+
+The owner authorized publication of the validated designer, menu examples and tutorial
+updates to public LiTheView and private LiTheView-full. The original H750 starter pair
+and unrelated article drafts remain excluded. Only the two menu examples advance their
+LiTheView dependency pins to the accompanying validated public commit.
+
+The hardware follow-up found an H750 touch-I2C timeout that stops its UI task and ongoing
+L4R9 BSP errors with reduced touch responsiveness. These remain documented, deferred
+example limitations at the owner's request; publication does not claim they are fixed.
+The host/editor checks and cross-build results below remain separate from these hardware
+limitations. Earlier statements about uncommitted work describe their checkpoint only.
+
 ## Current direction
 
 Work in the current LiTheView checkout; resolve its root with `git rev-parse --show-toplevel`.
@@ -19,6 +32,65 @@ Application CMake owns builds and the application's launchers own debugging.
 Read [DISPLAY_MODEL_PLAN.md](DISPLAY_MODEL_PLAN.md), [CONTROL_OBJECTS.md](CONTROL_OBJECTS.md),
 [SHARED_APPLICATION_PLAN.md](SHARED_APPLICATION_PLAN.md) and
 [LIBRARY_BOUNDARY_CLEANUP.md](LIBRARY_BOUNDARY_CLEANUP.md) before changing these contracts.
+
+## Review corrections and blank-project acceptance (2026-10-17)
+
+Designer 0.2.14 resolves the review's three P1 findings and five P2 findings.
+Add screen rechecks the editor version immediately before its workspace edit, accepts
+UTF-8 BOMs, and keeps valid screens visible when another registered form is missing.
+Generated resource namespaces cannot collide with the Foo/FooAssets form pair, and
+mixed legacy/scoped exports share one compiled source for identical native assets.
+Each menu form owns its own resource provider. All five H750 handwritten handlers
+pass the actual service binding plan used by Generate UI.
+
+The round tutorial now maps designer-created component identities when installing
+Playback, explicitly sets Play/Stop keyboard order, and uses compile-time page types
+rather than internal feature macros. Its two platform presets remain unchanged.
+The application FSM still owns navigation; the designer does not generate a task per form.
+
+Validation is recorded in [MENU_REVIEW_VALIDATION.md](MENU_REVIEW_VALIDATION.md).
+The installed source VSIX passes its general acceptance run and a fresh application
+exercise from blank through all five menu screens. Both platform presets build at each
+lesson. Final Windows CTest passes 7/7 for each menu, Core passes 18/18, designer Core
+100/100, Service 492 checks, App 18/18 and extension units 88/88. The compiled multi-form
+consumer links and runs. Critical static analysis passes Core (43 translation units)
+and both Windows menu applications (11 each). These are host/editor and cross-build
+results; no board was flashed or tested in this review-fix pass.
+
+All 331 protected starter baseline files are byte-identical. The original starter pair,
+private checkout and unrelated article drafts are untouched. Changes remain local and
+uncommitted; nothing has been pushed. The tested extension is installed only in isolated
+validation profiles. Menu dependency pins have not advanced: do that with a validated
+library commit during the later publication step, not by pointing at unpublished history.
+
+## Earlier Screens navigator checkpoint (2026-10-17)
+
+Local work in the public development checkout adds Designer 0.2.12's Screens section.
+It discovers manifest-listed forms sharing the current project's applicationRoot,
+without assuming Tasks/UI or a particular middleware layout. It skips library/submodule
+roots, generated/build directories, symlink traversal and unrelated application roots;
+walks and manifest sizes are bounded. Refresh screens discovers added/renamed forms.
+Navigation revalidates membership and uses normal persistent VS Code custom-editor tabs,
+preserving dirty documents and undo. It runs no build, changes no FSM and does not bypass
+workspace trust. Metadata discovery can work while the native service is unavailable.
+
+The completed H750 example now names its five source forms Home.litheview.xml,
+Settings.litheview.xml, Storage.litheview.xml, Volume.litheview.xml and Load.litheview.xml
+in their existing per-page folders. Manifests and README match. Generate UI for all five
+passes with byte-unchanged handwritten handlers and unchanged generated C++ output.
+The L4 tutorial teaches Home's rename; page creation uses descriptive names and handler
+connection reads the manifest rather than assuming main.litheview.xml. The original
+starter pair and all 331 preservation-baseline file hashes remain unchanged.
+
+Validation: 81/81 extension tests; actual source-VSIX integration passes, including a
+second native-preview screen, unsaved edit preservation, return and undo; all five H750
+forms inspect/render/export; the regenerated H750 host builds and passes 7/7. L4 helper
+creation/connection with renamed forms passes in an isolated fixture. No MCU changes or
+hardware operations. Evidence is under build/vscode-designer/screens-* and
+integration-20261017T181157004/application with spaces/vscode-validation.json.
+The source VSIX 0.2.12 is installed in the user's default VS Code profile. Reload the
+existing window to load it; trust remains the user's decision. These changes are not
+yet committed or mirrored into the private checkout. The unrelated article drafts stay local.
 
 ## Menu examples (2026-10-17)
 
@@ -467,3 +539,49 @@ Clang-Tidy. Packaged VS Code tests can use the verified isolated editor under
 
 No hardware access is needed for this cleanup. Host checks, cross-builds and physical acceptance
 must remain separately reported.
+
+## 2026-10-17: One UI project and Add screen (local, not yet committed)
+
+This supersedes the earlier per-page-project menu layout. Work is in the public
+checkout. No private checkout source, original starter source or hardware was changed.
+
+- H750 menu: one `Tasks/UI/project.litheview.json`, shared profiles, five XML forms in
+  `Tasks/UI/forms`, outputs `Tasks/UI/Generated/{form}`, handwritten `handlers/<Screen>.hpp`.
+  Duplicate page projects/profiles removed. The existing single UI task/FSM remains.
+- Core exporter supports independent form identities, output paths, namespaces, CMake
+  target names and shared native-resource source paths. The first legacy `form.main`
+  retains flat output when new screens are added; canonical manifest ordering cannot
+  relocate it. New layouts use `{form}` from their first screen.
+- VS Code 0.2.13 Add screen applies a blank form plus manifest registration through an
+  editor-owned WorkspaceEdit with source/conflict/path checks. Shared settings remain
+  in one project. Generate UI exports the selected screen; CLI and desktop Generate UI
+  export every registered screen. Whole-project export is not atomic: earlier successful
+  components remain if a later screen fails. Handwritten handlers are never generated over.
+- L4R9 tutorial now uses Add screen and one UI project. Command-line helper edits the
+  same files. All handler/playback lessons and CMake detection use `Tasks/UI`.
+  Published Tasks is blank again (kernel_memory.cpp only). Completed exercise retained
+  under `examples/stm32l4r9i-disco-menu-1/build/multi-form-tutorial-validation`, including
+  Tasks/UI, simulator, photo and cross-built ELF; older validation exercises are untouched.
+- Validation: designer solution 0 warnings/errors; Core 100/100 (including shared asset
+  CMake execution); service 515 checks; extension 82 tests; packaged VS Code integration
+  passed at `build/vscode-designer/integration-20261017T190530626/application with spaces/vscode-validation.json`.
+  That run creates a screen, previews it, adds a button, creates its distinct typed
+  handler, generates, rejects a duplicate name, and preserves another form's unsaved edit/undo.
+  H750 completed Win32 7/7 + STM32 cross-build; L4R9 completed Win32 7/7 + STM32 cross-build;
+  restored L4R9 blank Win32 1/1 + STM32 cross-build. All five H750 product headers also
+  compile together. No board was flashed or newly physically validated in this pass.
+- Evidence: `build/multi-form-validation/`. Backup of previous menu sources in
+  `build/multi-form-validation/menu-before/`. Original starter baseline checked: 331 files,
+  zero changes. Unrelated article drafts remain untracked and untouched.
+- Source-only VSIX 0.2.13 installed. Matching prepared service artifacts copied into
+  both menu library dependencies' ignored build directories; only H750 designer service
+  processes holding old DLLs were stopped. Reload VS Code to activate the extension.
+- Publication remains pending: commit/push the library/designer change, advance only
+  the menu examples' library pins to that published revision, and mirror the intended
+  changes to the private repository. Current local runtime tests compile with existing
+  pinned library C++ headers; prepared service artifacts are local, not a substitute for
+  advancing those pins when publishing. Do not change the original starter pair.
+
+## Hardware follow-up after review fixes (2026-10-17)
+
+User requested flashing both boards. Both programmed/verified; H750 touch I2C timeout asserted at app_main.cpp:25 after 3792 heartbeats. Reset recovered execution, not root cause. Round L4R9 runs but BSP errors accumulate (4749 in final sample). The owner subsequently authorized publication with these example limitations documented and investigation deferred. Exact ELFs, backups, hashes and debugger trace: build/menu-validation/review-flash-20261017-165615. See MENU_REVIEW_VALIDATION.md. Original starters untouched.

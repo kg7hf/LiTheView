@@ -78,6 +78,22 @@ file-lock fix is claimed. Display-definition checks passed under `build/cleanup-
 nested consumer build exceeded a Windows path-length limit. Historical measurements below describe
 their named checkpoints; the packed-only Core measurements above supersede retired fixture totals.
 
+## Application example analysis
+
+The default static-analysis command covers Core and its tests. It does not silently
+claim coverage of consuming applications. After configuring/building a menu example,
+use its exact compilation database:
+
+```powershell
+./tools/run-static-analysis.ps1 -ApplicationBuildDirectory examples/stm32h750b-dk-menu-1-complete/build/win32-debug
+```
+
+The same command accepts the completed round tutorial's build directory. It records
+its first-party C++ translation units in `application-analysis/scope.txt`, runs Cppcheck
+and critical Clang-Tidy, and fails if the analyzer cannot parse the selected compiler's
+headers. Vendor dependencies and generated UI are checked through their own gates;
+this application mode does not claim independent vendor-source analysis.
+
 ## One-command local gate
 
 From PowerShell, with the Arm GNU Toolchain on `PATH`, in `STM32_TOOLCHAIN_ROOT`, or supplied explicitly:

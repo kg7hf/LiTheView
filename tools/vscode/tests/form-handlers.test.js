@@ -82,3 +82,15 @@ test('text events keep independent typed handlers and preserve application code'
   }
   assert.throws(() => validateBindings(text.replace('lithe::TextEdit event', 'lithe::SelectionEdit event'), textPlan), /incompatible signature/);
 });
+
+test('several screens have distinct handwritten types and preserve each handler body', () => {
+  for (const name of ['Settings', 'Volume']) {
+    const typed = { ...plan, formId: 'form.' + name.toLowerCase(), className: name + 'Form',
+      baseType: 'lithe::generated::' + name, include: '../Generated/' + name + '/form.hpp' };
+    const generated = planHandlerEdit(null, typed, 'button.first').text;
+    assert.ok(generated.includes('class ' + name + 'Form : public lithe::generated::' + name + '::Instance<>'));
+    const authored = generated.replace('// Add application behavior here.', 'requestUpdate();');
+    assert.equal(planHandlerEdit(authored, typed, 'button.first').text, authored);
+    assert.throws(() => validateBindings(authored, { ...typed, formId: 'form.other' }), /different form/);
+  }
+});

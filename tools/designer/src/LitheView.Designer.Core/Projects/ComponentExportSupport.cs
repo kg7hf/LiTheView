@@ -9,7 +9,7 @@ namespace LitheView.Designer.Core.Projects;
 
 internal static class ComponentExportSupport
 {
-    internal static byte[] ProductConfiguration(string symbol, SurfaceInputRequirements requirements)
+    internal static byte[] ProductConfiguration(string symbol, SurfaceInputRequirements requirements, bool scoped = false)
     {
         static string Boolean(bool value) => value ? "true" : "false";
         string text = $$"""
@@ -31,6 +31,12 @@ internal static class ComponentExportSupport
             inline constexpr std::array<lithe::SurfacePlacementPolicy, 0U> kPlacement{};
             } // namespace lithe::simulator
             """;
+        if (scoped)
+        {
+            text = text.Replace("namespace lithe::simulator", "namespace lithe::simulator::" + symbol, StringComparison.Ordinal)
+                .Replace("lithe::generated::DisplayConfiguration", "lithe::generated::assets::" + symbol + "::DisplayConfiguration", StringComparison.Ordinal)
+                .Replace("lithe::generated::SelectedResources", "lithe::generated::assets::" + symbol + "::SelectedResources", StringComparison.Ordinal);
+        }
         return Encoding.UTF8.GetBytes(text.Replace("\r\n", "\n", StringComparison.Ordinal) + "\n");
     }
 

@@ -34,8 +34,9 @@ struct DisplayPoint final
     std::int32_t y{};
 };
 
-// All dimensions are validated at configuration (image <= 8192, window <= 4096).
-// The same integer transform drives painting and hit testing at every zoom.
+// All dimensions are validated at configuration (image <= 8192, window <=
+// 4096). The same integer transform drives painting and hit testing at every
+// zoom.
 struct FrontPanelTransform final
 {
     std::int32_t imageWidth{};

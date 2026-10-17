@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paul R. Decker
 // SPDX-License-Identifier: GPL-3.0-only
 
+// LiTheView handwritten form: form.main
 #pragma once
 #include "Application/navigation.hpp"
 #include "Application/volume.hpp"
@@ -18,9 +19,13 @@ public:
     void refresh() noexcept
     {
         if (auto* progress = getVolumeProgress(); progress != nullptr)
+        {
             progress->setValue(mVolume.value());
+        }
         if (auto* label = getLevelLabel(); label != nullptr)
+        {
             label->setText(mVolume.text());
+        }
     }
     void adjust(VolumeChange change) noexcept
     {

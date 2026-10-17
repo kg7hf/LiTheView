@@ -1,11 +1,12 @@
 // SPDX-FileCopyrightText: 2026 Paul R. Decker
 // SPDX-License-Identifier: GPL-3.0-only
 
+// LiTheView handwritten form: form.main
 // Handwritten Home form. Generate UI owns only Generated/.
 #pragma once
+#include "../playback_controls.hpp"
 #include "Application/navigation.hpp"
 #include "Application/playback.hpp"
-#include "playback_controls.hpp"
 namespace menu
 {
 class HomeMenuForm final : public HomePlaybackBase
@@ -21,11 +22,17 @@ public:
     void refreshPlayback() noexcept
     {
         if (auto* play = getPlayButton(); play != nullptr)
+        {
             play->show(mPlayback.state());
+        }
         if (auto* stop = getStopButton(); stop != nullptr)
+        {
             stop->show();
+        }
         if (auto* label = getPlaybackLabel(); label != nullptr)
+        {
             label->setText(mPlayback.text());
+        }
     }
 
 protected:

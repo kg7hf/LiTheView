@@ -68,17 +68,17 @@ Open a form with **Reopen Editor With > LiTheView Designer**:
 
 | Page | Form | Handwritten behavior |
 | --- | --- | --- |
-| Home | `Tasks/UI/forms/main.litheview.xml` | `Tasks/UI/form_handlers.hpp` |
-| Settings | `Tasks/Settings/forms/main.litheview.xml` | `Tasks/Settings/form_handlers.hpp` |
-| Storage | `Tasks/Storage/forms/main.litheview.xml` | `Tasks/Storage/form_handlers.hpp` |
-| Volume | `Tasks/Volume/forms/main.litheview.xml` | `Tasks/Volume/form_handlers.hpp` |
-| Load | `Tasks/Load/forms/main.litheview.xml` | `Tasks/Load/form_handlers.hpp` |
+| Home | `Tasks/UI/forms/Home.litheview.xml` | `Tasks/UI/handlers/Home.hpp` |
+| Settings | `Tasks/UI/forms/Settings.litheview.xml` | `Tasks/UI/handlers/Settings.hpp` |
+| Storage | `Tasks/UI/forms/Storage.litheview.xml` | `Tasks/UI/handlers/Storage.hpp` |
+| Volume | `Tasks/UI/forms/Volume.litheview.xml` | `Tasks/UI/handlers/Volume.hpp` |
+| Load | `Tasks/UI/forms/Load.litheview.xml` | `Tasks/UI/handlers/Load.hpp` |
 
-Each page has its own designer project and generated directory. **Configure** edits display
-and input; **Generate UI** exports code while preserving the handwritten handler file.
-All five pages must have the same display and logical-input contracts. Builds reject a
-mismatch. The present designer export workflow uses one component directory per project;
-there is no separate project-wide multi-page navigation editor.
+One designer project owns all five forms. **Configure** edits their shared display
+and input; **Generate UI** exports the selected screen into `Generated/<Screen>`
+and preserves its handwritten handler. After a shared configuration change,
+regenerate every screen. Builds reject mismatched exported contracts. Runtime
+navigation remains an application-owned FSM, separate from designer navigation.
 
 The canvas is `480 x 272`, rectangle, native RGB565. Settings and Storage titles are at
 `120,20,240,40`, text scale 3. Their buttons are `120,80,240,48`, `120,140,240,48`, and
@@ -103,7 +103,7 @@ The H750 hardware uses touch; it has no L4R9-style directional joystick. The rou
 tutorial maps its physical joystick to the same logical keys.
 
 `Application/volume.hpp` owns the bounded model without GUI or RTOS dependencies.
-`Tasks/Volume/form_handlers.hpp` uses generated `getVolumeProgress()` and `getLevelLabel()`
+`Tasks/UI/handlers/Volume.hpp` uses generated `getVolumeProgress()` and `getLevelLabel()`
 accessors. Buttons and horizontal keys call the same `adjust(VolumeChange)` method. The
 label borrows immutable percentage strings with static lifetime. Its background matches
 the panel so it repaints independently of the progress bar. Generate UI preserves the
@@ -133,7 +133,7 @@ stopped. This lesson controls a demonstration model, not an audio device.
 - `Tasks/UI/playback_controls.hpp` specializes the generated form with named
   `PlayButtonType` and `StopButtonType` overrides. Generated accessors return the custom
   types without casts; regeneration does not overwrite the specializations.
-- `Tasks/UI/form_handlers.hpp` owns the model. Its named handlers update the model,
+- `Tasks/UI/handlers/Home.hpp` owns the model. Its named handlers update the model,
   then the typed buttons and status label. All mutation happens in the application task.
 
 Three fixed **16 x 16 alpha1 masks** are constructed at compile time: triangle, pause bars
@@ -169,7 +169,7 @@ One row is highlighted; this is a custom single-column list, not a set of radio 
 ![Eight-entry catalog scrolled to its final rows](docs/load-scrolled.png)
 
 `Controls/selection_list.hpp` is an application-owned `ControlView` with a borrowed
-immutable catalog and a typed `ListEvents` observer. `Tasks/Load/form_handlers.hpp`
+immutable catalog and a typed `ListEvents` observer. `Tasks/UI/handlers/Load.hpp`
 uses the generator's named `EntryListType` override to replace the designer's
 `entryList` panel with this real control. Its callbacks update `Application/load_selection.hpp`.
 The model distinguishes selection from activation and uses typed entry IDs. No filesystem,
@@ -224,3 +224,44 @@ To change the photograph or hit regions, open Home in the designer, choose
 preset, then use the same Windows F5 launcher. CMake checks the photo hash and
 copies it beside `starter.exe`. If you move that executable, move `board-front.png`
 with it. The STM32 build does not include or decode this photograph.
+
+## Switch screens in the designer
+
+Open any form above in VS Code. The designer's **Screens** section lists all forms
+whose project paths identify this application root. Click Home, Settings, Storage,
+Volume or Load to open that screen in its own editor tab. **Refresh screens** picks
+up a page you just added or renamed. Hover a screen name to see its relative path.
+Unsaved changes and undo history stay in the original VS Code document. Generate UI
+still applies to the active form; the application's FSM owns runtime navigation.
+
+The forms live in separate Tasks subfolders to keep each generated component and its
+handwritten handlers together. The Screens list groups them without moving them.
+The blank round-display tutorial adds these forms as you complete its lessons.
+If VS Code shows Restricted Mode, trust your application folder to run the preview;
+screen discovery itself only reads project metadata and does not run a service.
+
+## UI project ownership
+
+All five XML forms are in `Tasks/UI/forms`, listed in one `project.litheview.json`.
+The one `profiles` directory defines their shared display and logical input. The
+paths sidecar uses `Tasks/UI/Generated/{form}`; generated files are grouped by Home,
+Settings, Storage, Volume and Load. Handwritten classes are in `Tasks/UI/handlers`.
+The menu's FSM owns these persistent forms; **there is one application/UI task**.
+
+Use **Add screen** to create another form in this UI project. Design it, Generate UI,
+create its event handlers, then add the desired transition and form ownership to
+`Application/menu.hpp` and `Application/navigation.hpp`. Merely creating a screen
+does not add it to the running menu or create a task. The CMake presets stay the same.
+
+Generate UI operates on the selected screen. To regenerate all five at once, run
+the designer CLI's `component export-project` with this shared manifest and the
+absolute library checkout path. Configure applies to all screens; regenerate each
+one before building after a display or input change.
+
+## Known hardware limitation
+
+A touch-controller I2C timeout was observed during the latest hardware check. This
+example currently propagates a failed touch read to the UI task's fatal assertion;
+resetting restored operation in that run but did not resolve the cause. Investigation
+is deferred for this example. A product should diagnose the bus fault and validate
+input recovery. See [the validation record](VALIDATION.md).

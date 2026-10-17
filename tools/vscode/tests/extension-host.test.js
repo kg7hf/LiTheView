@@ -40,7 +40,7 @@ function fixture(t, trusted = true) {
   class Diagnostic { constructor(range, message, severity) { this.message = message; this.severity = severity; } }
   const vscode = {
     env: {},
-    Uri: { joinPath(root, ...segments) { return { fsPath: path.join(root.fsPath, ...segments), toString() { return this.fsPath; } }; } },
+    Uri: { file(fsPath) { return { scheme: 'file', fsPath, toString() { return fsPath; } }; }, joinPath(root, ...segments) { return { fsPath: path.join(root.fsPath, ...segments), toString() { return this.fsPath; } }; } },
     Diagnostic, Range, WorkspaceEdit,
     DiagnosticSeverity: { Error: 0, Warning: 1, Information: 2 },
     window: {
@@ -50,7 +50,7 @@ function fixture(t, trusted = true) {
       async showQuickPick(items) { picks.push(items); return items[0]; }
     },
     languages: { createDiagnosticCollection: () => ({ ...disposed, set(key, items) { diagnostics.set(key.toString(), items); }, delete(key) { diagnostics.delete(key.toString()); } }) },
-    commands: { registerCommand(name, handler) { commands.set(name, handler); return disposed; }, executeCommand: async () => {} },
+    commands: { registerCommand(name, handler) { commands.set(name, handler); return disposed; }, executeCommand: async (...args) => { if (args[0] === 'vscode.openWith') picks.push(args); } },
     TaskScope: { Workspace: 2 },
     tasks: { async fetchTasks() { return availableTasks; }, async executeTask(task) { executedTasks.push(task); } },
     workspace: {
@@ -81,6 +81,7 @@ function fixture(t, trusted = true) {
     module, exports: module.exports, process: { platform: 'win32' }, setTimeout, clearTimeout,
     require(name) {
       if (name === 'vscode') return vscode;
+      if (name === './lib/screens') return { discoverScreens: async () => ({ screens: settings.screens || [], warnings: [] }) };
       if (name === './lib/service-client') return { ServiceClient: FakeService };
       if (name === './lib/project-paths') return {
         ...require('../lib/project-paths'), exists: async value => !value.endsWith('form_handlers.hpp'),
@@ -170,4 +171,21 @@ test('Configure rejects an explicitly selected older service with no migration',
   assert.ok(f.commands.has('litheview.projectSetup'));
   await assert.rejects(f.api.projectSetup(f.uri, 'touch'), /Designer 0.2.7/);
   assert.equal(f.calls.some(call => call.method === 'project.setup'), false);
+});
+
+ test('screen navigation preserves the unsaved source and rejects unlisted paths', async t => {
+  const f = fixture(t, false);
+  f.settings.screens = [{ id: 'Tasks/Settings/forms/Settings.litheview.xml', label: 'Settings', detail: 'Tasks/Settings/forms/Settings.litheview.xml', formPath: 'D:/app/Tasks/Settings/forms/Settings.litheview.xml' }];
+  await f.open();
+  await waitFor(() => f.messages.some(message => message.type === 'screens'));
+  f.document.xml = '<unsaved/>';
+  await f.api.openScreen(f.uri, f.settings.screens[0].id);
+  assert.equal(f.document.xml, '<unsaved/>');
+  assert.equal(f.calls.some(call => call.method === 'save'), false);
+  assert.equal(f.picks.at(-1)[0], 'vscode.openWith');
+  assert.equal(f.picks.at(-1)[2], 'litheview.formDesigner');
+  assert.equal(f.picks.at(-1)[3].preview, false);
+  await assert.rejects(f.api.openScreen(f.uri, '../../secret.xml'), /no longer belongs/);
+  f.settings.screens = [];
+  await assert.rejects(f.api.openScreen(f.uri, 'Tasks/Settings/forms/Settings.litheview.xml'), /no longer belongs/);
 });

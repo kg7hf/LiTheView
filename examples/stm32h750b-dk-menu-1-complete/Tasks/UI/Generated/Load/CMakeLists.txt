@@ -1,0 +1,12 @@
+# Generated UI component. The parent application owns executables and devices.
+if(NOT TARGET LitheView::Core)
+    find_package(LitheView CONFIG REQUIRED)
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/resources.cmake")
+add_library(litheview_generated_LoadMenu INTERFACE)
+add_library(LitheView::FormLoadMenu ALIAS litheview_generated_LoadMenu)
+target_link_libraries(litheview_generated_LoadMenu INTERFACE LitheView::Core)
+target_include_directories(litheview_generated_LoadMenu INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
+if(LITHEVIEW_SELECTED_RESOURCE_SOURCES)
+    target_sources(litheview_generated_LoadMenu INTERFACE ${LITHEVIEW_SELECTED_RESOURCE_SOURCES})
+endif()

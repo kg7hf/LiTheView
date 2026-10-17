@@ -18,7 +18,8 @@ enum class EntryId : std::uint8_t
     backup,
     factory
 };
-// Fixed demo catalog: selection and loading are deliberately different operations.
+// Fixed demo catalog: selection and loading are deliberately different
+// operations.
 class LoadSelection final
 {
 public:
@@ -41,7 +42,9 @@ public:
     [[nodiscard]] std::string_view loadedText() const noexcept
     {
         if (!mLoaded)
+        {
             return "LOADED: NONE";
+        }
         switch (*mLoaded)
         {
         case EntryId::sessionA:

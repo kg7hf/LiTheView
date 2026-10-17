@@ -1078,8 +1078,32 @@
         resizeStage();
     });
     byId('generate').addEventListener('click', () => { if (editable()) vscode.postMessage({ type: 'generate' }); });
+    byId('add-screen').addEventListener('click', () => vscode.postMessage({ type: 'addScreen' }));
+    byId('refresh-screens').addEventListener('click', () => vscode.postMessage({ type: 'refreshScreens' }));
     byId('source').addEventListener('click', () => vscode.postMessage({ type: 'source' }));
     byId('setup').addEventListener('click', () => { if (editable()) vscode.postMessage({ type: 'setup' }); });
+
+    window.addEventListener('message', event => {
+        const message = event.data;
+        if (!message || message.type !== 'screens') return;
+        const list = byId('screens');
+        list.replaceChildren();
+        const screens = Array.isArray(message.screens) ? message.screens : [];
+        byId('screen-count').textContent = String(screens.length);
+        byId('screens-status').textContent = message.warning || (screens.length ? 'Open a screen to edit its form.' : 'No screens found.');
+        for (const screen of screens) {
+            const item = document.createElement('li');
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'screen-button secondary';
+            button.textContent = screen.label;
+            button.title = screen.detail;
+            if (screen.active) button.setAttribute('aria-current', 'page');
+            button.addEventListener('click', () => vscode.postMessage({ type: 'openScreen', id: screen.id }));
+            item.append(button);
+            list.append(item);
+        }
+    });
 
     function acceptState(message) {
         if (!Number.isInteger(message.documentVersion)) { reportError('The designer received a document without a version.'); return; }
