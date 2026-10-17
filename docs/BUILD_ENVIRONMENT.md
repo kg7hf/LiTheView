@@ -67,6 +67,19 @@ All subsequent Windows commands run from this checkout root unless stated otherw
 checkout can start here. The first clone/SDK restore needs network access; Core builds use the local
 source and installed compiler and do not fetch STM32 or FreeRTOS repositories.
 
+### Windows paths for recursive dependencies
+
+Prefer a short checkout directory. The starters' nested FreeRTOS dependencies can
+exceed Windows' traditional path-length limit. If Git reports `Filename too long`,
+enable long paths for the dependency initialization command:
+
+```powershell
+git -c core.longpaths=true submodule update --init --recursive
+```
+
+This applies to that command and its recursive Git operations without changing
+machine-wide configuration. It does not remove path limits in other build tools.
+
 ## 3. Build Core and run a consumer
 
 Core is a library, so it does not open a window by itself. These commands build it with all application,

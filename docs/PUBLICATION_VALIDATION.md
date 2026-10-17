@@ -80,3 +80,15 @@ parameters documented in the scripts and build guide. The .NET SDK must satisfy
 suites and detailed gate scope, and each starter README for its normal application
 build and debug commands. Temporary validation output belongs under `build/` and
 is not part of the source publication.
+
+## Public access verification
+
+After publication, an anonymous clone and all recursive submodules initialized
+successfully with credential helpers and authentication headers disabled. The
+isolated check also disabled the user's Git configuration; its deeply nested
+Windows checkout required `-c core.longpaths=true` for FreeRTOS dependencies.
+The initial path-length failure was retained alongside the successful rerun.
+
+Anonymous GitHub API checks confirmed the public repository, only the `main`
+branch, no inherited pull requests or workflow runs, and no access to the separate
+private full-history repository or its former commit through this repository.
