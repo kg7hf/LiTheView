@@ -1,0 +1,8 @@
+/build/
+/CMakeUserPresets.json
+/Core/Inc/Backup/
+/Core/Src/Backup/
+/cmake/stm32cubemx/
+
+# The guided exercise creates these application-owned files locally.
+/Tasks/UI/

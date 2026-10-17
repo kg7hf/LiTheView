@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: 2026 Paul R. Decker
+# SPDX-License-Identifier: GPL-3.0-only
+
+# Explicit HAL source list; regenerated Cube CMake is deliberately not consumed.
+set(STARTER_HAL_SOURCES
+    ${HAL}/Src/stm32h7xx_hal_tim.c
+    ${HAL}/Src/stm32h7xx_hal_tim_ex.c
+    ${HAL}/Src/stm32h7xx_hal_adc.c
+    ${HAL}/Src/stm32h7xx_hal_adc_ex.c
+    ${HAL}/Src/stm32h7xx_hal_rcc.c
+    ${HAL}/Src/stm32h7xx_hal_rcc_ex.c
+    ${HAL}/Src/stm32h7xx_hal_flash.c
+    ${HAL}/Src/stm32h7xx_hal_flash_ex.c
+    ${HAL}/Src/stm32h7xx_hal_gpio.c
+    ${HAL}/Src/stm32h7xx_hal_hsem.c
+    ${HAL}/Src/stm32h7xx_hal_dma.c
+    ${HAL}/Src/stm32h7xx_hal_dma_ex.c
+    ${HAL}/Src/stm32h7xx_hal_mdma.c
+    ${HAL}/Src/stm32h7xx_hal_pwr.c
+    ${HAL}/Src/stm32h7xx_hal_pwr_ex.c
+    ${HAL}/Src/stm32h7xx_hal_cortex.c
+    ${HAL}/Src/stm32h7xx_hal.c
+    ${HAL}/Src/stm32h7xx_hal_i2c.c
+    ${HAL}/Src/stm32h7xx_hal_i2c_ex.c
+    ${HAL}/Src/stm32h7xx_hal_exti.c
+    ${HAL}/Src/stm32h7xx_hal_eth.c
+    ${HAL}/Src/stm32h7xx_hal_eth_ex.c
+    ${HAL}/Src/stm32h7xx_hal_fdcan.c
+    ${HAL}/Src/stm32h7xx_ll_fmc.c
+    ${HAL}/Src/stm32h7xx_hal_nor.c
+    ${HAL}/Src/stm32h7xx_hal_sram.c
+    ${HAL}/Src/stm32h7xx_hal_nand.c
+    ${HAL}/Src/stm32h7xx_hal_sdram.c
+    ${HAL}/Src/stm32h7xx_hal_ltdc.c
+    ${HAL}/Src/stm32h7xx_hal_ltdc_ex.c
+    ${HAL}/Src/stm32h7xx_hal_qspi.c
+    ${HAL}/Src/stm32h7xx_ll_delayblock.c
+    ${HAL}/Src/stm32h7xx_hal_rtc.c
+    ${HAL}/Src/stm32h7xx_hal_rtc_ex.c
+    ${HAL}/Src/stm32h7xx_hal_sai.c
+    ${HAL}/Src/stm32h7xx_hal_sai_ex.c
+    ${HAL}/Src/stm32h7xx_ll_sdmmc.c
+    ${HAL}/Src/stm32h7xx_hal_sd.c
+    ${HAL}/Src/stm32h7xx_hal_sd_ex.c
+    ${HAL}/Src/stm32h7xx_hal_mmc.c
+    ${HAL}/Src/stm32h7xx_hal_mmc_ex.c
+    ${HAL}/Src/stm32h7xx_hal_spi.c
+    ${HAL}/Src/stm32h7xx_hal_spi_ex.c
+    ${HAL}/Src/stm32h7xx_hal_uart.c
+    ${HAL}/Src/stm32h7xx_hal_uart_ex.c
+    ${HAL}/Src/stm32h7xx_hal_pcd.c
+    ${HAL}/Src/stm32h7xx_hal_pcd_ex.c
+    ${HAL}/Src/stm32h7xx_ll_usb.c
+)

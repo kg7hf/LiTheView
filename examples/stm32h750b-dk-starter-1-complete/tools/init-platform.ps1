@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Paul R. Decker
+# SPDX-License-Identifier: GPL-3.0-only
+
+#requires -Version 7.2
+[CmdletBinding()]
+param()
+$ErrorActionPreference = 'Stop'
+Push-Location (Split-Path $PSScriptRoot -Parent)
+try {
+    $prefix = [string](& git rev-parse --show-prefix)
+    if ($LASTEXITCODE -ne 0) { throw 'Use a Git checkout of this example.' }
+    $root = (& git rev-parse --show-toplevel).Trim()
+    foreach ($dependency in @('Drivers/CMSIS_6', 'Drivers/CMSIS/Device/ST/STM32H7xx',
+        'Drivers/STM32H7xx_HAL_Driver', 'Middlewares/Third_Party/FreeRTOS', 'Middlewares/Third_Party/FreeRTOS-Kernel')) {
+        & git -C $root submodule update --init -- "$($prefix.Trim())$dependency"
+        if ($LASTEXITCODE -ne 0) { throw "Could not initialize $dependency" }
+    }
+} finally { Pop-Location }

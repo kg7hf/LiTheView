@@ -1,0 +1,74 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "H750 starter: Windows",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/win32-debug/starter.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build/win32-debug",
+      "environment": [
+        {
+          "name": "PATH",
+          "value": "${workspaceFolder}/build/tool-links/mingw;${env:PATH}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "${workspaceFolder}/build/tool-links/mingw/gdb.exe",
+      "preLaunchTask": "H750 starter: build win32-debug"
+    },
+    {
+      "name": "H750 starter: STM32H750 (ST-LINK)",
+      "type": "stlinkgdbtarget",
+      "request": "launch",
+      "origin": "snippet",
+      "cwd": "${workspaceFolder}",
+      "preBuild": "",
+      "preLaunchTask": "H750 starter: build stm32-debug",
+      "gdb": "${workspaceFolder}/build/tool-links/arm-gdb/arm-none-eabi-gdb.exe",
+      "deviceName": "STM32H750XBH6",
+      "deviceCore": "Cortex-M7",
+      "runEntry": "main",
+      "imagesAndSymbols": [
+        {
+          "imageFileName": "${workspaceFolder}/build/stm32-debug/starter.elf"
+        }
+      ],
+      "serverExe": "ST-LINK_gdbserver.exe",
+      "serverCwd": "${workspaceFolder}/build/tool-links/stlink",
+      "serverCubeProgPath": "${workspaceFolder}/build/tool-links/programmer",
+      "serverSerialNumber": "${input:h750ProbeSerial}",
+      "serverInterface": "SWD",
+      "serverInterfaceFrequency": "8000",
+      "serverStartupDelay": 1000,
+      "serverReset": "Connect under reset",
+      "serverVerify": true,
+      "serverRtos": {
+        "enabled": false
+      },
+      "serverSemihosting": {
+        "enabled": false,
+        "mode": "console",
+        "port": "61260"
+      },
+      "liveWatch": {
+        "enabled": false,
+        "samplesPerSecond": "4"
+      },
+      "faultDivByZero": true,
+      "faultUnalignedAccess": false,
+      "faultHaltOnException": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "h750ProbeSerial",
+      "type": "promptString",
+      "description": "ST-LINK serial for the H750 (select explicitly when other boards are connected)",
+      "default": ""
+    }
+  ]
+}

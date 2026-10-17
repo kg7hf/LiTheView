@@ -1,0 +1,36 @@
+[submodule "examples/stm32h750b-dk-starter-1/Drivers/CMSIS_6"]
+	path = examples/stm32h750b-dk-starter-1/Drivers/CMSIS_6
+	url = https://github.com/ARM-software/CMSIS_6.git
+[submodule "examples/stm32h750b-dk-starter-1/Drivers/CMSIS/Device/ST/STM32H7xx"]
+	path = examples/stm32h750b-dk-starter-1/Drivers/CMSIS/Device/ST/STM32H7xx
+	url = https://github.com/STMicroelectronics/cmsis-device-h7.git
+[submodule "examples/stm32h750b-dk-starter-1/Drivers/STM32H7xx_HAL_Driver"]
+	path = examples/stm32h750b-dk-starter-1/Drivers/STM32H7xx_HAL_Driver
+	url = https://github.com/STMicroelectronics/stm32h7xx-hal-driver.git
+[submodule "examples/stm32h750b-dk-starter-1/Middlewares/Third_Party/FreeRTOS"]
+	path = examples/stm32h750b-dk-starter-1/Middlewares/Third_Party/FreeRTOS
+	url = https://github.com/STMicroelectronics/stm32-mw-freertos.git
+[submodule "examples/stm32h750b-dk-starter-1/Middlewares/Third_Party/FreeRTOS-Kernel"]
+	path = examples/stm32h750b-dk-starter-1/Middlewares/Third_Party/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "examples/stm32h750b-dk-starter-1/Middlewares/Third_Party/LiTheView"]
+	path = examples/stm32h750b-dk-starter-1/Middlewares/Third_Party/LiTheView
+	url = https://github.com/kg7hf/LiTheView.git
+[submodule "examples/stm32h750b-dk-starter-1-complete/Drivers/CMSIS_6"]
+	path = examples/stm32h750b-dk-starter-1-complete/Drivers/CMSIS_6
+	url = https://github.com/ARM-software/CMSIS_6.git
+[submodule "examples/stm32h750b-dk-starter-1-complete/Drivers/CMSIS/Device/ST/STM32H7xx"]
+	path = examples/stm32h750b-dk-starter-1-complete/Drivers/CMSIS/Device/ST/STM32H7xx
+	url = https://github.com/STMicroelectronics/cmsis-device-h7.git
+[submodule "examples/stm32h750b-dk-starter-1-complete/Drivers/STM32H7xx_HAL_Driver"]
+	path = examples/stm32h750b-dk-starter-1-complete/Drivers/STM32H7xx_HAL_Driver
+	url = https://github.com/STMicroelectronics/stm32h7xx-hal-driver.git
+[submodule "examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/FreeRTOS"]
+	path = examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/FreeRTOS
+	url = https://github.com/STMicroelectronics/stm32-mw-freertos.git
+[submodule "examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/FreeRTOS-Kernel"]
+	path = examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/LiTheView"]
+	path = examples/stm32h750b-dk-starter-1-complete/Middlewares/Third_Party/LiTheView
+	url = https://github.com/kg7hf/LiTheView.git
