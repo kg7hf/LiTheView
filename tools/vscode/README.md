@@ -71,6 +71,10 @@ extension already installed in VS Code. Check **Extensions > LiTheView Designer*
 for the installed version. Install the matching VSIX, then run **Developer: Reload
 Window**. Validation in an isolated editor does not change your normal editor.
 
+Close open LiTheView designer tabs before rerunning preparation. The service
+holds its DLLs open while an editor is active; Windows can otherwise report
+`MSB3021` or `MSB3027` because those files are in use.
+
 For a source-only VSIX, prepare tools inside the application's actual LiTheView
 submodule, not just an outer library checkout. From the application root:
 
