@@ -126,3 +126,21 @@ The owner authorized publishing the validated designer and menu/tutorial changes
 repositories, with the touch/bus issues documented for later investigation. This is not
 acceptance of production input reliability. Only menu dependency pins advance; the
 original H750 starter pair and unrelated local work remain excluded.
+
+## Menu dependency publication check (2026-10-17)
+
+Both menu examples pin the public library/designer commit
+`fc21b83d07219f47ec8ac71f4af141aa3435dc3e`. The original starter pair keeps its existing pins.
+With that dependency, H750 Windows CTest passes 7/7 and STM32 cross-build passes;
+the blank L4R9 Windows test passes 1/1 and its STM32 cross-build passes.
+
+A fresh installed source VSIX 0.2.14 tutorial run passes all 24 checkpoints: blank project,
+custom round display, panel, navigation, Volume, playback and Load; both platform builds
+at each stage and final Windows tests 7/7. Evidence:
+`build/vscode-designer/integration-20261017T212529256/application with spaces/vscode-validation.json`.
+The first publication rerun selected the system .NET 9 installation and was rejected;
+rerunning with the verified user-local .NET 10 executable passed. An outer shell check
+subsequently reported a stale native exit code despite the runner's successful result;
+the retained runner output and validation JSON confirm completion. These execution logs
+are under `build/publication-menu-20261017/`. All 331 protected starter files still match.
+Hardware was not accessed again; the documented touch limitations remain deferred.
