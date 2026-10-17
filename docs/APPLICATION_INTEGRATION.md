@@ -1,5 +1,9 @@
 # Add LitheView to an existing application
 
+**Your application or solution is the superproject. LiTheView is one dependency
+within it.** Open the application folder that owns your build and debug configurations
+in VS Code; opening the library checkout is for working on LiTheView itself.
+
 Your application owns its directory layout, devices, tasks, toolchain, and firmware build. LitheView
 can be a submodule anywhere in that tree. The designer saves a portable UI project and exports a C++
 component to a location you choose. The same component can run in the PC simulator before the board
@@ -37,23 +41,78 @@ On another product, the library could be `external/graphics/lithe`, the UI could
 and build output could be on another drive. The developer does not need to rename their device
 classes or move them into the library.
 
+## Choose the layout that fits your application
+
+The application root and library root are different directories. Your display,
+touch and button adapters, RTOS tasks, business logic and generated UI belong to
+the application. Their directory names and relationships are your choice.
+
+| Convention | Library checkout | UI project manifest | Generated component |
+| --- | --- | --- | --- |
+| STM32 middleware | `Middlewares/Third_Party/LiTheView/` | `Tasks/UI/project.litheview.json` | `Tasks/UI/Generated/` |
+| External dependencies | `externals/LiTheView/` | `src/ui/project.litheview.json` | `src/ui/Generated/` |
+| Everything UI-related together | `UI/LiTheView/` | `UI/project.litheview.json` | `UI/Generated/` |
+
+All table paths are relative to **your application root**. In the third layout,
+`UI/LiTheView/` is the dependency, while `UI/forms/`, `UI/Generated/` and your handler
+sources are its siblings. Do not place application sources or generated output
+inside `UI/LiTheView/`: that subtree is the independently versioned library.
+
+For example, an application using an external dependency folder can look like:
+
+```text
+MyControlPanel/                         open this folder in VS Code
+  .vscode/                             application tasks and debug launchers
+  CMakeLists.txt
+  CMakePresets.json                     Windows and embedded configurations
+  externals/LiTheView/                  pinned library submodule
+  src/
+    sensors/
+    motors/
+    ui/
+      project.litheview.json
+      project.litheview.paths.json
+      forms/
+      profiles/
+      Generated/
+      form_handlers.hpp                handwritten application behavior
+  Platform/Windows/                    host device implementations
+  Platform/STM32/                      hardware device implementations
+  build/                               application build outputs
+```
+
+Initialize only the dependencies your application uses. Adding LiTheView does not
+require initializing its bundled examples, STM32 packages or FreeRTOS: those are
+application dependencies when your chosen platform needs them. Preparing designer
+tools inside the library submodule also does not make it the application root.
+
+The repository's `examples/` nesting is a distribution convenience. Each maintained
+starter is an application with its own dependency tree; the outer library checkout
+is not the model for a developer's product directory structure.
+
 ## Set the paths in the designer
 
-1. Launch the designer from the LitheView checkout using its normal preparation task. Its tooling
-   root supplies the widget catalog, profile catalog, and native preview worker.
-2. Choose **File > New Project**, select the display and logical input, and select the option to use
-   an existing application folder. Choose the exact UI source folder, such as `Tasks/UI`.
-   Existing files remain untouched. A collision with a new project filename fails before publication.
-   Opening an existing UI instead uses its `project.litheview.json`.
-3. Use **Project > Project Paths...** to choose the application root, LitheView
-   checkout and generated component directory. The standalone wizard opens these
-   settings after creation in an existing folder. The VS Code **Add LiTheView UI**
-   wizard records these paths directly.
+1. Add or initialize the LiTheView submodule at your chosen dependency location.
+   Install the matching VS Code extension. For a source-only extension, prepare
+   tools in that submodule using its `tools/prepare-vscode-designer.ps1` script.
+2. Open **your application root** in VS Code and run **LiTheView: Add LiTheView UI**.
+   Select or browse to the initialized library checkout. Choose your UI source
+   folder and generated component folder; they do not need to be under `Tasks/UI`.
+   The wizard records these locations in the project's path sidecar.
+3. Define the display and logical input, then open the form. To reopen an existing
+   project, open its `.litheview.xml` form in that same application workspace.
+   Existing files remain application-owned; a conflicting new project filename
+   stops creation rather than replacing them.
 4. Save and choose **Generate UI**, then build with your application's existing
    Windows CMake preset and debug with its normal F5 launcher. Repeat for the MCU
    after connecting the platform drivers. Generation does not build or launch.
    The [H750 starter](../examples/stm32h750b-dk-starter-1/README.md) demonstrates this
    progression without changing presets after the first export.
+
+If using the separate desktop designer, **File > New Project** can target an
+existing application folder, and **Project > Project Paths...** selects the same
+application/library/component locations. That is an alternative editor route;
+it does not change which project owns the build.
 
 The optional `buildDirectory` field below remains for legacy CLI scaffold tooling;
 it does not select or redirect the application CMake build, and is not exposed by
@@ -78,6 +137,31 @@ paths are relative to that resolved application root. Fully qualified absolute p
 accepted for external library/output locations. Relative settings are preferable in source control:
 moving the application and its submodule together preserves them. No saved path is relative to the
 designer's launch directory. Spaces in paths are supported.
+
+For the three layouts above, the sidecar values are:
+
+| Manifest directory | `applicationRoot` | `libraryRoot` | `componentDirectory` |
+| --- | --- | --- | --- |
+| `Tasks/UI/` | `../..` | `Middlewares/Third_Party/LiTheView` | `Tasks/UI/Generated` |
+| `src/ui/` | `../..` | `externals/LiTheView` | `src/ui/Generated` |
+| `UI/` | `..` | `UI/LiTheView` | `UI/Generated` |
+
+VS Code can discover registered submodules or let you browse to the dependency.
+If you set `litheview.libraryRoot` in the application's `.vscode/settings.json`,
+that explicit setting overrides the sidecar's library selection. It is relative
+to the VS Code workspace folder, so keep it consistent with the chosen layout:
+
+```json
+{
+  "litheview.libraryRoot": "externals/LiTheView"
+}
+```
+
+When relocating a dependency or UI folder, update the Git submodule registration,
+the sidecar, any explicit VS Code override and the application's CMake paths.
+Changing the designer paths does not move files or rewrite your parent build.
+The CMake example below uses the middleware layout; substitute your actual
+library and generated-component directories for its two `add_subdirectory` calls.
 
 Without a sidecar, the defaults are the manifest directory as application root, the running
 designer's checkout as library root, `simulation` as component directory, and `simulation/build`

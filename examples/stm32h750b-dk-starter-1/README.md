@@ -1,5 +1,13 @@
 # H750 starter 1: from a blank application to the first display
 
+**This folder is the application root for the exercise.** Its placement inside
+LiTheView's `examples/` is for distribution. In your own product, your application
+is the superproject and LiTheView is a dependency inside it. This example uses
+`Middlewares/Third_Party/LiTheView/` and keeps its UI in `Tasks/UI/`; you can instead
+use `externals/LiTheView/` with `src/ui/`, or `UI/LiTheView/` with sibling forms and
+generated files. See [project layout options](../../docs/APPLICATION_INTEGRATION.md#choose-the-layout-that-fits-your-application).
+
+
 Open **this folder** as your VS Code workspace. This is an application that already
 boots and runs one application task on both Windows and STM32H750B-DK. The Windows
 build runs the same FreeRTOS kernel and CMSIS wrapper with a Windows platform port.
@@ -44,12 +52,14 @@ Middlewares/Third_Party/LiTheView`. This supplied example already registers and
 pins its package; do not add it a second time. Other application layouts can use
 another path and set `litheview.libraryRoot` accordingly.
 
-Install LiTheView Designer **0.2.8 or later** using **Extensions: Install from
-VSIX...**. Reload the VS Code window after upgrading. The package is a development
-VSIX, not a published Marketplace download. **If the extension is already installed,
-skip preparation and packaging entirely and continue to step 2.** The installed
-package contains the designer service and preview worker. Initializing a new
-application's library submodule does not mean rebuilding those tools.
+Install the LiTheView Designer version matching the pinned library using
+**Extensions: Install from VSIX...**, then reload VS Code. The package is a
+VSIX, not a published Marketplace download. For a **source-only** extension, run
+`Middlewares/Third_Party/LiTheView/tools/prepare-vscode-designer.ps1` from this
+application root before opening the designer; an installed extension alone does
+not prepare a newly initialized submodule. A matching bundled-runtime extension
+already contains its service and worker. See [designer setup troubleshooting](#designer-setup-troubleshooting)
+for SDK selection and updates.
 
 ## 2. Define your display, then open a blank canvas
 

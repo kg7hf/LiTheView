@@ -16,6 +16,31 @@ itself is standard C++23 and has no Win32, STM32, or FreeRTOS dependency.
 The foreground window is the simulator using a board photograph; the Windows
 and STM32 targets share the application logic and generated UI.*
 
+## Your application is the project root
+
+**LiTheView is a component of your application, not the superproject for your
+product.** Open your own application or solution folder in VS Code. That project
+owns the build presets, debug launchers, tasks, sensors, motors, drivers and other
+middleware. LiTheView supplies the graphics library and form-design tools.
+
+Choose a dependency location that fits your project:
+
+| Application layout | LiTheView dependency | Your UI files |
+| --- | --- | --- |
+| STM32-style middleware | `Middlewares/Third_Party/LiTheView/` | `Tasks/UI/` |
+| External dependencies | `externals/LiTheView/` | `src/ui/` |
+| UI-local dependency | `UI/LiTheView/` | `UI/forms/`, `UI/Generated/`, and your handlers in `UI/` |
+
+These are alternatives, not required folder names. Keep your forms, generated UI
+and handwritten handlers outside the LiTheView dependency itself. The designer
+records the library and output locations; your application CMake build integrates
+them. See [project layouts and path configuration](docs/APPLICATION_INTEGRATION.md).
+
+The examples in this repository are hosted here for distribution. When following
+a starter, open that **example's folder** as the application workspace; its own
+LiTheView submodule demonstrates the dependency relationship. You do not need to
+put your product inside this repository or adopt its library-development layout.
+
 ## Getting started
 
 **New machine? Start with [Install tools, build and run LiTheView](docs/BUILD_ENVIRONMENT.md).**

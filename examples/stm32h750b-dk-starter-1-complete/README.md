@@ -1,5 +1,13 @@
 # H750 starter 1: completed first display
 
+**This folder is the application root for the exercise.** Its placement inside
+LiTheView's `examples/` is for distribution. In your own product, your application
+is the superproject and LiTheView is a dependency inside it. This example uses
+`Middlewares/Third_Party/LiTheView/` and keeps its UI in `Tasks/UI/`; you can instead
+use `externals/LiTheView/` with `src/ui/`, or `UI/LiTheView/` with sibling forms and
+generated files. See [project layout options](../../docs/APPLICATION_INTEGRATION.md#choose-the-layout-that-fits-your-application).
+
+
 This is the expected end of the [guided starter](../stm32h750b-dk-starter-1/README.md).
 Open **this folder** as your VS Code workspace to build the finished lesson.
 To work through the exercise yourself, open the blank starter instead.

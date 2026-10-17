@@ -34,6 +34,30 @@ The [companion example](../tests/rendering/display-bringup/) is a working 128x96
 It supplies a starting point and a repeatable host check, not a driver for an unnamed panel. The
 hardware-specific steps below identify exactly what your board integration must implement.
 
+## Before step 1: use your application as the root
+
+LiTheView is a library within your product, not the superproject around it. Start
+from your application's existing source tree and open that root in VS Code.
+Keep its firmware and Windows simulator presets, startup code, drivers and tasks.
+Choose where to add the library and where your UI files should live:
+
+| Library location | Application-owned UI location |
+| --- | --- |
+| `Middlewares/Third_Party/LiTheView/` | `Tasks/UI/` |
+| `externals/LiTheView/` | `src/ui/` |
+| `UI/LiTheView/` | `UI/`, with forms and generated files alongside the dependency |
+
+You choose one layout; none is mandatory. Keep your forms, generated components
+and event handlers outside the library submodule. The **Add LiTheView UI** wizard
+records those directories, and your application build includes the library and
+generated component. Follow [application integration](APPLICATION_INTEGRATION.md#choose-the-layout-that-fits-your-application)
+for complete trees, relative path examples and CMake integration.
+
+The H750 starters happen to be distributed under this repository's `examples/`.
+For that exercise, the selected starter folder is the application root; its
+`Middlewares/Third_Party/LiTheView/` folder is the library dependency. Your own
+application does not need to live under a LiTheView checkout.
+
 ## 1. Collect the display and input specifications
 
 Before choosing a framebuffer, record the following from the panel/controller datasheet. Include
@@ -105,7 +129,8 @@ for a complete reproducible exercise, or follow [application integration](APPLIC
 for your own source layout. The starter assumes that the Windows and embedded applications already
 build, with their platform code and one RTOS task established.
 
-Install Designer 0.2.3 or later. The [extension guide](../tools/vscode/README.md) covers installation;
+Install the Designer version matching your library checkout. The
+[extension guide](../tools/vscode/README.md) covers installation;
 preparing the tools from source requires the .NET SDK selected by `tools/designer/global.json`.
 Compiling an application with checked generated C++ requires no designer or .NET SDK.
 
