@@ -1,0 +1,214 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "LitheView: VS Code Designer Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "${workspaceFolder}/examples",
+                "--extensionDevelopmentPath=${workspaceFolder}/tools/vscode",
+                "--disable-extensions"
+            ],
+            "preLaunchTask": "LitheView: prepare VS Code Designer"
+        },
+        {
+            "name": "LitheView: Designer Tutorial Simulator (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/designer-tutorial-debug/project/simulation/build/debug/host/litheview_generated_simulator.exe",
+            "cwd": "${workspaceFolder}/build/designer-tutorial-debug/project/simulation/build/debug/host",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "preLaunchTask": "LitheView: prepare Designer Tutorial Debug"
+        },
+        {
+            "name": "LitheView: Display Bring-up Simulator (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/display-bringup-debug/host/litheview_display_bringup_simulator.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/display-bringup-debug/host",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "preLaunchTask": "LitheView: prepare Display Bring-up Debug"
+        },
+        {
+            "name": "LitheView: Display Bring-up Checks (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/display-bringup-debug/host/litheview_display_bringup.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/display-bringup-debug/host",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "preLaunchTask": "LitheView: prepare Display Bring-up Debug"
+        },
+        {
+            "name": "Regression: Win32 XRGB8888 (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/windows-mingw-xrgb8888-product-debug/tests/rendering/win32/litheview_win32.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable GDB pretty printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Use Intel assembly syntax",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "LitheView: build Win32 XRGB8888 Debug"
+        },
+        {
+            "name": "Regression: Win32 RGB565 (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/windows-mingw-rgb565-product-debug/tests/rendering/win32/litheview_win32_rgb565.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable GDB pretty printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Use Intel assembly syntax",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "LitheView: build Win32 RGB565 Debug"
+        },
+        {
+            "name": "Regression: Round XRGB8888 (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/windows-mingw-xrgb8888-product-debug/tests/rendering/win32/litheview_win32_round.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "preLaunchTask": "LitheView: build Round XRGB8888 Debug"
+        },
+        {
+            "name": "Regression: Round RGB565 (MinGW Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/windows-mingw-rgb565-product-debug/tests/rendering/win32/litheview_win32_round_rgb565.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "preLaunchTask": "LitheView: build Round RGB565 Debug"
+        },
+        {
+            "name": "LitheView: Item 5 Widget Catalog CLI",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+            "args": [
+                "widget-schema",
+                "validate",
+                "${workspaceFolder}/schema/widgets.json"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "LitheView: build Item 5 Designer Debug"
+        },
+        {
+            "name": "LitheView: Item 5 Form Compiler CLI",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+            "args": [
+                "form",
+                "validate",
+                "${workspaceFolder}/tests/designer-fixtures/document-compiler-smoke/forms/main.litheview.xml",
+                "${workspaceFolder}/schema/widgets.json"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "LitheView: build Item 5 Designer Debug"
+        },
+        {
+            "name": "LitheView: Item 5 Native Preview CLI",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+            "args": [
+                "preview",
+                "render",
+                "${workspaceFolder}/tests/designer-fixtures/document-compiler-smoke/forms/main.litheview.xml",
+                "${workspaceFolder}/profiles/display-surfaces/stm32h750b-dk-rk043fn48h-rgb565.json",
+                "${workspaceFolder}/build/windows-mingw-debug/litheview_designer_preview_worker.exe",
+                "${workspaceFolder}/build/designer-preview/main-form-rgb565.raw"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "LitheView: prepare Item 5 Native Preview"
+        },
+        {
+            "name": "LitheView: Item 5 Resource Manifest CLI",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+            "args": [
+                "resource",
+                "verify",
+                "${workspaceFolder}/tests/designer-fixtures/resource-manifest-smoke/resources/status-icon.resource.json",
+                "${workspaceFolder}/tests/designer-fixtures/resource-manifest-smoke"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "LitheView: build Item 5 Designer Debug"
+        },
+        {
+            "name": "LitheView: Item 5 Visual Designer",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/designer/src/LitheView.Designer.App/bin/Debug/net10.0-windows/LitheView.Designer.App.dll",
+            "args": [
+                "--repository-root",
+                "${workspaceFolder}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "preLaunchTask": "LitheView: prepare Item 5 Native Preview"
+        }
+    ]
+}

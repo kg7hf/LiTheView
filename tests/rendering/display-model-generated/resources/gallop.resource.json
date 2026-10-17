@@ -1,0 +1,186 @@
+{
+  "$schema": "../../../schema/resource-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "gallop-icon",
+  "displayName": "Retained gallop static-frame icon",
+  "kind": "icon",
+  "source": {
+    "path": "assets/gallop_source.png",
+    "sha256": "71656c0af13f37460e70d9d674867ea6787fef02767ee7c461089d9926d47344",
+    "byteCount": 529618,
+    "mediaType": "image/png",
+    "provenance": {
+      "origin": "Original LitheView artwork generated with the OpenAI image-generation tool on 2026-08-30; byte-for-byte copy of assets/animations/gallop_source.png.",
+      "author": "LitheView project",
+      "sourceUri": null,
+      "notes": "See tests/rendering/assets/animations/README.md in the repository for the retained generation prompt and project licensing. This fixture selects the first 384x512 source cell and scales it to 96x72 with nearest-neighbor sampling.",
+      "license": {
+        "spdxId": "GPL-3.0-only",
+        "licenseTextPath": null,
+        "licenseTextSha256": null,
+        "attribution": "Paul R. Decker; LiTheView artwork with recorded image-generation provenance and subsequent project edits.",
+        "redistributionApproved": true
+      }
+    }
+  },
+  "compliance": {
+    "missingProvenance": "error",
+    "missingLicense": "error",
+    "unapprovedRedistribution": "error"
+  },
+  "variants": [
+    {
+      "id": "r2",
+      "compatiblePainterFormats": [
+        "r2Packed2x2",
+        "rrrr2222",
+        "ryry2222"
+      ],
+      "converter": {
+        "id": "litheview.converter.image.gdiplus",
+        "version": "1.0.0",
+        "options": {
+          "alphaMode": "Preserve",
+          "alphaThreshold": "128",
+          "cropHeight": "512",
+          "cropWidth": "384",
+          "cropX": "0",
+          "cropY": "0",
+          "dither": "None",
+          "entryPoint": "gallopR2",
+          "format": "r2Packed2x2",
+          "height": "72",
+          "kind": "icon",
+          "matteArgb": "ffffffff",
+          "paletteArgb": "",
+          "scaleMode": "NearestNeighbor",
+          "symbol": "GallopR2",
+          "tintArgb": "ffff0000",
+          "tintable": "false",
+          "width": "96"
+        }
+      },
+      "output": {
+        "path": "generated/resources/gallop-r2.cpp",
+        "sha256": "8cac446acf4b45ddafa83f65c77ca02f09487100859dc906540c114b38e1d9cd",
+        "byteCount": 34562,
+        "format": "r2Packed2x2",
+        "pixelSize": {
+          "width": 96,
+          "height": 72
+        },
+        "frameCount": 1
+      },
+      "image": {
+        "tintable": false,
+        "sourcePixelSize": {
+          "width": 1536,
+          "height": 1024
+        },
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "width": 384,
+          "height": 512
+        },
+        "scaleMode": "nearestNeighbor",
+        "alphaMode": "preserve",
+        "alphaThreshold": 128,
+        "dither": "none",
+        "tintArgb": "ffff0000",
+        "matteArgb": "ffffffff",
+        "paletteArgb": "",
+        "strideBytes": 48,
+        "pixelBytes": 1728,
+        "paletteBytes": 0,
+        "estimatedRomBytes": 1728,
+        "pixelChecksumFnv1a32": "0xfecb162a",
+        "paletteChecksumFnv1a32": "0x811c9dc5",
+        "dataChecksumFnv1a32": "0xfecb162a"
+      },
+      "integration": {
+        "ownership": "application",
+        "lifetime": "static",
+        "providerId": null,
+        "notes": "Compile the selected immutable C++ source; the generated ResourceProvider borrows its static Bitmap."
+      }
+    },
+    {
+      "id": "alpha1",
+      "compatiblePainterFormats": [
+        "rgb565",
+        "rgb888",
+        "xrgb8888",
+        "argb8888"
+      ],
+      "converter": {
+        "id": "litheview.converter.image.gdiplus",
+        "version": "1.0.0",
+        "options": {
+          "alphaMode": "Preserve",
+          "alphaThreshold": "128",
+          "cropHeight": "512",
+          "cropWidth": "384",
+          "cropX": "0",
+          "cropY": "0",
+          "dither": "None",
+          "entryPoint": "gallopAlpha1",
+          "format": "alpha1",
+          "height": "72",
+          "kind": "icon",
+          "matteArgb": "ffffffff",
+          "paletteArgb": "",
+          "scaleMode": "NearestNeighbor",
+          "symbol": "GallopAlpha1",
+          "tintArgb": "ffff0000",
+          "tintable": "true",
+          "width": "96"
+        }
+      },
+      "output": {
+        "path": "generated/resources/gallop-alpha1.cpp",
+        "sha256": "e223673c525286c9304c44ce477b766499935e76e712fe7fac99ee048506b1cd",
+        "byteCount": 18164,
+        "format": "alpha1",
+        "pixelSize": {
+          "width": 96,
+          "height": 72
+        },
+        "frameCount": 1
+      },
+      "image": {
+        "tintable": true,
+        "sourcePixelSize": {
+          "width": 1536,
+          "height": 1024
+        },
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "width": 384,
+          "height": 512
+        },
+        "scaleMode": "nearestNeighbor",
+        "alphaMode": "preserve",
+        "alphaThreshold": 128,
+        "dither": "none",
+        "tintArgb": "ffff0000",
+        "matteArgb": "ffffffff",
+        "paletteArgb": "",
+        "strideBytes": 12,
+        "pixelBytes": 864,
+        "paletteBytes": 0,
+        "estimatedRomBytes": 864,
+        "pixelChecksumFnv1a32": "0xf493ccea",
+        "paletteChecksumFnv1a32": "0x811c9dc5",
+        "dataChecksumFnv1a32": "0xf493ccea"
+      },
+      "integration": {
+        "ownership": "application",
+        "lifetime": "static",
+        "providerId": null,
+        "notes": "Compile the selected immutable C++ source; the generated ResourceProvider borrows its static Bitmap."
+      }
+    }
+  ]
+}

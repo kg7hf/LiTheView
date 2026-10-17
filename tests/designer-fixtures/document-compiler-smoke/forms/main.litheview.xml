@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.main" displayName="Main Form" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-action id="action.back" runtimeId="100" symbol="Back"-->
+<!--litheview-action id="action.open" runtimeId="101" symbol="Open"-->
+<!--litheview-binding id="binding.device-name" runtimeName="device-name" symbol="DeviceName" kind="mutableText" capacityBytes="24"-->
+<!--litheview-theme-color id="theme.content" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.disabled-content" encodedColor="00786f6a"-->
+<!--litheview-theme-color id="theme.disabled-surface" encodedColor="00dcd4d0"-->
+<!--litheview-theme-color id="theme.on-primary" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.primary" encodedColor="00df6c2d"-->
+<!--litheview-theme-color id="theme.primary-pressed" encodedColor="00b35724"-->
+<!--litheview-theme-color id="theme.surface" encodedColor="00223344"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="accent-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="background-color" tokenId="theme.surface"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="disabled-background-color" tokenId="theme.disabled-surface"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="disabled-foreground-color" tokenId="theme.disabled-content"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.main.open" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.main.root" propertyId="background-color" tokenId="theme.surface"-->
+<!--litheview-component id="component.main.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00223344">
+  <!--litheview-component id="component.main.open" name="openButton"-->
+  <button frame="8,8,144,36" runtimeID="41" backgroundColor="0x00223344" textColor="0x00ffffff" accentColor="0x00df6c2d" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" disabledBackgroundColor="0x00dcd4d0" disabledForegroundColor="0x00786f6a" text="OPEN AND RUN" />
+  <!--litheview-component id="component.main.name" name="nameField"-->
+  <textfield frame="8,52,464,32" binding="device-name" placeholder="DEVICE NAME" maxLength="23" />
+  <!--litheview-component id="component.main.softkeys" name="softkeyBar"-->
+  <softkey frame="0,240,480,32" left_text="BACK" right_text="OPEN" leftAction="100" rightAction="101" />
+</panel>

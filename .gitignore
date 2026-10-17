@@ -1,0 +1,22 @@
+# Generated build trees and installed-package validation output
+/build/
+/CMakeUserPresets.json
+/saved_examples/
+/tools/designer/**/bin/
+/tools/designer/**/obj/
+/tools/designer/.dotnet-home/
+
+# IDE-local state (shared launch and task definitions remain tracked)
+/.vs/
+/.vscode/*.log
+*.suo
+*.user
+
+# Operating-system and editor detritus
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Private retained source and history snapshots
+/.local-retained/

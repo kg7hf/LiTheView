@@ -1,0 +1,76 @@
+{
+  "$schema": "../../schema/display-definition.schema.json",
+  "schemaVersion": 2,
+  "id": "litheview.definition.software.rk043fn48h-rgb565",
+  "displayName": "rk043fn48h-rgb565 compiled software surface",
+  "geometry": {
+    "width": 480,
+    "height": 272,
+    "shape": "rectangle",
+    "rotationDegrees": 0,
+    "safeArea": {
+      "x": 0,
+      "y": 0,
+      "width": 480,
+      "height": 272
+    }
+  },
+  "addressSpace": "pixels",
+  "format": "rgb565",
+  "storageBlock": {
+    "width": 1,
+    "height": 1,
+    "bytes": 2
+  },
+  "channelModel": "rgb",
+  "fields": [
+    {
+      "channel": "red",
+      "bitOffset": 11,
+      "bitWidth": 5,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "channel": "green",
+      "bitOffset": 5,
+      "bitWidth": 6,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "channel": "blue",
+      "bitOffset": 0,
+      "bitWidth": 5,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "composition": {
+    "sourceAlpha": true,
+    "coverage": true,
+    "sourceOver": true,
+    "destinationAlpha": false
+  },
+  "resourceFormats": [
+    "alpha1",
+    "alpha8",
+    "indexed4",
+    "rgb565",
+    "rgb888",
+    "xrgb8888",
+    "argb8888",
+    "r2Packed2x2"
+  ],
+  "source": {
+    "status": "softwareContract",
+    "reference": "Repository software packing and geometry contract; physical panel source verification is separate.",
+    "sha256": null
+  }
+}

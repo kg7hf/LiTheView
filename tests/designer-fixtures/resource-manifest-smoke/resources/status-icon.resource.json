@@ -1,0 +1,110 @@
+{
+  "$schema": "../../../../schema/resource-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.resource.status-icon",
+  "displayName": "Status Icon",
+  "kind": "icon",
+  "source": {
+    "path": "assets/status-icon.svg",
+    "sha256": "e4c4d1f9c1a6991616701d23232d06a592b696df6ead618db95dddb906e00a8d",
+    "byteCount": 123,
+    "mediaType": "image/svg+xml",
+    "provenance": {
+      "origin": "Original deterministic fixture created by the LitheView project.",
+      "author": "LitheView contributors",
+      "sourceUri": null,
+      "notes": "This small source proves manifest identity and artifact locking; it is not the production image converter golden.",
+      "license": {
+        "spdxId": "CC0-1.0",
+        "licenseTextPath": "licenses/CC0-1.0.txt",
+        "licenseTextSha256": "cbdb2322599d546d2a222b96de1ae5aa35e304d715c83df56cdc28236a86e4c9",
+        "attribution": "LitheView deterministic resource-manifest smoke fixture",
+        "redistributionApproved": true
+      }
+    }
+  },
+  "compliance": {
+    "missingProvenance": "error",
+    "missingLicense": "error",
+    "unapprovedRedistribution": "error"
+  },
+  "variants": [
+    {
+      "id": "alpha1",
+      "compatiblePainterFormats": [
+        "argb8888",
+        "rgb565",
+        "rgb888",
+        "xrgb8888"
+      ],
+      "converter": {
+        "id": "litheview.converter.icon",
+        "version": "1.0.0-contract",
+        "options": {
+          "alphaMode": "Threshold",
+          "alphaThreshold": "128",
+          "cropHeight": "8",
+          "cropWidth": "8",
+          "cropX": "0",
+          "cropY": "0",
+          "dither": "None",
+          "entryPoint": "statusIcon",
+          "format": "alpha1",
+          "height": "8",
+          "kind": "icon",
+          "matteArgb": "ff000000",
+          "paletteArgb": "",
+          "scaleMode": "NearestNeighbor",
+          "symbol": "StatusIcon",
+          "tintArgb": "ffffffff",
+          "tintable": "true",
+          "width": "8"
+        }
+      },
+      "output": {
+        "path": "generated/status-icon-alpha1.bin",
+        "sha256": "ed4e39dabe164d2e5c847d542605879083a70e5992614272ce401fc31cf9ae48",
+        "byteCount": 8,
+        "format": "alpha1",
+        "pixelSize": {
+          "width": 8,
+          "height": 8
+        },
+        "frameCount": 1
+      },
+      "image": {
+        "tintable": true,
+        "sourcePixelSize": {
+          "width": 8,
+          "height": 8
+        },
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "width": 8,
+          "height": 8
+        },
+        "scaleMode": "nearestNeighbor",
+        "alphaMode": "threshold",
+        "alphaThreshold": 128,
+        "dither": "none",
+        "tintArgb": "ffffffff",
+        "matteArgb": "ff000000",
+        "paletteArgb": "",
+        "strideBytes": 1,
+        "pixelBytes": 8,
+        "paletteBytes": 0,
+        "estimatedRomBytes": 8,
+        "pixelChecksumFnv1a32": "0x8db44054",
+        "paletteChecksumFnv1a32": "0x811c9dc5",
+        "dataChecksumFnv1a32": "0x8db44054"
+      },
+      "integration": {
+        "ownership": "application",
+        "lifetime": "static",
+        "providerId": null,
+        "notes": "The application owns the immutable payload and supplies it through the LitheView resource-provider boundary."
+      }
+    }
+  ]
+}

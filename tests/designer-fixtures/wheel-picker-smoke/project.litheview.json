@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../schema/project-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.project.wheel-picker-smoke",
+  "displayName": "Wheel Picker Smoke Test",
+  "schemaCompatibility": {
+    "displaySurface": 1,
+    "projectManifest": 1,
+    "form": 1,
+    "resourceManifest": 1,
+    "extensionManifest": 1
+  },
+  "surfaceProfile": {
+    "id": "litheview.surface.stm32h750b-dk-rk043fn48h-rgb565",
+    "sha256": "335b8cf89656605b35abfdd8c55796665082fbf0b1af763e6fb17d728982ef10"
+  },
+  "forms": [
+    "forms/main.litheview.xml"
+  ],
+  "resourceManifests": [],
+  "extensions": []
+}

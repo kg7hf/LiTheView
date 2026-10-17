@@ -1,0 +1,10 @@
+{
+  "$schema": "../../schema/logical-input-configuration.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.input.encoder-select",
+  "pointer": false,
+  "keys": false,
+  "text": false,
+  "encoder": true,
+  "select": true
+}

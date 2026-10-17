@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/project-manifest.schema.json",
+  "title": "LitheView designer project manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "displayName",
+    "schemaCompatibility",
+    "forms",
+    "resourceManifests",
+    "extensions"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "enum": [1, 2, 3]
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "schemaCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectManifest",
+        "form",
+        "resourceManifest",
+        "extensionManifest"
+      ],
+      "properties": {
+        "displaySurface": {
+          "const": 1
+        },
+        "projectManifest": {
+          "enum": [1, 2, 3]
+        },
+        "displayDefinition": {
+          "const": 2
+        },
+        "logicalInput": {
+          "const": 1
+        },
+        "form": {
+          "const": 1
+        },
+        "resourceManifest": {
+          "const": 1
+        },
+        "extensionManifest": {
+          "const": 1
+        }
+      }
+    },
+    "surfaceProfile": {
+      "$ref": "#/$defs/profileLock"
+    },
+    "displayDefinition": {
+      "$ref": "#/$defs/profileLock"
+    },
+    "logicalInput": {
+      "$ref": "#/$defs/profileLock"
+    },
+    "forms": {
+      "$ref": "#/$defs/projectPaths"
+    },
+    "resourceManifests": {
+      "$ref": "#/$defs/projectPaths"
+    },
+    "extensions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "packagePath", "sha256", "required"],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "packagePath": {
+            "$ref": "#/$defs/projectPath"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "schemaVersion": { "const": 1 } } },
+      "then": {
+        "required": ["surfaceProfile"],
+        "properties": {
+          "displayDefinition": false,
+          "logicalInput": false,
+          "schemaCompatibility": {
+            "required": ["displaySurface"],
+            "properties": {
+              "projectManifest": { "const": 1 },
+              "displayDefinition": false,
+              "logicalInput": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "schemaVersion": { "const": 2 } } },
+      "then": {
+        "required": ["surfaceProfile", "displayDefinition", "logicalInput"],
+        "properties": {
+          "schemaCompatibility": {
+            "required": ["displaySurface", "displayDefinition", "logicalInput"],
+            "properties": { "projectManifest": { "const": 2 } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "schemaVersion": { "const": 3 } } },
+      "then": {
+        "required": ["displayDefinition", "logicalInput"],
+        "properties": {
+          "surfaceProfile": false,
+          "schemaCompatibility": {
+            "required": ["displayDefinition", "logicalInput"],
+            "properties": {
+              "projectManifest": { "const": 3 },
+              "displaySurface": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "profileLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "projectPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "projectPaths": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/projectPath"
+      }
+    }
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/display-surface.schema.json",
+  "title": "LitheView display-surface profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "displayName",
+    "compatibilityFamily",
+    "shape",
+    "physicalSize",
+    "pixelSize",
+    "coordinateSystem",
+    "painterSurface",
+    "nativeDisplay",
+    "safeArea",
+    "inputCapabilities",
+    "provenance"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "compatibilityFamily": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "shape": {
+      "enum": ["rectangle", "square", "circle"]
+    },
+    "physicalSize": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["widthMillimeters", "heightMillimeters"],
+          "properties": {
+            "widthMillimeters": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 2000
+            },
+            "heightMillimeters": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 2000
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["diameterMillimeters"],
+          "properties": {
+            "diameterMillimeters": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 2000
+            }
+          }
+        }
+      ]
+    },
+    "pixelSize": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        }
+      }
+    },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "rotationDegrees"],
+      "properties": {
+        "origin": {
+          "const": "topLeft"
+        },
+        "rotationDegrees": {
+          "enum": [0, 90, 180, 270]
+        }
+      }
+    },
+    "painterSurface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "colorDepthBits", "storageBitsPerPixel"],
+      "properties": {
+        "format": {
+          "enum": ["rgb565", "rgb888", "xrgb8888", "argb8888"]
+        },
+        "colorDepthBits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "storageBitsPerPixel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      }
+    },
+    "nativeDisplay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["colorModel", "colorDepthBits", "transferUnitBits", "transferFormat"],
+      "properties": {
+        "colorModel": {
+          "enum": ["rgb", "redLuminanceSubpixels", "redYellowFullPixel"]
+        },
+        "colorDepthBits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "transferUnitBits": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "transferFormat": {
+          "enum": ["rgb565", "rgb888Parallel", "argb8888", "packed8"]
+        }
+      }
+    },
+    "safeArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "inputCapabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["touch", "keyboard", "encoder", "pushButton"]
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manufacturer",
+        "model",
+        "sourceUrl",
+        "sourceDocument",
+        "sourceSha256",
+        "notes"
+      ],
+      "properties": {
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "sourceDocument": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sourceSha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

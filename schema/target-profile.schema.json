@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/target-profile.schema.json",
+  "title": "LitheView target profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "displayName",
+    "compatibilityFamily",
+    "baseProfile",
+    "surfaceCompatibility",
+    "runtime",
+    "capacities",
+    "budgets",
+    "resourceStorage",
+    "supportedResourceFormats",
+    "provenance"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "compatibilityFamily": {
+      "$ref": "#/$defs/identifier"
+    },
+    "baseProfile": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["profileId", "sha256", "explicitOverrides"],
+          "properties": {
+            "profileId": {
+              "$ref": "#/$defs/identifier"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "explicitOverrides": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "displayName",
+                  "compatibilityFamily",
+                  "surfaceCompatibility",
+                  "runtime",
+                  "capacities",
+                  "budgets",
+                  "resourceStorage",
+                  "supportedResourceFormats",
+                  "provenance"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "surfaceCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "painterFormats"],
+      "properties": {
+        "family": {
+          "$ref": "#/$defs/identifier"
+        },
+        "painterFormats": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["rgb565", "rgb888", "xrgb8888", "argb8888", "r2Packed2x2", "rrrr2222", "ryry2222"]
+          }
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["architecture", "environment", "renderingMode", "tile"],
+      "properties": {
+        "architecture": {
+          "enum": ["win32X64", "cortexM33", "cortexM7"]
+        },
+        "environment": {
+          "enum": ["windows", "bareMetal", "freeRtos"]
+        },
+        "renderingMode": {
+          "enum": ["fullFrame", "tiled"]
+        },
+        "tile": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/pixelSize"
+            }
+          ]
+        }
+      }
+    },
+    "capacities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxChildrenPerView",
+        "maxDamageRegions",
+        "maxControllerDepth",
+        "maxFocusableViews"
+      ],
+      "properties": {
+        "maxChildrenPerView": {
+          "const": 16
+        },
+        "maxDamageRegions": {
+          "const": 8
+        },
+        "maxControllerDepth": {
+          "const": 8
+        },
+        "maxFocusableViews": {
+          "const": 64
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archiveText",
+        "initializedData",
+        "bss",
+        "stackFrame",
+        "staticObject",
+        "tileWorkspace",
+        "framebuffer",
+        "internalFlash",
+        "internalRam",
+        "externalRam"
+      ],
+      "properties": {
+        "archiveText": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "initializedData": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "bss": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "stackFrame": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "staticObject": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "tileWorkspace": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "framebuffer": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "internalFlash": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "internalRam": {
+          "$ref": "#/$defs/optionalBudget"
+        },
+        "externalRam": {
+          "$ref": "#/$defs/optionalBudget"
+        }
+      }
+    },
+    "resourceStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultPlacement", "allowedPlacements", "alignmentBytes"],
+      "properties": {
+        "defaultPlacement": {
+          "$ref": "#/$defs/resourcePlacement"
+        },
+        "allowedPlacements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/resourcePlacement"
+          }
+        },
+        "alignmentBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        }
+      }
+    },
+    "supportedResourceFormats": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["alpha1", "alpha8", "indexed4", "rgb565", "rgb888", "xrgb8888", "argb8888", "r2Packed2x2"]
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourcePaths", "notes"],
+      "properties": {
+        "sourcePaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          }
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pixelSize": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maximumBytes", "enforcement", "source"],
+      "properties": {
+        "maximumBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "enforcement": {
+          "enum": [
+            "archiveGate",
+            "buildGate",
+            "compilerDiagnostic",
+            "linkerRegion",
+            "compileTimeAssertion",
+            "advisoryEstimate"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    },
+    "optionalBudget": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/budget"
+        }
+      ]
+    },
+    "resourcePlacement": {
+      "enum": ["internalFlash", "externalQspi", "hostFile", "applicationProvider"]
+    }
+  }
+}

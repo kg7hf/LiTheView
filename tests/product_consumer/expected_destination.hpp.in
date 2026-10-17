@@ -1,0 +1,8 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include <lithe/pixel_format.hpp>
+
+inline constexpr auto kExpectedDestination = lithe::PixelFormat::@expected_destination_enum@;

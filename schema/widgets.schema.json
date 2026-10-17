@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/widgets.schema.json",
+  "title": "LitheView widget catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "compatibilityVersion",
+    "id",
+    "displayName",
+    "properties",
+    "widgets",
+    "migrations"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1, "maxLength": 240 },
+    "schemaVersion": { "const": 1 },
+    "compatibilityVersion": { "type": "integer", "minimum": 1 },
+    "id": { "$ref": "#/$defs/id" },
+    "displayName": { "$ref": "#/$defs/displayName" },
+    "properties": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 512,
+      "items": { "$ref": "#/$defs/property" }
+    },
+    "widgets": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 512,
+      "items": { "$ref": "#/$defs/widget" }
+    },
+    "migrations": {
+      "type": "array",
+      "maxItems": 512,
+      "items": { "$ref": "#/$defs/migration" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$",
+      "maxLength": 128
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "stringArray": {
+      "type": "array",
+      "maxItems": 512,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 160 }
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "displayName",
+        "kind",
+        "xmlName",
+        "xmlAliases",
+        "xmlTransform",
+        "cppMember",
+        "defaultValue",
+        "required",
+        "enumValues",
+        "documentation"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" },
+        "kind": {
+          "enum": [
+            "boolean",
+            "signedInteger",
+            "unsignedInteger",
+            "enum",
+            "color",
+            "text",
+            "boundedText",
+            "rectangle",
+            "duration",
+            "actionId",
+            "bindingId",
+            "font",
+            "bitmap",
+            "animationFrames"
+          ]
+        },
+        "xmlName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "xmlAliases": { "$ref": "#/$defs/stringArray" },
+        "xmlTransform": {
+          "enum": ["direct", "invertBoolean", "consecutiveSequence", "triStateBoolean"]
+        },
+        "cppMember": { "type": "string", "pattern": "^(spec|state)\\.[A-Za-z_][A-Za-z0-9_.]*$" },
+        "defaultValue": {},
+        "minimum": { "type": "integer" },
+        "maximum": { "type": "integer" },
+        "units": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "required": { "type": "boolean" },
+        "enumValues": { "$ref": "#/$defs/stringArray" },
+        "documentation": { "type": "string", "minLength": 1, "maxLength": 640 }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "xml": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["element", "elementAliases", "legacyClass", "legacyClassAliases"],
+      "properties": {
+        "element": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "elementAliases": { "$ref": "#/$defs/stringArray" },
+        "legacyClass": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$", "maxLength": 80 },
+        "legacyClassAliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$", "maxLength": 80 }
+        },
+        "discriminatorPropertyId": { "$ref": "#/$defs/id" }
+      }
+    },
+    "parentRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rootAllowed", "allowedParentIds"],
+      "properties": {
+        "rootAllowed": { "type": "boolean" },
+        "allowedParentIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 512,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "event", "runtimeActionSource"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" },
+        "event": { "$ref": "#/$defs/id" },
+        "runtimeActionSource": { "type": "string", "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "propertyId", "direction"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" },
+        "propertyId": { "$ref": "#/$defs/id" },
+        "direction": { "enum": ["oneWay", "twoWay"] }
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "propertyId", "required"],
+      "properties": {
+        "kind": { "enum": ["font", "bitmap", "animationFrames", "mutableTextBuffer"] },
+        "propertyId": { "$ref": "#/$defs/id" },
+        "required": { "type": "boolean" }
+      }
+    },
+    "widget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "displayName",
+        "runtimeKind",
+        "cppType",
+        "paletteGroup",
+        "help",
+        "defaultGeometry",
+        "xml",
+        "parentRule",
+        "childPolicy",
+        "propertyIds",
+        "actions",
+        "bindings",
+        "states",
+        "inputCapabilities",
+        "resources"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" },
+        "runtimeKind": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+        "cppType": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_:]*$" },
+        "paletteGroup": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "help": { "type": "string", "minLength": 1, "maxLength": 640 },
+        "defaultGeometry": { "$ref": "#/$defs/geometry" },
+        "xml": { "$ref": "#/$defs/xml" },
+        "parentRule": { "$ref": "#/$defs/parentRule" },
+        "childPolicy": { "enum": ["none", "many"] },
+        "propertyIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "actions": { "type": "array", "items": { "$ref": "#/$defs/action" } },
+        "bindings": { "type": "array", "items": { "$ref": "#/$defs/binding" } },
+        "states": { "type": "array", "items": { "$ref": "#/$defs/state" } },
+        "inputCapabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["keys", "pointerInput", "textInput", "elapsedTime"] }
+        },
+        "resources": { "type": "array", "items": { "$ref": "#/$defs/resource" } }
+      }
+    },
+    "migration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fromCompatibilityVersion",
+        "toCompatibilityVersion",
+        "kind",
+        "fromId",
+        "toId"
+      ],
+      "properties": {
+        "fromCompatibilityVersion": { "type": "integer", "minimum": 1 },
+        "toCompatibilityVersion": { "type": "integer", "minimum": 2 },
+        "kind": { "enum": ["renameWidget", "renameProperty"] },
+        "widgetId": { "$ref": "#/$defs/id" },
+        "fromId": { "$ref": "#/$defs/id" },
+        "toId": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "../../../../schema/target-profile.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.target.synthetic-r2-tiled",
+  "displayName": "Synthetic R2 tiled budget fixture",
+  "compatibilityFamily": "litheview.target-family.synthetic",
+  "baseProfile": null,
+  "surfaceCompatibility": {
+    "family": "litheview.surface-family.synthetic",
+    "painterFormats": [
+      "r2Packed2x2"
+    ]
+  },
+  "runtime": {
+    "architecture": "cortexM33",
+    "environment": "bareMetal",
+    "renderingMode": "tiled",
+    "tile": {
+      "width": 512,
+      "height": 2
+    }
+  },
+  "capacities": {
+    "maxChildrenPerView": 16,
+    "maxDamageRegions": 8,
+    "maxControllerDepth": 8,
+    "maxFocusableViews": 64
+  },
+  "budgets": {
+    "archiveText": null,
+    "initializedData": null,
+    "bss": null,
+    "stackFrame": null,
+    "staticObject": null,
+    "tileWorkspace": {
+      "maximumBytes": 256,
+      "enforcement": "compileTimeAssertion",
+      "source": "Synthetic acceptance fixture; not a linked target measurement"
+    },
+    "framebuffer": null,
+    "internalFlash": null,
+    "internalRam": null,
+    "externalRam": null
+  },
+  "resourceStorage": {
+    "defaultPlacement": "internalFlash",
+    "allowedPlacements": [
+      "internalFlash",
+      "applicationProvider"
+    ],
+    "alignmentBytes": 4
+  },
+  "supportedResourceFormats": [
+    "alpha1",
+    "alpha8",
+    "indexed4",
+    "rgb565",
+    "r2Packed2x2"
+  ],
+  "provenance": {
+    "sourcePaths": [
+      "tests/rendering/display-model-generated/targets/synthetic-r2-tiled.json"
+    ],
+    "notes": "Synthetic storage and budget test only. No display controller, transport protocol or physical hardware is modeled."
+  }
+}

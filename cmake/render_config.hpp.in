@@ -1,0 +1,50 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include "lithe/pixel_format.hpp"
+
+namespace lithe
+{
+
+namespace render_config
+{
+
+// Generated with the archive and installed with its public headers. Consumers
+// select a different destination by configuring a separate library build.
+// clang-format off
+inline constexpr bool kRgb565Enabled{@litheview_RGB565_enabled@};
+inline constexpr bool kRgb888Enabled{@litheview_RGB888_enabled@};
+inline constexpr bool kXrgb8888Enabled{@litheview_XRGB8888_enabled@};
+inline constexpr bool kArgb8888Enabled{@litheview_ARGB8888_enabled@};
+inline constexpr bool kR2Packed2x2Enabled{@litheview_R2_PACKED2X2_enabled@};
+inline constexpr bool kRrrr2222Enabled{@litheview_RRRR2222_enabled@};
+inline constexpr bool kRyry2222Enabled{@litheview_RYRY2222_enabled@};
+// clang-format on
+
+} // namespace render_config
+
+[[nodiscard]] constexpr bool supportsDestination(PixelFormat format) noexcept
+{
+    switch (format)
+    {
+    case PixelFormat::rgb565:
+        return render_config::kRgb565Enabled;
+    case PixelFormat::rgb888:
+        return render_config::kRgb888Enabled;
+    case PixelFormat::xrgb8888:
+        return render_config::kXrgb8888Enabled;
+    case PixelFormat::argb8888:
+        return render_config::kArgb8888Enabled;
+    case PixelFormat::r2Packed2x2:
+        return render_config::kR2Packed2x2Enabled;
+    case PixelFormat::rrrr2222:
+        return render_config::kRrrr2222Enabled;
+    case PixelFormat::ryry2222:
+        return render_config::kRyry2222Enabled;
+    }
+    return false;
+}
+
+} // namespace lithe

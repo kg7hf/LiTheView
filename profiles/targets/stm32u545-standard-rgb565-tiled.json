@@ -1,0 +1,88 @@
+{
+  "$schema": "../../schema/target-profile.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.target.stm32u545-standard-rgb565-tiled",
+  "displayName": "STM32U545 Standard RGB565 Tiled",
+  "compatibilityFamily": "litheview.target-family.stm32u545",
+  "baseProfile": null,
+  "surfaceCompatibility": {
+    "family": "litheview.surface-family.rk043fn48h-480x272",
+    "painterFormats": [
+      "rgb565"
+    ]
+  },
+  "runtime": {
+    "architecture": "cortexM33",
+    "environment": "bareMetal",
+    "renderingMode": "tiled",
+    "tile": {
+      "width": 480,
+      "height": 4
+    }
+  },
+  "capacities": {
+    "maxChildrenPerView": 16,
+    "maxDamageRegions": 8,
+    "maxControllerDepth": 8,
+    "maxFocusableViews": 64
+  },
+  "budgets": {
+    "archiveText": {
+      "maximumBytes": 85200,
+      "enforcement": "archiveGate",
+      "source": "CMakeLists.txt litheview_embedded_max_text_bytes compact alpha1"
+    },
+    "initializedData": {
+      "maximumBytes": 256,
+      "enforcement": "archiveGate",
+      "source": "CMakeLists.txt litheview_embedded_budget"
+    },
+    "bss": {
+      "maximumBytes": 256,
+      "enforcement": "archiveGate",
+      "source": "CMakeLists.txt litheview_embedded_budget"
+    },
+    "stackFrame": {
+      "maximumBytes": 4096,
+      "enforcement": "buildGate",
+      "source": "CMakeLists.txt LITHEVIEW_EMBEDDED_STACK_FRAME_LIMIT"
+    },
+    "staticObject": {
+      "maximumBytes": 16000,
+      "enforcement": "compileTimeAssertion",
+      "source": "tests/rendering/stm32u545re-q/graphics_probe.hpp GraphicsProbe"
+    },
+    "tileWorkspace": {
+      "maximumBytes": 3840,
+      "enforcement": "compileTimeAssertion",
+      "source": "tests/rendering/stm32u545re-q/graphics_probe.hpp GraphicsProbe kStripBytes"
+    },
+    "framebuffer": null,
+    "internalFlash": null,
+    "internalRam": null,
+    "externalRam": null
+  },
+  "resourceStorage": {
+    "defaultPlacement": "internalFlash",
+    "allowedPlacements": [
+      "internalFlash",
+      "applicationProvider"
+    ],
+    "alignmentBytes": 4
+  },
+  "supportedResourceFormats": [
+    "alpha1",
+    "alpha8",
+    "indexed4",
+    "rgb565"
+  ],
+  "provenance": {
+    "sourcePaths": [
+      "CMakeLists.txt",
+      "docs/CONFORMANCE.md",
+      "tests/rendering/stm32u545re-q/README.md",
+      "tests/rendering/stm32u545re-q/graphics_probe.hpp"
+    ],
+    "notes": "This is the compact-font, alpha1-animation acceptance profile. Archive, data, BSS, stack-frame, strip-workspace, and complete-probe ceilings remain hard. It is a displayless cross-build profile and is not physical-panel evidence."
+  }
+}

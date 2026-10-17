@@ -1,0 +1,19 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include "gallop_animation.hpp"
+#include "lithe/font.hpp"
+
+namespace lithe::demo::config
+{
+
+// The CMake substitution token is not C++ syntax; the configured declaration follows house style.
+// clang-format off
+inline constexpr BuiltInFontBackend kFontBackend{BuiltInFontBackend::@litheview_demo_font@};
+inline constexpr GallopResourceFormat kAnimationFormat{
+    GallopResourceFormat::@litheview_demo_animation@};
+// clang-format on
+
+} // namespace lithe::demo::config

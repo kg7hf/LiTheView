@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.display-conformance" displayName="Display Conformance" surfaceProfileId="litheview.definition.software.synthetic-r2"-->
+<!--litheview-resource id="resource.gallop" runtimeName="gallop-icon" symbol="GallopIcon" kind="bitmap"-->
+<!--litheview-component id="component.root" name="rootPanel"-->
+<panel frame="0,0,512,384" backgroundColor="0x00000000">
+  <!--litheview-component id="component.image" name="gallopImage"-->
+  <image frame="48,48,96,72" imageName="gallop-icon" />
+  <!--litheview-component id="component.previous" name="previousButton"-->
+  <button frame="48,136,56,28" runtimeID="10" backgroundColor="0x000000ff" textColor="0x00ffffff" accentColor="0x0000ffff" text="PREV" />
+  <!--litheview-component id="component.next" name="nextButton"-->
+  <button frame="112,136,56,28" runtimeID="11" backgroundColor="0x000000ff" textColor="0x00ffffff" accentColor="0x0000ffff" text="NEXT" />
+</panel>

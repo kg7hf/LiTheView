@@ -1,0 +1,114 @@
+{
+  "name": "litheview-designer",
+  "displayName": "LiTheView Designer",
+  "description": "Edit LiTheView forms inside your embedded application workspace.",
+  "version": "0.2.11",
+  "publisher": "litheview",
+  "license": "GPL-3.0-only",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "main": "./extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onCustomEditor:litheview.formDesigner"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Form source remains editable; designer services require workspace trust."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "The native designer requires a local Windows application workspace."
+    }
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "litheview.formDesigner",
+        "displayName": "LiTheView Designer",
+        "selector": [
+          {
+            "filenamePattern": "*.litheview.xml"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      {
+        "command": "litheview.addUi",
+        "title": "LiTheView: Add LiTheView UI"
+      },
+      {
+        "command": "litheview.openDesigner",
+        "title": "LiTheView: Open Designer"
+      },
+      {
+        "command": "litheview.generateUi",
+        "title": "LiTheView: Generate UI"
+      },
+      {
+        "command": "litheview.projectSetup",
+        "title": "LiTheView: Configure"
+      },
+      {
+        "command": "litheview.viewSource",
+        "title": "LiTheView: View Form Source"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "litheview.generateUi",
+          "when": "activeCustomEditorId == litheview.formDesigner",
+          "group": "navigation"
+        },
+        {
+          "command": "litheview.viewSource",
+          "when": "activeCustomEditorId == litheview.formDesigner",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "LiTheView Designer",
+      "properties": {
+        "litheview.libraryRoot": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "Optional library checkout override, relative to the application workspace root. Normally resolved from project.litheview.paths.json."
+        },
+        "litheview.servicePath": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "Optional designer service DLL or executable, relative to the resolved library root."
+        },
+        "litheview.previewWorkerPath": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "Optional native preview worker executable, relative to the resolved library root."
+        },
+        "litheview.dotnetPath": {
+          "type": "string",
+          "default": "dotnet",
+          "scope": "resource",
+          "description": "dotnet executable used to launch the designer service DLL. Leave it as \"dotnet\" to use the first of DOTNET_ROOT, %USERPROFILE%\\.dotnet, PATH, and Program Files that has the .NET runtime the service needs."
+        }
+      }
+    }
+  }
+}

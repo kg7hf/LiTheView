@@ -1,0 +1,769 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/display-definition.schema.json",
+  "title": "LitheView compiled display definition, version 2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "displayName",
+    "geometry",
+    "addressSpace",
+    "format",
+    "storageBlock",
+    "channelModel",
+    "fields",
+    "composition",
+    "resourceFormats",
+    "source"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height",
+        "shape",
+        "rotationDegrees",
+        "safeArea"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "shape": {
+          "enum": [
+            "rectangle",
+            "square",
+            "circle"
+          ]
+        },
+        "rotationDegrees": {
+          "const": 0
+        },
+        "safeArea": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ],
+          "properties": {
+            "x": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 16384
+            },
+            "y": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 16384
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16384
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16384
+            }
+          }
+        }
+      }
+    },
+    "addressSpace": {
+      "enum": [
+        "pixels",
+        "cells",
+        "emitters"
+      ]
+    },
+    "format": {
+      "enum": [
+        "rgb565",
+        "rgb888",
+        "xrgb8888",
+        "argb8888",
+        "r2Packed2x2",
+        "rrrr2222",
+        "ryry2222"
+      ]
+    },
+    "storageBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height",
+        "bytes"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        }
+      }
+    },
+    "channelModel": {
+      "enum": [
+        "rgb",
+        "red",
+        "redYellow"
+      ]
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "channel",
+          "bitOffset",
+          "bitWidth",
+          "position"
+        ],
+        "properties": {
+          "channel": {
+            "enum": [
+              "red",
+              "green",
+              "blue",
+              "alpha",
+              "yellow",
+              "unused"
+            ]
+          },
+          "bitOffset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 31
+          },
+          "bitWidth": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "position": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "y": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "composition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceAlpha",
+        "coverage",
+        "sourceOver",
+        "destinationAlpha"
+      ],
+      "properties": {
+        "sourceAlpha": {
+          "type": "boolean"
+        },
+        "coverage": {
+          "type": "boolean"
+        },
+        "sourceOver": {
+          "type": "boolean"
+        },
+        "destinationAlpha": {
+          "type": "boolean"
+        }
+      }
+    },
+    "resourceFormats": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "alpha1",
+          "alpha8",
+          "indexed4",
+          "rgb565",
+          "rgb888",
+          "xrgb8888",
+          "argb8888",
+          "r2Packed2x2"
+        ]
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reference",
+        "sha256"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "softwareContract",
+            "unverified",
+            "verified"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "verified"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "pixels"
+        },
+        "format": {
+          "const": "rgb565"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 1,
+            "height": 1,
+            "bytes": 2
+          }
+        },
+        "channelModel": {
+          "const": "rgb"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "red",
+              "bitOffset": 11,
+              "bitWidth": 5,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "green",
+              "bitOffset": 5,
+              "bitWidth": 6,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "blue",
+              "bitOffset": 0,
+              "bitWidth": 5,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": false
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "pixels"
+        },
+        "format": {
+          "const": "rgb888"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 1,
+            "height": 1,
+            "bytes": 3
+          }
+        },
+        "channelModel": {
+          "const": "rgb"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "red",
+              "bitOffset": 0,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "green",
+              "bitOffset": 8,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "blue",
+              "bitOffset": 16,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": false
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "pixels"
+        },
+        "format": {
+          "const": "xrgb8888"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 1,
+            "height": 1,
+            "bytes": 4
+          }
+        },
+        "channelModel": {
+          "const": "rgb"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "red",
+              "bitOffset": 16,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "green",
+              "bitOffset": 8,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "blue",
+              "bitOffset": 0,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "unused",
+              "bitOffset": 24,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": false
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "pixels"
+        },
+        "format": {
+          "const": "argb8888"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 1,
+            "height": 1,
+            "bytes": 4
+          }
+        },
+        "channelModel": {
+          "const": "rgb"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "red",
+              "bitOffset": 16,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "green",
+              "bitOffset": 8,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "blue",
+              "bitOffset": 0,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "alpha",
+              "bitOffset": 24,
+              "bitWidth": 8,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": true
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "emitters"
+        },
+        "format": {
+          "const": "r2Packed2x2"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 2,
+            "height": 2,
+            "bytes": 1
+          }
+        },
+        "channelModel": {
+          "const": "red"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "red",
+              "bitOffset": 2,
+              "bitWidth": 2,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 6,
+              "bitWidth": 2,
+              "position": {
+                "x": 1,
+                "y": 0
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 0,
+              "bitWidth": 2,
+              "position": {
+                "x": 0,
+                "y": 1
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 4,
+              "bitWidth": 2,
+              "position": {
+                "x": 1,
+                "y": 1
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": false
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "cells"
+        },
+        "format": {
+          "const": "rrrr2222"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 1,
+            "height": 1,
+            "bytes": 1
+          }
+        },
+        "channelModel": {
+          "const": "red"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "red",
+              "bitOffset": 2,
+              "bitWidth": 2,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 6,
+              "bitWidth": 2,
+              "position": {
+                "x": 1,
+                "y": 0
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 0,
+              "bitWidth": 2,
+              "position": {
+                "x": 0,
+                "y": 1
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 4,
+              "bitWidth": 2,
+              "position": {
+                "x": 1,
+                "y": 1
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": false
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "addressSpace": {
+          "const": "cells"
+        },
+        "format": {
+          "const": "ryry2222"
+        },
+        "storageBlock": {
+          "const": {
+            "width": 1,
+            "height": 1,
+            "bytes": 1
+          }
+        },
+        "channelModel": {
+          "const": "redYellow"
+        },
+        "fields": {
+          "const": [
+            {
+              "channel": "yellow",
+              "bitOffset": 2,
+              "bitWidth": 2,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 6,
+              "bitWidth": 2,
+              "position": {
+                "x": 1,
+                "y": 0
+              }
+            },
+            {
+              "channel": "red",
+              "bitOffset": 0,
+              "bitWidth": 2,
+              "position": {
+                "x": 0,
+                "y": 1
+              }
+            },
+            {
+              "channel": "yellow",
+              "bitOffset": 4,
+              "bitWidth": 2,
+              "position": {
+                "x": 1,
+                "y": 1
+              }
+            }
+          ]
+        },
+        "composition": {
+          "const": {
+            "sourceAlpha": true,
+            "coverage": true,
+            "sourceOver": true,
+            "destinationAlpha": false
+          }
+        }
+      }
+    }
+  ]
+}

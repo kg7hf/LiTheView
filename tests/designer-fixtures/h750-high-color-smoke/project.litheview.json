@@ -1,0 +1,20 @@
+{
+  "$schema": "../../../schema/project-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.project.h750-high-color-smoke",
+  "displayName": "H750 High-Color Contract Smoke Test",
+  "schemaCompatibility": {
+    "displaySurface": 1,
+    "projectManifest": 1,
+    "form": 1,
+    "resourceManifest": 1,
+    "extensionManifest": 1
+  },
+  "surfaceProfile": {
+    "id": "litheview.surface.stm32h750b-dk-rk043fn48h-xrgb8888",
+    "sha256": "97dad1722b7e782c38e8da83534dd63de2ed45200e392b35589852224a03710f"
+  },
+  "forms": [],
+  "resourceManifests": [],
+  "extensions": []
+}

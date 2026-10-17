@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.tabs" displayName="Tab Settings" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-action id="action.connect" runtimeId="23" symbol="Connect"-->
+<!--litheview-action id="action.mode" runtimeId="30" symbol="Mode"-->
+<!--litheview-action id="action.settings" runtimeId="20" symbol="Settings"-->
+<!--litheview-theme-color id="theme.button" encodedColor="00553a28"-->
+<!--litheview-theme-color id="theme.content" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.on-primary" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.on-selected" encodedColor="00803d1a"-->
+<!--litheview-theme-color id="theme.panel" encodedColor="00402818"-->
+<!--litheview-theme-color id="theme.primary" encodedColor="00df6c2d"-->
+<!--litheview-theme-color id="theme.primary-pressed" encodedColor="00b35724"-->
+<!--litheview-theme-color id="theme.selected" encodedColor="00fae4d6"-->
+<!--litheview-theme-color id="theme.surface" encodedColor="00223344"-->
+<!--litheview-theme-reference componentId="component.tabs.about-page" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.tabs.address-label" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.auto-dim" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.tabs.auto-dim" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.auto-dim" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.brightness-label" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.connect" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.tabs.connect" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.tabs.connect" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.connect" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.connect" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.tabs.connect" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.display-page" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.tabs.mode" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.tabs.network-page" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.tabs.root" propertyId="background-color" tokenId="theme.surface"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.tabs.settings" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.tabs.version-label" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-component id="component.tabs.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00223344">
+  <!--litheview-component id="component.tabs.settings" name="settingsTabs"-->
+  <tabview frame="8,8,464,212" runtimeID="20" backgroundColor="0x00402818" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" items="DISPLAY|NETWORK|ABOUT" tabHeight="32">
+    <!--litheview-component id="component.tabs.display-page" name="displayPage"-->
+    <panel frame="0,32,464,180" backgroundColor="0x00402818">
+      <!--litheview-component id="component.tabs.brightness-label" name="brightnessLabel"-->
+      <label frame="16,16,200,24" textColor="0x00ffffff" text="BRIGHTNESS" />
+      <!--litheview-component id="component.tabs.brightness" name="brightnessPicker"-->
+      <picker frame="16,48,200,40" runtimeID="21" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" items="LOW|MEDIUM|HIGH" selectedIndex="1" />
+      <!--litheview-component id="component.tabs.auto-dim" name="autoDimCheck"-->
+      <checkbox frame="232,48,200,40" runtimeID="22" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" text="AUTO DIM" />
+    </panel>
+    <!--litheview-component id="component.tabs.network-page" name="networkPage"-->
+    <panel frame="0,32,464,180" backgroundColor="0x00402818">
+      <!--litheview-component id="component.tabs.address-label" name="addressLabel"-->
+      <label frame="16,16,300,24" textColor="0x00ffffff" text="ADDRESS 192.168.0.10" />
+      <!--litheview-component id="component.tabs.connect" name="connectButton"-->
+      <button frame="16,56,160,40" runtimeID="23" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" text="CONNECT" />
+    </panel>
+    <!--litheview-component id="component.tabs.about-page" name="aboutPage"-->
+    <panel frame="0,32,464,180" backgroundColor="0x00402818">
+      <!--litheview-component id="component.tabs.version-label" name="versionLabel"-->
+      <label frame="16,16,300,24" textColor="0x00ffffff" text="LITHEVIEW TABS" />
+    </panel>
+  </tabview>
+  <!--litheview-component id="component.tabs.mode" name="modeBar"-->
+  <tabbar frame="8,228,464,36" runtimeID="30" backgroundColor="0x00402818" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" items="AUTO|MANUAL|SERVICE" wrap="false" />
+</panel>

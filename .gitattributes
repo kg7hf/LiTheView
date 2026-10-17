@@ -1,0 +1,3 @@
+# Upstream notices are hash-checked verbatim; preserve their line endings and whitespace.
+/licenses/*.txt -text -whitespace
+/LICENSE -text -whitespace

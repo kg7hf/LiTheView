@@ -1,0 +1,555 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "LitheView: prepare VS Code Designer",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-File",
+                "tools/prepare-vscode-designer.ps1",
+                "-Dotnet",
+                "dotnet"
+            ],
+            "linux": {
+                "args": [
+                    "-NoProfile",
+                    "-File",
+                    "tools/prepare-vscode-designer.ps1",
+                    "-Dotnet",
+                    "dotnet"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "-NoProfile",
+                    "-File",
+                    "tools/prepare-vscode-designer.ps1",
+                    "-Dotnet",
+                    "dotnet"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$gcc",
+            "group": "build"
+        },
+        {
+            "label": "LitheView: package VS Code Designer",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-File",
+                "tools/package-vscode-designer.ps1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "LitheView: prepare VS Code Designer",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "LitheView: test VS Code Designer",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-File",
+                "tools/test-vscode-designer.ps1",
+                "-Dotnet",
+                "dotnet"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "LitheView: prepare VS Code Designer",
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
+            "label": "LitheView: prepare Designer Tutorial Debug",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-File",
+                "tools/run-designer-tutorial.ps1",
+                "-Configuration",
+                "Debug",
+                "-Dotnet",
+                "dotnet"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$gcc",
+            "group": "build"
+        },
+        {
+            "label": "LitheView: prepare Display Bring-up Debug",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-File",
+                "tools/run-display-bringup.ps1",
+                "-Configuration",
+                "Debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$gcc",
+            "group": "build"
+        },
+        {
+            "label": "LitheView: test Target Feasibility Debug",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-File",
+                "tools/check-target-feasibility.ps1",
+                "-CliAssembly",
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "-Dotnet",
+                "dotnet",
+                "-BuildRoot",
+                "build/target-feasibility-debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
+            "label": "LitheView: configure Win32 XRGB8888 Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "windows-mingw-xrgb8888-product-debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: build Win32 XRGB8888 Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "windows-mingw-xrgb8888-product-debug",
+                "--parallel",
+                "2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: configure Win32 XRGB8888 Debug",
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "LitheView: configure Win32 RGB565 Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "windows-mingw-rgb565-product-debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: build Win32 RGB565 Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "windows-mingw-rgb565-product-debug",
+                "--parallel",
+                "2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: configure Win32 RGB565 Debug",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: build Round XRGB8888 Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "windows-mingw-round-xrgb8888-debug",
+                "--parallel",
+                "2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: configure Win32 XRGB8888 Debug",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: build Round RGB565 Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "windows-mingw-round-rgb565-debug",
+                "--parallel",
+                "2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: configure Win32 RGB565 Debug",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: configure Universal Host Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "windows-mingw-debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: build Universal Host Debug",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "windows-mingw-debug",
+                "--parallel",
+                "2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: configure Universal Host Debug",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: test Display Model Debug",
+            "type": "process",
+            "command": "ctest",
+            "args": [
+                "--preset",
+                "windows-mingw-debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Universal Host Debug",
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
+            "label": "LitheView: build Item 5 Designer Debug",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "LitheView.Designer.sln",
+                "-c",
+                "Debug",
+                "--maxcpucount:1",
+                "-nodeReuse:false"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/tools/designer",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "LitheView: build Item 5 Native Preview Worker",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "windows-mingw-debug",
+                "--target",
+                "litheview_designer_preview_worker",
+                "litheview_designer_preview_tests",
+                "--parallel",
+                "2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: configure Universal Host Debug",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "LitheView: prepare Item 5 Native Preview",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "LitheView: build Item 5 Designer Debug",
+                "LitheView: build Item 5 Native Preview Worker"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "LitheView: test Item 5 Designer Core",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/tests/LitheView.Designer.Core.Tests/bin/Debug/net10.0/LitheView.Designer.Core.Tests.dll"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1",
+                    "LITHEVIEW_PREVIEW_WORKER": "${workspaceFolder}/build/windows-mingw-debug/litheview_designer_preview_worker.exe"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "LitheView: build Item 5 Designer Debug",
+                "LitheView: build Item 5 Native Preview Worker"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "test"
+        },
+        {
+            "label": "LitheView: test Item 5 Designer UI",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/tests/LitheView.Designer.App.Tests/bin/Debug/net10.0-windows/LitheView.Designer.App.Tests.dll"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": "$msCompile",
+            "group": "test"
+        },
+        {
+            "label": "LitheView: test Item 5 Designer",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "LitheView: test Item 5 Designer Core",
+                "LitheView: test Item 5 Designer UI"
+            ],
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
+            "label": "LitheView: regenerate Item 5 widget metadata",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "widget-schema",
+                "compile",
+                "schema/widgets.json",
+                "tools/designer/src/LitheView.Designer.Schema/Generated/BuiltInWidgetCatalog.g.cs",
+                "include/lithe/designer/generated_widget_metadata.hpp",
+                "docs/WIDGET_PROPERTY_REFERENCE.md"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "LitheView: validate Item 5 document fixture",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "form",
+                "validate",
+                "tests/designer-fixtures/document-compiler-smoke/forms/main.litheview.xml",
+                "schema/widgets.json"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "LitheView: regenerate Item 5 document fixture",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "form",
+                "export-cpp",
+                "tests/designer-fixtures/document-compiler-smoke/forms/main.litheview.xml",
+                "schema/widgets.json",
+                "tests/designer-fixtures/document-compiler-smoke/generated/main_form.hpp",
+                "tests/designer-fixtures/document-compiler-smoke/generated/main_form.cpp"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "LitheView: render Item 5 native preview fixture",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "preview",
+                "render",
+                "tests/designer-fixtures/document-compiler-smoke/forms/main.litheview.xml",
+                "profiles/display-surfaces/stm32h750b-dk-rk043fn48h-rgb565.json",
+                "build/windows-mingw-debug/litheview_designer_preview_worker.exe",
+                "build/designer-preview/main-form-rgb565.raw"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "LitheView: build Item 5 Designer Debug",
+                "LitheView: build Item 5 Native Preview Worker"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "LitheView: validate Item 5 resource manifest",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "resource",
+                "validate",
+                "tests/designer-fixtures/resource-manifest-smoke/resources/status-icon.resource.json"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "LitheView: verify Item 5 resource artifacts",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll",
+                "resource",
+                "verify",
+                "tests/designer-fixtures/resource-manifest-smoke/resources/status-icon.resource.json",
+                "tests/designer-fixtures/resource-manifest-smoke"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: build Item 5 Designer Debug",
+            "problemMatcher": "$msCompile",
+            "group": "test"
+        },
+        {
+            "label": "LitheView: run Item 5 Visual Designer",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tools/designer/src/LitheView.Designer.App/bin/Debug/net10.0-windows/LitheView.Designer.App.dll",
+                "--repository-root",
+                "${workspaceFolder}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "DOTNET_CLI_HOME": "${workspaceFolder}/build/dotnet-home",
+                    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+                    "DOTNET_NOLOGO": "1"
+                }
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": "LitheView: prepare Item 5 Native Preview",
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "../../schema/display-definition.schema.json",
+  "schemaVersion": 2,
+  "id": "litheview.definition.software.synthetic-r2",
+  "displayName": "Synthetic storage test: r2",
+  "geometry": {
+    "width": 512,
+    "height": 384,
+    "shape": "rectangle",
+    "rotationDegrees": 0,
+    "safeArea": {
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 384
+    }
+  },
+  "addressSpace": "emitters",
+  "format": "r2Packed2x2",
+  "storageBlock": {
+    "width": 2,
+    "height": 2,
+    "bytes": 1
+  },
+  "channelModel": "red",
+  "fields": [
+    {
+      "channel": "red",
+      "bitOffset": 2,
+      "bitWidth": 2,
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "channel": "red",
+      "bitOffset": 6,
+      "bitWidth": 2,
+      "position": {
+        "x": 1,
+        "y": 0
+      }
+    },
+    {
+      "channel": "red",
+      "bitOffset": 0,
+      "bitWidth": 2,
+      "position": {
+        "x": 0,
+        "y": 1
+      }
+    },
+    {
+      "channel": "red",
+      "bitOffset": 4,
+      "bitWidth": 2,
+      "position": {
+        "x": 1,
+        "y": 1
+      }
+    }
+  ],
+  "composition": {
+    "sourceAlpha": true,
+    "coverage": true,
+    "sourceOver": true,
+    "destinationAlpha": false
+  },
+  "resourceFormats": [
+    "alpha1",
+    "indexed4",
+    "r2Packed2x2"
+  ],
+  "source": {
+    "status": "softwareContract",
+    "reference": "Synthetic geometry testing the generic storage contract; no physical display or controller is represented.",
+    "sha256": null
+  }
+}

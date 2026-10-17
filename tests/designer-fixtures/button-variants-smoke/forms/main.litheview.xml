@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.buttons" displayName="Button Variants" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-action id="action.alarm" runtimeId="12" symbol="Alarm"-->
+<!--litheview-action id="action.home" runtimeId="11" symbol="Home"-->
+<!--litheview-action id="action.mute" runtimeId="13" symbol="Mute"-->
+<!--litheview-action id="action.start" runtimeId="10" symbol="Start"-->
+<!--litheview-resource id="resource.bitmap.home-icon" runtimeName="home-icon" symbol="HomeIcon" kind="bitmap"-->
+<!--litheview-theme-color id="theme.button" encodedColor="00553a28"-->
+<!--litheview-theme-color id="theme.content" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.disabled-content" encodedColor="00786f6a"-->
+<!--litheview-theme-color id="theme.disabled-surface" encodedColor="00dcd4d0"-->
+<!--litheview-theme-color id="theme.on-primary" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.on-selected" encodedColor="00803d1a"-->
+<!--litheview-theme-color id="theme.primary" encodedColor="00df6c2d"-->
+<!--litheview-theme-color id="theme.primary-pressed" encodedColor="00b35724"-->
+<!--litheview-theme-color id="theme.selected" encodedColor="00fae4d6"-->
+<!--litheview-theme-color id="theme.surface" encodedColor="00223344"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="disabled-background-color" tokenId="theme.disabled-surface"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="disabled-foreground-color" tokenId="theme.disabled-content"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.buttons.alarm" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="disabled-background-color" tokenId="theme.disabled-surface"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="disabled-foreground-color" tokenId="theme.disabled-content"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.buttons.home" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="disabled-background-color" tokenId="theme.disabled-surface"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="disabled-foreground-color" tokenId="theme.disabled-content"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.buttons.mute" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.buttons.root" propertyId="background-color" tokenId="theme.surface"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="disabled-background-color" tokenId="theme.disabled-surface"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="disabled-foreground-color" tokenId="theme.disabled-content"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.buttons.service" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="disabled-background-color" tokenId="theme.disabled-surface"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="disabled-foreground-color" tokenId="theme.disabled-content"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.buttons.start" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.buttons.title" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-component id="component.buttons.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00223344">
+  <!--litheview-component id="component.buttons.title" name="titleLabel"-->
+  <label frame="16,12,448,24" textColor="0x00ffffff" text="BUTTON VARIANTS" />
+  <!--litheview-component id="component.buttons.start" name="startButton"-->
+  <button frame="16,48,208,40" runtimeID="10" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" disabledBackgroundColor="0x00dcd4d0" disabledForegroundColor="0x00786f6a" text="START" detail="F1" />
+  <!--litheview-component id="component.buttons.home" name="homeButton"-->
+  <button frame="240,48,48,40" runtimeID="11" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" disabledBackgroundColor="0x00dcd4d0" disabledForegroundColor="0x00786f6a" icon="home-icon" />
+  <!--litheview-component id="component.buttons.mute" name="muteToggle"-->
+  <button frame="304,48,160,40" runtimeID="13" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" disabledBackgroundColor="0x00dcd4d0" disabledForegroundColor="0x00786f6a" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" text="MUTE" behavior="toggle" icon="home-icon" />
+  <!--litheview-component id="component.buttons.alarm" name="alarmToggle"-->
+  <button frame="16,100,208,40" runtimeID="12" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" disabledBackgroundColor="0x00dcd4d0" disabledForegroundColor="0x00786f6a" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" text="ALARM" behavior="toggle" checked="true" />
+  <!--litheview-component id="component.buttons.service" name="serviceButton"-->
+  <button frame="240,100,224,40" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" disabledBackgroundColor="0x00dcd4d0" disabledForegroundColor="0x00786f6a" enabled="false" text="SERVICE" />
+</panel>

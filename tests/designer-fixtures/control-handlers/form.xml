@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.main" displayName="First Display Main Form" surfaceProfileId="litheview.project.first-display.surface"-->
+<!--litheview-component id="component.main.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00303030" borderColor="0x00ffffff" borderWidth="2">
+  <!--litheview-component id="component.main.button1" name="button1"-->
+  <button frame="140,148,200,60" text="TOGGLE" backgroundColor="0x00805020" textColor="0x00ffffff" />
+  <!--litheview-component id="component.main.label1" name="label1"-->
+  <label frame="140,64,200,60" text="ON" textScale="3" textColor="0x00ffffff" />
+</panel>

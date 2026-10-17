@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.alarm" displayName="Alarm Time" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-action id="action.hour" runtimeId="40" symbol="Hour"-->
+<!--litheview-action id="action.minute" runtimeId="41" symbol="Minute"-->
+<!--litheview-action id="action.repeat" runtimeId="42" symbol="Repeat"-->
+<!--litheview-action id="action.save" runtimeId="43" symbol="Save"-->
+<!--litheview-theme-color id="theme.button" encodedColor="00553a28"-->
+<!--litheview-theme-color id="theme.content" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.on-primary" encodedColor="00ffffff"-->
+<!--litheview-theme-color id="theme.on-selected" encodedColor="00803d1a"-->
+<!--litheview-theme-color id="theme.panel" encodedColor="00402818"-->
+<!--litheview-theme-color id="theme.primary" encodedColor="00df6c2d"-->
+<!--litheview-theme-color id="theme.primary-pressed" encodedColor="00b35724"-->
+<!--litheview-theme-color id="theme.selected" encodedColor="00fae4d6"-->
+<!--litheview-theme-color id="theme.surface" encodedColor="00223344"-->
+<!--litheview-theme-reference componentId="component.alarm.hint" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="accent-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.alarm.hour" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="accent-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.alarm.minute" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="accent-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="background-color" tokenId="theme.panel"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="selected-background-color" tokenId="theme.selected"-->
+<!--litheview-theme-reference componentId="component.alarm.repeat" propertyId="selected-foreground-color" tokenId="theme.on-selected"-->
+<!--litheview-theme-reference componentId="component.alarm.root" propertyId="background-color" tokenId="theme.surface"-->
+<!--litheview-theme-reference componentId="component.alarm.save" propertyId="background-color" tokenId="theme.button"-->
+<!--litheview-theme-reference componentId="component.alarm.save" propertyId="focused-background-color" tokenId="theme.primary"-->
+<!--litheview-theme-reference componentId="component.alarm.save" propertyId="focused-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.save" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-theme-reference componentId="component.alarm.save" propertyId="pressed-background-color" tokenId="theme.primary-pressed"-->
+<!--litheview-theme-reference componentId="component.alarm.save" propertyId="pressed-foreground-color" tokenId="theme.on-primary"-->
+<!--litheview-theme-reference componentId="component.alarm.title" propertyId="foreground-color" tokenId="theme.content"-->
+<!--litheview-component id="component.alarm.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00223344">
+  <!--litheview-component id="component.alarm.title" name="titleLabel"-->
+  <label frame="16,12,448,24" textColor="0x00ffffff" text="ALARM TIME" />
+  <!--litheview-component id="component.alarm.hour" name="hourWheel"-->
+  <wheelpicker frame="16,44,128,168" runtimeID="40" backgroundColor="0x00402818" textColor="0x00ffffff" accentColor="0x00df6c2d" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" textScale="2" items="00|01|02|03|04|05|06|07|08|09|10|11|12|13|14|15|16|17|18|19|20|21|22|23" selectedIndex="7" />
+  <!--litheview-component id="component.alarm.minute" name="minuteWheel"-->
+  <wheelpicker frame="160,44,128,168" runtimeID="41" backgroundColor="0x00402818" textColor="0x00ffffff" accentColor="0x00df6c2d" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" textScale="2" items="00|05|10|15|20|25|30|35|40|45|50|55" selectedIndex="6" />
+  <!--litheview-component id="component.alarm.repeat" name="repeatWheel"-->
+  <wheelpicker frame="304,44,160,168" runtimeID="42" backgroundColor="0x00402818" textColor="0x00ffffff" accentColor="0x00df6c2d" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" selectedBackgroundColor="0x00fae4d6" selectedForegroundColor="0x00803d1a" textScale="2" items="ONCE|DAILY|WEEKDAYS|WEEKENDS" selectedIndex="1" wrap="false" rowHeight="32" />
+  <!--litheview-component id="component.alarm.hint" name="hintLabel"-->
+  <label frame="16,232,272,24" textColor="0x00ffffff" text="PUSH TO EDIT, TURN TO SCROLL" />
+  <!--litheview-component id="component.alarm.save" name="saveButton"-->
+  <button frame="304,224,160,40" runtimeID="43" backgroundColor="0x00553a28" textColor="0x00ffffff" focusedBackgroundColor="0x00df6c2d" focusedForegroundColor="0x00ffffff" pressedBackgroundColor="0x00b35724" pressedForegroundColor="0x00ffffff" text="SAVE" />
+</panel>

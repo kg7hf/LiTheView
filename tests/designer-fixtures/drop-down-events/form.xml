@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.mode" displayName="Mode Selection" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-component id="root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00261b13">
+  <!--litheview-component id="mode" name="mode"-->
+  <dropdown frame="20,30,180,28" backgroundColor="0x00473526" textColor="0x00ffffff" items="AUTO|MANUAL|OFF" rowHeight="28" selectedIndex="0" wrap="0" />
+  <!--litheview-component id="applied" name="applied"-->
+  <label frame="240,30,180,28" textColor="0x00ffffff" text="AUTO" />
+</panel>

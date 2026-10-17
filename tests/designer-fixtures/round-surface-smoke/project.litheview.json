@@ -1,0 +1,20 @@
+{
+  "$schema": "../../../schema/project-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.project.round-surface-smoke",
+  "displayName": "Round Surface Contract Smoke Test",
+  "schemaCompatibility": {
+    "displaySurface": 1,
+    "projectManifest": 1,
+    "form": 1,
+    "resourceManifest": 1,
+    "extensionManifest": 1
+  },
+  "surfaceProfile": {
+    "id": "litheview.surface.gc9a01-1-28-round-240-rgb565",
+    "sha256": "64fb13970d93d65df209ecee57e1795a88cffc7514d7716d95564c5a699963a8"
+  },
+  "forms": [],
+  "resourceManifests": [],
+  "extensions": []
+}

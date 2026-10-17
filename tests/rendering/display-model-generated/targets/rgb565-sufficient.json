@@ -1,0 +1,83 @@
+{
+  "$schema": "../../../../schema/target-profile.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.target.fixture.rgb565-sufficient",
+  "displayName": "Fixture RGB565 sufficient framebuffer budget",
+  "compatibilityFamily": "litheview.target-family.synthetic-m7",
+  "baseProfile": null,
+  "surfaceCompatibility": {
+    "family": "litheview.surface-family.rk043fn48h-480x272",
+    "painterFormats": [
+      "rgb565"
+    ]
+  },
+  "runtime": {
+    "architecture": "cortexM7",
+    "environment": "freeRtos",
+    "renderingMode": "fullFrame",
+    "tile": null
+  },
+  "capacities": {
+    "maxChildrenPerView": 16,
+    "maxDamageRegions": 8,
+    "maxControllerDepth": 8,
+    "maxFocusableViews": 64
+  },
+  "budgets": {
+    "archiveText": null,
+    "initializedData": null,
+    "bss": null,
+    "stackFrame": {
+      "maximumBytes": 4096,
+      "enforcement": "advisoryEstimate",
+      "source": "Synthetic acceptance fixture; not a hardware specification or measurement"
+    },
+    "staticObject": null,
+    "tileWorkspace": null,
+    "framebuffer": {
+      "maximumBytes": 300000,
+      "enforcement": "advisoryEstimate",
+      "source": "Synthetic acceptance fixture; not a hardware specification or measurement"
+    },
+    "internalFlash": {
+      "maximumBytes": 131072,
+      "enforcement": "advisoryEstimate",
+      "source": "Synthetic acceptance fixture; not a hardware specification or measurement"
+    },
+    "internalRam": {
+      "maximumBytes": 524288,
+      "enforcement": "advisoryEstimate",
+      "source": "Synthetic acceptance fixture; not a hardware specification or measurement"
+    },
+    "externalRam": {
+      "maximumBytes": 16777216,
+      "enforcement": "advisoryEstimate",
+      "source": "Synthetic acceptance fixture; not a hardware specification or measurement"
+    }
+  },
+  "resourceStorage": {
+    "defaultPlacement": "internalFlash",
+    "allowedPlacements": [
+      "internalFlash",
+      "externalQspi",
+      "applicationProvider"
+    ],
+    "alignmentBytes": 4
+  },
+  "supportedResourceFormats": [
+    "alpha1",
+    "alpha8",
+    "indexed4",
+    "rgb565",
+    "rgb888",
+    "xrgb8888",
+    "argb8888"
+  ],
+  "provenance": {
+    "sourcePaths": [
+      "tests/rendering/display-model-generated/targets/rgb565-sufficient.json",
+      "profiles/targets/README.md"
+    ],
+    "notes": "Invented framebuffer acceptance fixture. Declared limits distinguish sufficient from constrained storage; no hardware placement or linker enforcement is claimed."
+  }
+}

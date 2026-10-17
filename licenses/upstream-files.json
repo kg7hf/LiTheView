@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "file": "Apache-2.0.txt",
+      "sourceUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "file": "DejaVu-LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/version_2_37/LICENSE",
+      "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+    },
+    {
+      "file": "GCC-COPYING3.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING3",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "file": "GCC-RUNTIME-EXCEPTION.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING.RUNTIME",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "file": "MinGW-w64-AUTHORS.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/mingw-w64/mingw-w64/v12.0.0/AUTHORS",
+      "sha256": "8f308316e7a94b8410f871868bd3948f126526dc1775aeee97a0e365f9a0fd9f"
+    },
+    {
+      "file": "MinGW-w64-COPYING.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/mingw-w64/mingw-w64/v12.0.0/COPYING",
+      "sha256": "99a69660981156c21336fdb5661f89341b013c94e4bf9e1c7467b4745718397f"
+    },
+    {
+      "file": "Winpthreads-COPYING.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/mingw-w64/mingw-w64/v12.0.0/mingw-w64-libraries/winpthreads/COPYING",
+      "sha256": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177"
+    },
+    {
+      "file": "ST-H7-HAL-LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/STMicroelectronics/stm32h7xx-hal-driver/a1996eed9172b59887bafaaa0ea1816ea14d48b5/LICENSE.md",
+      "sha256": "376c82bcef0be563bf59b93d05cfdd4b6295e4660b55b31dd8a883bf1d6637f7"
+    },
+    {
+      "file": "ST-CMSIS-H7-LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-h7/8f922cdc7cc6de2344e75ddd657889f4ff761790/LICENSE.md",
+      "sha256": "49d37f1f2e5c1f9fc9da194b44ffbfa41f966b7cf446fbab4d1e2b0c1e3d20df"
+    },
+    {
+      "file": "FreeRTOS-Kernel-LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/FreeRTOS/FreeRTOS-Kernel/0adc196d4bd52a2d91102b525b0aafc1e14a2386/LICENSE.md",
+      "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1"
+    },
+    {
+      "file": "ST-FreeRTOS-LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/STMicroelectronics/stm32-mw-freertos/d8c632a9478f66d41365680f8e3fd7c8e640747b/LICENSE.md",
+      "sha256": "a426d8c9fac77c22e2a7ae9cccdae232eef49ba9609992719bc89735ae796054"
+    },
+    {
+      "file": "STM32CubeH7-Package-license.txt",
+      "sourceUrl": "https://www.st.com/en/embedded-software/stm32cubeh7.html",
+      "sourceArchive": "stm32cube_fw_h7_v1130.zip",
+      "sourceArchiveSha256": "740817c8c9ebe8c9cc438e04a4b3bdaa1259a929003a50695cf6f6f30c8a5d26",
+      "sourcePath": "Package_license.md",
+      "sha256": "c55e260816a91ae0ea09cb7cd78772bdf84f54bbdd8d0594bad6747a900a115b"
+    },
+    {
+      "file": "STM32CubeH7-Examples-LICENSE.txt",
+      "sourceUrl": "https://www.st.com/en/embedded-software/stm32cubeh7.html",
+      "sourceArchive": "stm32cube_fw_h7_v1130.zip",
+      "sourceArchiveSha256": "740817c8c9ebe8c9cc438e04a4b3bdaa1259a929003a50695cf6f6f30c8a5d26",
+      "sourcePath": "Projects/STM32H750B-DK/Examples/LICENSE.txt",
+      "sha256": "bdc7b0f98db4846279336431024c49a01d578a2ea1d19ec68797bbe33e718d2d"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "../../schema/target-profile.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.target.synthetic-m7-rgb565-full-frame",
+  "displayName": "Synthetic Cortex-M7 RGB565 full-frame budget fixture",
+  "compatibilityFamily": "litheview.target-family.synthetic-m7",
+  "baseProfile": null,
+  "surfaceCompatibility": {
+    "family": "litheview.surface-family.rk043fn48h-480x272",
+    "painterFormats": [
+      "rgb565"
+    ]
+  },
+  "runtime": {
+    "architecture": "cortexM7",
+    "environment": "freeRtos",
+    "renderingMode": "fullFrame",
+    "tile": null
+  },
+  "capacities": {
+    "maxChildrenPerView": 16,
+    "maxDamageRegions": 8,
+    "maxControllerDepth": 8,
+    "maxFocusableViews": 64
+  },
+  "budgets": {
+    "archiveText": null,
+    "initializedData": null,
+    "bss": null,
+    "stackFrame": {
+      "maximumBytes": 4096,
+      "enforcement": "advisoryEstimate",
+      "source": "profiles/targets/README.md synthetic full-frame fixture limits"
+    },
+    "staticObject": null,
+    "tileWorkspace": null,
+    "framebuffer": {
+      "maximumBytes": 16777216,
+      "enforcement": "advisoryEstimate",
+      "source": "profiles/targets/README.md synthetic full-frame fixture limits"
+    },
+    "internalFlash": {
+      "maximumBytes": 131072,
+      "enforcement": "advisoryEstimate",
+      "source": "profiles/targets/README.md synthetic full-frame fixture limits"
+    },
+    "internalRam": {
+      "maximumBytes": 524288,
+      "enforcement": "advisoryEstimate",
+      "source": "profiles/targets/README.md synthetic full-frame fixture limits"
+    },
+    "externalRam": {
+      "maximumBytes": 16777216,
+      "enforcement": "advisoryEstimate",
+      "source": "profiles/targets/README.md synthetic full-frame fixture limits"
+    }
+  },
+  "resourceStorage": {
+    "defaultPlacement": "internalFlash",
+    "allowedPlacements": [
+      "internalFlash",
+      "externalQspi",
+      "applicationProvider"
+    ],
+    "alignmentBytes": 4
+  },
+  "supportedResourceFormats": [
+    "alpha1",
+    "alpha8",
+    "indexed4",
+    "rgb565",
+    "rgb888",
+    "xrgb8888",
+    "argb8888"
+  ],
+  "provenance": {
+    "sourcePaths": [
+      "profiles/targets/README.md",
+      "profiles/targets/synthetic-m7-rgb565-full-frame.json"
+    ],
+    "notes": "Invented target-planning fixture. These ceilings do not describe an H750 starter or measured hardware. Actual application placement and transfer evidence must be supplied independently."
+  }
+}

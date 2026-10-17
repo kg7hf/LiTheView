@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Application-owned host front view",
+  "description": "Optional PC simulator presentation; not a display definition or firmware resource. Image paths are relative to the application root from project.litheview.paths.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "enabled", "image", "windowWidth", "display", "buttons"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "enabled": { "type": "boolean" },
+    "image": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "width", "height", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "width": { "type": "integer", "minimum": 1, "maximum": 8192 },
+        "height": { "type": "integer", "minimum": 1, "maximum": 8192 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "windowWidth": { "type": "integer", "minimum": 160, "maximum": 4096 },
+    "display": { "$ref": "#/$defs/area" },
+    "buttons": {
+      "type": "array", "maxItems": 16,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "bounds"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,47}$", "not": { "const": "display" } },
+          "bounds": { "$ref": "#/$defs/area" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "area": {
+      "type": "object", "additionalProperties": false, "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "integer", "minimum": 0, "maximum": 8192 },
+        "y": { "type": "integer", "minimum": 0, "maximum": 8192 },
+        "width": { "type": "integer", "minimum": 1, "maximum": 8192 },
+        "height": { "type": "integer", "minimum": 1, "maximum": 8192 }
+      }
+    }
+  }
+}

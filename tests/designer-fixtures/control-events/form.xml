@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.events" displayName="Control Events"-->
+<!--litheview-component id="root" name="rootPanel"-->
+<panel frame="0,0,480,272">
+  <!--litheview-component id="check" name="enable"-->
+  <checkbox frame="0,0,100,24" text="ENABLE" />
+  <!--litheview-component id="radio.one" name="radio1"-->
+  <radio frame="0,30,100,24" text="ONE" selected="true" />
+  <!--litheview-component id="radio.two" name="radio2"-->
+  <radio frame="100,30,100,24" text="TWO" />
+  <!--litheview-component id="picker" name="mode"-->
+  <picker frame="0,60,200,30" items="ONE|TWO|THREE" wrap="false" />
+  <!--litheview-component id="wheel" name="setpoint"-->
+  <wheelpicker frame="0,100,120,120" items="ONE|TWO|THREE" rowHeight="24" wrap="false" />
+  <!--litheview-component id="label" name="status"-->
+  <label frame="220,0,120,24" text="OFF" />
+  <!--litheview-component id="toggle" name="toggle"-->
+  <button frame="220,60,100,30" text="TOGGLE" behavior="toggle" />
+</panel>

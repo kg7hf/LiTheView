@@ -1,0 +1,22 @@
+# Widget handlers are capabilities, not requirements. These are explicit application operations.
+# name,pointer,keys,text,encoder,select,activation,navigation,textRequired,expected
+output-only,0,0,0,0,0,0,0,0,OK
+unused-capabilities,1,1,1,1,1,0,0,0,OK
+missing-activation,0,0,0,0,0,1,0,0,LVSL3009
+missing-navigation,0,0,0,0,0,0,1,0,LVSL3010
+missing-text,0,0,0,0,0,0,0,1,LVSL3011
+stable-priority,0,0,0,0,0,1,1,1,LVSL3009
+pointer-controls,1,0,0,0,0,1,1,0,OK
+keys-controls,0,1,0,0,0,1,1,0,OK
+encoder-select,0,0,0,1,1,1,1,0,OK
+encoder-navigation,0,0,0,1,0,0,1,0,OK
+encoder-no-activation,0,0,0,1,0,1,1,0,LVSL3009
+select-activation,0,0,0,0,1,1,0,0,OK
+select-no-navigation,0,0,0,0,1,1,1,0,LVSL3010
+text-independent,0,0,1,0,0,0,0,1,OK
+text-no-activation,0,0,1,0,0,1,0,1,LVSL3009
+text-no-navigation,0,0,1,0,0,0,1,1,LVSL3010
+pointer-no-text,1,0,0,0,0,1,1,1,LVSL3011
+keys-no-text,0,1,0,0,0,1,1,1,LVSL3011
+encoder-select-text,0,0,1,1,1,1,1,1,OK
+pointer-text,1,0,1,0,0,1,1,1,OK

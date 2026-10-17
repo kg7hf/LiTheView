@@ -1,0 +1,23 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Paul R. Decker
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
+body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); background: var(--vscode-editor-background); }
+main { max-width: 900px; margin: 28px auto; padding: 0 20px 30px; }
+h1 { font-size: 26px; font-weight: 600; } h2 { font-size: 17px; font-weight: 600; }
+section { border-top: 1px solid var(--vscode-panel-border); padding: 10px 0 18px; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
+label { display: flex; flex-direction: column; gap: 7px; }
+input, select { box-sizing: border-box; width: 100%; font: inherit; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, transparent); padding: 8px; }
+input:focus, select:focus, button:focus { outline: 1px solid var(--vscode-focusBorder); }
+button { margin-right: 10px; border: 0; padding: 9px 18px; color: var(--vscode-button-foreground); background: var(--vscode-button-background); cursor: pointer; }
+button:hover { background: var(--vscode-button-hoverBackground); } button.secondary { background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground); }
+fieldset:disabled { opacity: 0.65; } [hidden] { display: none !important; }
+.hint { color: var(--vscode-descriptionForeground); font-size: 12px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+#custom { margin-top: 18px; } #status { white-space: pre-wrap; color: var(--vscode-errorForeground); }
+.check { flex-direction: row; align-items: center; line-height: 1.5; } .check input { width: auto; }
+#front-canvas { display: block; width: 100%; height: auto; margin: 16px 0; cursor: crosshair; touch-action: none; }
+.front-coordinates { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }

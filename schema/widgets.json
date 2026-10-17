@@ -1,0 +1,1518 @@
+{
+  "$schema": "widgets.schema.json",
+  "schemaVersion": 1,
+  "compatibilityVersion": 1,
+  "id": "litheview.widgets.builtin",
+  "displayName": "LitheView Built-in Widgets",
+  "properties": [
+    {
+      "id": "frame",
+      "displayName": "Frame",
+      "kind": "rectangle",
+      "xmlName": "frame",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.frame",
+      "defaultValue": [0, 0, 1, 1],
+      "required": true,
+      "enumValues": [],
+      "documentation": "Integer x, y, width, and height relative to the parent; width and height are positive."
+    },
+    {
+      "id": "runtime-id",
+      "displayName": "Runtime ID",
+      "kind": "unsignedInteger",
+      "xmlName": "runtimeID",
+      "xmlAliases": ["id"],
+      "xmlTransform": "direct",
+      "cppMember": "spec.id",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 65535,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Optional 16-bit runtime view and default action identifier; zero means unassigned."
+    },
+    {
+      "id": "background-color",
+      "displayName": "Background Color",
+      "kind": "color",
+      "xmlName": "backgroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.background",
+      "defaultValue": "#00000000",
+      "required": false,
+      "enumValues": [],
+      "documentation": "RGBA background color; a transparent value leaves the existing surface visible."
+    },
+    {
+      "id": "foreground-color",
+      "displayName": "Foreground Color",
+      "kind": "color",
+      "xmlName": "textColor",
+      "xmlAliases": ["foregroundColor"],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.foreground",
+      "defaultValue": "#FFFFFFFF",
+      "required": false,
+      "enumValues": [],
+      "documentation": "RGBA foreground color used for text and primary strokes."
+    },
+    {
+      "id": "accent-color",
+      "displayName": "Accent Color",
+      "kind": "color",
+      "xmlName": "accentColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.accent",
+      "defaultValue": "#2D6CDFFF",
+      "required": false,
+      "enumValues": [],
+      "documentation": "RGBA accent color used for selection, progress, focus, and active state."
+    },
+    {
+      "id": "border-color",
+      "displayName": "Border Color",
+      "kind": "color",
+      "xmlName": "borderColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.border",
+      "defaultValue": "#00000000",
+      "required": false,
+      "enumValues": [],
+      "documentation": "RGBA border color; transparent disables a visible border even when width is nonzero."
+    },
+    {
+      "id": "focused-background-color",
+      "displayName": "Focused Background Color",
+      "kind": "color",
+      "xmlName": "focusedBackgroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.focusedBackground",
+      "defaultValue": "#00DF6C2D",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded focused-state background token. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "focused-foreground-color",
+      "displayName": "Focused Foreground Color",
+      "kind": "color",
+      "xmlName": "focusedForegroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.focusedForeground",
+      "defaultValue": "#00FFFFFF",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded focused-state text and stroke token. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "pressed-background-color",
+      "displayName": "Pressed Background Color",
+      "kind": "color",
+      "xmlName": "pressedBackgroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.pressedBackground",
+      "defaultValue": "#00B35724",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded pointer-pressed background token. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "pressed-foreground-color",
+      "displayName": "Pressed Foreground Color",
+      "kind": "color",
+      "xmlName": "pressedForegroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.pressedForeground",
+      "defaultValue": "#00FFFFFF",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded pointer-pressed text and stroke token. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "disabled-background-color",
+      "displayName": "Disabled Background Color",
+      "kind": "color",
+      "xmlName": "disabledBackgroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.disabledBackground",
+      "defaultValue": "#00DCD4D0",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded disabled-state background token. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "disabled-foreground-color",
+      "displayName": "Disabled Foreground Color",
+      "kind": "color",
+      "xmlName": "disabledForegroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.disabledForeground",
+      "defaultValue": "#00786F6A",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded disabled-state text and stroke token. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "selected-background-color",
+      "displayName": "Selected Background Color",
+      "kind": "color",
+      "xmlName": "selectedBackgroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.selectedBackground",
+      "defaultValue": null,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded selected-state background token for a latched toggle button, checked checkbox, or selected radio button. Omitted keeps the normal background; disabled, pressed, and focused states take precedence. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "selected-foreground-color",
+      "displayName": "Selected Foreground Color",
+      "kind": "color",
+      "xmlName": "selectedForegroundColor",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "state.selectedForeground",
+      "defaultValue": null,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Bounded selected-state text, icon, and stroke token. Omitted keeps the normal foreground. Named theme colors may be selected instead of a literal."
+    },
+    {
+      "id": "text-alignment-flags",
+      "displayName": "Text Alignment",
+      "kind": "unsignedInteger",
+      "xmlName": "textAlignmentFlags",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.textAlign",
+      "defaultValue": 12,
+      "minimum": 0,
+      "maximum": 15,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Legacy four-bit horizontal and vertical text-alignment encoding."
+    },
+    {
+      "id": "text-scale",
+      "displayName": "Text Scale",
+      "kind": "unsignedInteger",
+      "xmlName": "textScale",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.textScale",
+      "defaultValue": 1,
+      "minimum": 1,
+      "maximum": 8,
+      "units": "integer scale",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Integer nearest-neighbor scale applied by the selected font backend."
+    },
+    {
+      "id": "border-width",
+      "displayName": "Border Width",
+      "kind": "unsignedInteger",
+      "xmlName": "borderWidth",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.style.borderWidth",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 16,
+      "units": "pixels",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Border width in target pixels; zero disables border drawing."
+    },
+    {
+      "id": "visible",
+      "displayName": "Visible",
+      "kind": "boolean",
+      "xmlName": "hide",
+      "xmlAliases": [],
+      "xmlTransform": "invertBoolean",
+      "cppMember": "spec.visible",
+      "defaultValue": true,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial visibility. XML stores the inverse historical hide flag."
+    },
+    {
+      "id": "enabled",
+      "displayName": "Enabled",
+      "kind": "boolean",
+      "xmlName": "enabled",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.enabled",
+      "defaultValue": true,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial interaction state; disabled views remain renderable but cannot receive focus."
+    },
+    {
+      "id": "focus-policy",
+      "displayName": "Focus Policy",
+      "kind": "enum",
+      "xmlName": "canFocus",
+      "xmlAliases": [],
+      "xmlTransform": "triStateBoolean",
+      "cppMember": "spec.focusable",
+      "defaultValue": "auto",
+      "required": false,
+      "enumValues": ["auto", "false", "true"],
+      "documentation": "Auto uses the widget default; true or false emits an explicit canFocus override."
+    },
+    {
+      "id": "text",
+      "displayName": "Text",
+      "kind": "boundedText",
+      "xmlName": "text",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.text",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Borrowed UTF-8 display text whose storage must outlive the built layout."
+    },
+    {
+      "id": "detail",
+      "displayName": "Detail Text",
+      "kind": "boundedText",
+      "xmlName": "detail",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.detail",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Secondary borrowed UTF-8 text displayed by widgets that provide a detail line."
+    },
+    {
+      "id": "button-behavior",
+      "displayName": "Behavior",
+      "kind": "enum",
+      "xmlName": "behavior",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.buttonBehavior",
+      "defaultValue": "momentary",
+      "required": false,
+      "enumValues": ["momentary", "toggle"],
+      "documentation": "Momentary buttons are non-latching and report one action for each completed activation. Toggle buttons latch the selected state, flip it before reporting each activation, and draw a latch indicator."
+    },
+    {
+      "id": "icon",
+      "displayName": "Icon",
+      "kind": "bitmap",
+      "xmlName": "icon",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.resource",
+      "defaultValue": null,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Optional borrowed bitmap drawn before the text, or centered when the button has no text or detail. Alpha1 and alpha8 icons are tinted with the resolved state foreground."
+    },
+    {
+      "id": "font",
+      "displayName": "Font",
+      "kind": "font",
+      "xmlName": "font",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.font",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Optional font resource name; an empty value selects the caller-provided default font."
+    },
+    {
+      "id": "value",
+      "displayName": "Value",
+      "kind": "signedInteger",
+      "xmlName": "value",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.value",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 100,
+      "units": "percent",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial progress value clamped to the inclusive range zero through one hundred."
+    },
+    {
+      "id": "bitmap",
+      "displayName": "Bitmap",
+      "kind": "bitmap",
+      "xmlName": "imageName",
+      "xmlAliases": ["resource"],
+      "xmlTransform": "direct",
+      "cppMember": "spec.resource",
+      "defaultValue": null,
+      "required": true,
+      "enumValues": [],
+      "documentation": "Required bitmap resource name resolved by ResourceProvider during bounded layout construction."
+    },
+    {
+      "id": "animation-frames",
+      "displayName": "Animation Frames",
+      "kind": "animationFrames",
+      "xmlName": "animationImage*",
+      "xmlAliases": [],
+      "xmlTransform": "consecutiveSequence",
+      "cppMember": "spec.animationFrameOffset",
+      "defaultValue": null,
+      "required": true,
+      "enumValues": [],
+      "documentation": "Required ordered bitmap-name sequence emitted as consecutive animationImageN attributes."
+    },
+    {
+      "id": "animation-interval",
+      "displayName": "Animation Interval",
+      "kind": "duration",
+      "xmlName": "animationInterval",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.animationIntervalMs",
+      "defaultValue": 100,
+      "minimum": 1,
+      "maximum": 65535,
+      "units": "milliseconds",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Caller-clocked interval between animation frames."
+    },
+    {
+      "id": "repeat-index",
+      "displayName": "Repeat Index",
+      "kind": "unsignedInteger",
+      "xmlName": "repeatIndex",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.animationRepeatIndex",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 65535,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Frame index selected after the last frame, enabling an intro followed by a loop."
+    },
+    {
+      "id": "autoplay",
+      "displayName": "Autoplay",
+      "kind": "boolean",
+      "xmlName": "autoplay",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.animationAutoplay",
+      "defaultValue": true,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Starts animation when the view is built; elapsed time remains caller-owned."
+    },
+    {
+      "id": "content-height",
+      "displayName": "Content Height",
+      "kind": "signedInteger",
+      "xmlName": "contentHeight",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.contentHeight",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 2147483647,
+      "units": "pixels",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Scrollable content extent; zero allows the runtime to fit content from children."
+    },
+    {
+      "id": "scroll-offset",
+      "displayName": "Scroll Offset",
+      "kind": "signedInteger",
+      "xmlName": "scrollOffset",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.scrollOffset",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 2147483647,
+      "units": "pixels",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial nonnegative vertical content offset."
+    },
+    {
+      "id": "scroll-step",
+      "displayName": "Scroll Step",
+      "kind": "signedInteger",
+      "xmlName": "scrollStep",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.scrollStep",
+      "defaultValue": 32,
+      "minimum": 1,
+      "maximum": 2147483647,
+      "units": "pixels",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Positive vertical distance moved by one key-driven scroll operation."
+    },
+    {
+      "id": "shows-indicator",
+      "displayName": "Show Indicator",
+      "kind": "boolean",
+      "xmlName": "showsIndicator",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.showsIndicator",
+      "defaultValue": true,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Enables the compact draggable scroll indicator."
+    },
+    {
+      "id": "items",
+      "displayName": "Items",
+      "kind": "boundedText",
+      "xmlName": "items",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.text",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Pipe-delimited picker items or tab titles retained in caller-owned immutable storage."
+    },
+    {
+      "id": "selected-index",
+      "displayName": "Selected Index",
+      "kind": "unsignedInteger",
+      "xmlName": "selectedIndex",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.selectedIndex",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 255,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial picker item or tab; the runtime clamps a picker value, and tabs require an existing tab."
+    },
+    {
+      "id": "wrap",
+      "displayName": "Wrap",
+      "kind": "boolean",
+      "xmlName": "wrap",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.wraps",
+      "defaultValue": true,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Allows left/right selection to wrap between the first and last items or tabs."
+    },
+    {
+      "id": "tab-height",
+      "displayName": "Tab Height",
+      "kind": "unsignedInteger",
+      "xmlName": "tabHeight",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.tabHeight",
+      "defaultValue": 32,
+      "minimum": 8,
+      "maximum": 255,
+      "units": "pixels",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Height of the tab strip; pages use tab-view coordinates and start at or below it."
+    },
+    {
+      "id": "row-height",
+      "displayName": "Row Height",
+      "kind": "unsignedInteger",
+      "xmlName": "rowHeight",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.rowHeight",
+      "defaultValue": 28,
+      "minimum": 12,
+      "maximum": 255,
+      "units": "pixels",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Height of a wheel or drop-down list row in pixels."
+    },
+    {
+      "id": "checked",
+      "displayName": "Checked",
+      "kind": "boolean",
+      "xmlName": "checked",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.checked",
+      "defaultValue": false,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial Boolean state of a checkbox or toggle button; a momentary button cannot be checked."
+    },
+    {
+      "id": "selected",
+      "displayName": "Selected",
+      "kind": "boolean",
+      "xmlName": "selected",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.checked",
+      "defaultValue": false,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Initial radio-button selection state."
+    },
+    {
+      "id": "binding",
+      "displayName": "Text Buffer Binding",
+      "kind": "bindingId",
+      "xmlName": "binding",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.resource",
+      "defaultValue": null,
+      "required": true,
+      "enumValues": [],
+      "documentation": "Required application-owned mutable text-buffer binding resolved by ResourceProvider."
+    },
+    {
+      "id": "placeholder",
+      "displayName": "Placeholder",
+      "kind": "boundedText",
+      "xmlName": "placeholder",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.detail",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Borrowed text displayed while the bound text buffer is empty."
+    },
+    {
+      "id": "max-length",
+      "displayName": "Maximum Length",
+      "kind": "unsignedInteger",
+      "xmlName": "maxLength",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.maxLength",
+      "defaultValue": null,
+      "minimum": 1,
+      "maximum": 65535,
+      "units": "UTF-8 bytes",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Optional UTF-8 byte limit, additionally clamped to the caller-owned buffer capacity minus one."
+    },
+    {
+      "id": "left-text",
+      "displayName": "Left Text",
+      "kind": "boundedText",
+      "xmlName": "left_text",
+      "xmlAliases": ["leftText"],
+      "xmlTransform": "direct",
+      "cppMember": "spec.text",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Borrowed label for the left softkey region."
+    },
+    {
+      "id": "right-text",
+      "displayName": "Right Text",
+      "kind": "boundedText",
+      "xmlName": "right_text",
+      "xmlAliases": ["rightText"],
+      "xmlTransform": "direct",
+      "cppMember": "spec.detail",
+      "defaultValue": "",
+      "required": false,
+      "enumValues": [],
+      "documentation": "Borrowed label for the right softkey region."
+    },
+    {
+      "id": "left-action",
+      "displayName": "Left Action",
+      "kind": "actionId",
+      "xmlName": "leftAction",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.leftAction",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 65535,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Action ID emitted when the left softkey is selected."
+    },
+    {
+      "id": "right-action",
+      "displayName": "Right Action",
+      "kind": "actionId",
+      "xmlName": "rightAction",
+      "xmlAliases": [],
+      "xmlTransform": "direct",
+      "cppMember": "spec.rightAction",
+      "defaultValue": 0,
+      "minimum": 0,
+      "maximum": 65535,
+      "required": false,
+      "enumValues": [],
+      "documentation": "Action ID emitted when the right softkey is selected."
+    }
+  ],
+  "widgets": [
+    {
+      "id": "lithe.widget.panel",
+      "displayName": "Panel",
+      "runtimeKind": "panel",
+      "cppType": "lithe::View",
+      "paletteGroup": "Containers",
+      "help": "General fixed-capacity container and the canonical root of a designed form.",
+      "defaultGeometry": { "width": 240, "height": 160 },
+      "xml": {
+        "element": "panel",
+        "elementAliases": ["view"],
+        "legacyClass": "LCDVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": true,
+        "allowedParentIds": [
+          "lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table", "lithe.widget.tab-view"
+        ]
+      },
+      "childPolicy": "many",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" }
+      ],
+      "inputCapabilities": [],
+      "resources": []
+    },
+    {
+      "id": "lithe.widget.label",
+      "displayName": "Label",
+      "runtimeKind": "label",
+      "cppType": "lithe::LabelView",
+      "paletteGroup": "Content",
+      "help": "Static borrowed UTF-8 text rendered with the selected or default font.",
+      "defaultGeometry": { "width": 120, "height": 24 },
+      "xml": {
+        "element": "label",
+        "elementAliases": [],
+        "legacyClass": "LCDLABELVIEW",
+        "legacyClassAliases": ["LCDTEXTVIEW"]
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "text", "font"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" }
+      ],
+      "inputCapabilities": [],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.button",
+      "displayName": "Button",
+      "runtimeKind": "button",
+      "cppType": "lithe::ButtonView",
+      "paletteGroup": "Input",
+      "help": "Focusable button with text, an optional icon, and momentary (non-latching) or toggle (latching) behavior.",
+      "defaultGeometry": { "width": 120, "height": 36 },
+      "xml": {
+        "element": "button",
+        "elementAliases": [],
+        "legacyClass": "LCDBUTTONVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "selected-background-color", "selected-foreground-color",
+        "text-alignment-flags", "text-scale", "border-width", "visible", "enabled", "focus-policy",
+        "text", "detail", "button-behavior", "checked", "icon", "font"
+      ],
+      "actions": [
+        {
+          "id": "activate",
+          "displayName": "Activate",
+          "event": "activate",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "pressed", "displayName": "Pressed" },
+        { "id": "selected", "displayName": "Selected" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [
+        { "kind": "font", "propertyId": "font", "required": false },
+        { "kind": "bitmap", "propertyId": "icon", "required": false }
+      ]
+    },
+    {
+      "id": "lithe.widget.progress",
+      "displayName": "Progress",
+      "runtimeKind": "progress",
+      "cppType": "lithe::ProgressView",
+      "paletteGroup": "Content",
+      "help": "Bounded zero-through-one-hundred progress indicator.",
+      "defaultGeometry": { "width": 120, "height": 16 },
+      "xml": {
+        "element": "progress",
+        "elementAliases": [],
+        "legacyClass": "LCDPROGRESSVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "value"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" }
+      ],
+      "inputCapabilities": [],
+      "resources": []
+    },
+    {
+      "id": "lithe.widget.image",
+      "displayName": "Image",
+      "runtimeKind": "image",
+      "cppType": "lithe::ImageView",
+      "paletteGroup": "Content",
+      "help": "Bitmap rendered at its native size from a caller-owned immutable resource.",
+      "defaultGeometry": { "width": 64, "height": 64 },
+      "xml": {
+        "element": "image",
+        "elementAliases": [],
+        "legacyClass": "LCDIMAGEVIEW",
+        "legacyClassAliases": [],
+        "discriminatorPropertyId": "bitmap"
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "bitmap"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" }
+      ],
+      "inputCapabilities": [],
+      "resources": [{ "kind": "bitmap", "propertyId": "bitmap", "required": true }]
+    },
+    {
+      "id": "lithe.widget.animated-image",
+      "displayName": "Animated Image",
+      "runtimeKind": "animatedImage",
+      "cppType": "lithe::AnimatedImageView",
+      "paletteGroup": "Content",
+      "help": "Caller-clocked sequence of immutable bitmap resources with bounded frame storage.",
+      "defaultGeometry": { "width": 96, "height": 72 },
+      "xml": {
+        "element": "image",
+        "elementAliases": [],
+        "legacyClass": "LCDIMAGEVIEW",
+        "legacyClassAliases": [],
+        "discriminatorPropertyId": "animation-frames"
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "animation-frames", "animation-interval", "repeat-index", "autoplay"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "running", "displayName": "Running" }
+      ],
+      "inputCapabilities": ["elapsedTime"],
+      "resources": [
+        { "kind": "animationFrames", "propertyId": "animation-frames", "required": true }
+      ]
+    },
+    {
+      "id": "lithe.widget.icon",
+      "displayName": "Icon",
+      "runtimeKind": "icon",
+      "cppType": "lithe::IconView",
+      "paletteGroup": "Content",
+      "help": "Bitmap centered within the assigned frame.",
+      "defaultGeometry": { "width": 32, "height": 32 },
+      "xml": {
+        "element": "icon",
+        "elementAliases": [],
+        "legacyClass": "LCDICONVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "bitmap"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" }
+      ],
+      "inputCapabilities": [],
+      "resources": [{ "kind": "bitmap", "propertyId": "bitmap", "required": true }]
+    },
+    {
+      "id": "lithe.widget.line",
+      "displayName": "Line",
+      "runtimeKind": "line",
+      "cppType": "lithe::LineView",
+      "paletteGroup": "Content",
+      "help": "Horizontal or vertical rule selected from the frame aspect ratio.",
+      "defaultGeometry": { "width": 120, "height": 1 },
+      "xml": {
+        "element": "line",
+        "elementAliases": [],
+        "legacyClass": "LCDLINEVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" }
+      ],
+      "inputCapabilities": [],
+      "resources": []
+    },
+    {
+      "id": "lithe.widget.scroll",
+      "displayName": "Scroll Panel",
+      "runtimeKind": "scroll",
+      "cppType": "lithe::ScrollView",
+      "paletteGroup": "Containers",
+      "help": "Vertically translated child container with bounded key and pointer scrolling.",
+      "defaultGeometry": { "width": 160, "height": 120 },
+      "xml": {
+        "element": "scroll",
+        "elementAliases": [],
+        "legacyClass": "LCDSCROLLVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": [
+          "lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table", "lithe.widget.tab-view"
+        ]
+      },
+      "childPolicy": "many",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "content-height", "scroll-offset", "scroll-step", "shows-indicator"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "dragging", "displayName": "Dragging Indicator" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": []
+    },
+    {
+      "id": "lithe.widget.table",
+      "displayName": "Table",
+      "runtimeKind": "table",
+      "cppType": "lithe::TableView",
+      "paletteGroup": "Containers",
+      "help": "Scrollable fixed-child container using the same bounded behavior as Scroll Panel.",
+      "defaultGeometry": { "width": 200, "height": 120 },
+      "xml": {
+        "element": "table",
+        "elementAliases": [],
+        "legacyClass": "LCDTABLEVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": [
+          "lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table", "lithe.widget.tab-view"
+        ]
+      },
+      "childPolicy": "many",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "content-height", "scroll-offset", "scroll-step", "shows-indicator"
+      ],
+      "actions": [],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "dragging", "displayName": "Dragging Indicator" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": []
+    },
+    {
+      "id": "lithe.widget.picker",
+      "displayName": "Picker",
+      "runtimeKind": "picker",
+      "cppType": "lithe::PickerView",
+      "paletteGroup": "Input",
+      "help": "Focus-driven delimiter-backed choice picker without dynamic allocation.",
+      "defaultGeometry": { "width": 140, "height": 40 },
+      "xml": {
+        "element": "picker",
+        "elementAliases": [],
+        "legacyClass": "LCDPICKERVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "items", "selected-index", "wrap", "font"
+      ],
+      "actions": [
+        {
+          "id": "selection-changed",
+          "displayName": "Selection Changed",
+          "event": "selection-changed",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.checkbox",
+      "displayName": "Checkbox",
+      "runtimeKind": "checkbox",
+      "cppType": "lithe::CheckboxView",
+      "paletteGroup": "Input",
+      "help": "Focusable Boolean choice that toggles when activated.",
+      "defaultGeometry": { "width": 140, "height": 28 },
+      "xml": {
+        "element": "checkbox",
+        "elementAliases": [],
+        "legacyClass": "LCDCHECKBOXVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "selected-background-color", "selected-foreground-color",
+        "text-alignment-flags", "text-scale", "border-width", "visible", "enabled", "focus-policy",
+        "text", "checked", "font"
+      ],
+      "actions": [
+        {
+          "id": "checked-changed",
+          "displayName": "Checked Changed",
+          "event": "checked-changed",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "checked", "displayName": "Checked" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.radio",
+      "displayName": "Radio Button",
+      "runtimeKind": "radio",
+      "cppType": "lithe::RadioButtonView",
+      "paletteGroup": "Input",
+      "help": "Focusable radio-style Boolean choice; grouping policy remains application-owned.",
+      "defaultGeometry": { "width": 140, "height": 28 },
+      "xml": {
+        "element": "radio",
+        "elementAliases": [],
+        "legacyClass": "LCDRADIOBUTTONVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "selected-background-color", "selected-foreground-color",
+        "text-alignment-flags", "text-scale", "border-width", "visible", "enabled", "focus-policy",
+        "text", "selected", "font"
+      ],
+      "actions": [
+        {
+          "id": "selected",
+          "displayName": "Selected",
+          "event": "selected",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "selected", "displayName": "Selected" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.text-field",
+      "displayName": "Text Field",
+      "runtimeKind": "textField",
+      "cppType": "lithe::TextFieldView",
+      "paletteGroup": "Input",
+      "help": "Bounded UTF-8 editor over an application-owned mutable text buffer.",
+      "defaultGeometry": { "width": 160, "height": 32 },
+      "xml": {
+        "element": "textfield",
+        "elementAliases": ["text-field"],
+        "legacyClass": "LCDTEXTFIELDVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "binding", "placeholder", "max-length", "font"
+      ],
+      "actions": [],
+      "bindings": [
+        {
+          "id": "text",
+          "displayName": "Text",
+          "propertyId": "binding",
+          "direction": "twoWay"
+        }
+      ],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "empty", "displayName": "Empty" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput", "textInput"],
+      "resources": [
+        { "kind": "font", "propertyId": "font", "required": false },
+        { "kind": "mutableTextBuffer", "propertyId": "binding", "required": true }
+      ]
+    },
+    {
+      "id": "lithe.widget.softkey",
+      "displayName": "Softkey Bar",
+      "runtimeKind": "softkey",
+      "cppType": "lithe::SoftkeyView",
+      "paletteGroup": "Input",
+      "help": "Two-region softkey bar with independent left and right action IDs.",
+      "defaultGeometry": { "width": 240, "height": 36 },
+      "xml": {
+        "element": "softkey",
+        "elementAliases": [],
+        "legacyClass": "LCDSOFTKEYVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "text-alignment-flags", "text-scale", "border-width", "visible",
+        "enabled", "focus-policy", "left-text", "right-text", "left-action", "right-action", "font"
+      ],
+      "actions": [
+        {
+          "id": "left-activate",
+          "displayName": "Left Activate",
+          "event": "left-activate",
+          "runtimeActionSource": "left-action"
+        },
+        {
+          "id": "right-activate",
+          "displayName": "Right Activate",
+          "event": "right-activate",
+          "runtimeActionSource": "right-action"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "left-selected", "displayName": "Left Selected" },
+        { "id": "right-selected", "displayName": "Right Selected" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.tab-bar",
+      "displayName": "Tab Bar",
+      "runtimeKind": "tabBar",
+      "cppType": "lithe::TabBarView",
+      "paletteGroup": "Input",
+      "help": "Equal-width strip of up to sixteen tabs. Left/right, select, or a pointer release on a tab changes the selection and reports the action.",
+      "defaultGeometry": { "width": 240, "height": 32 },
+      "xml": {
+        "element": "tabbar",
+        "elementAliases": ["tab-bar"],
+        "legacyClass": "LCDTABBARVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "selected-background-color", "selected-foreground-color",
+        "text-scale", "border-width", "visible", "enabled", "focus-policy", "items",
+        "selected-index", "wrap", "font"
+      ],
+      "actions": [
+        {
+          "id": "selection-changed",
+          "displayName": "Selection Changed",
+          "event": "selection-changed",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "pressed", "displayName": "Pressed" },
+        { "id": "selected", "displayName": "Selected" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.tab-view",
+      "displayName": "Tab View",
+      "runtimeKind": "tabView",
+      "cppType": "lithe::TabView",
+      "paletteGroup": "Containers",
+      "help": "Tab strip above one container page per tab; only the selected tab's page is visible and reachable by focus.",
+      "defaultGeometry": { "width": 240, "height": 160 },
+      "xml": {
+        "element": "tabview",
+        "elementAliases": ["tab-view"],
+        "legacyClass": "LCDTABVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "many",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "selected-background-color", "selected-foreground-color",
+        "text-scale", "border-width", "visible", "enabled", "focus-policy", "items",
+        "selected-index", "wrap", "tab-height", "font"
+      ],
+      "actions": [
+        {
+          "id": "selection-changed",
+          "displayName": "Selection Changed",
+          "event": "selection-changed",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "pressed", "displayName": "Pressed" },
+        { "id": "selected", "displayName": "Selected" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.wheel-picker",
+      "displayName": "Wheel Picker",
+      "runtimeKind": "wheelPicker",
+      "cppType": "lithe::WheelPickerView",
+      "paletteGroup": "Input",
+      "help": "Vertical scroll wheel of up to 255 items with the selection centered in a band. Select or encoder push starts and ends editing; while editing, up/down or the encoder turn it and back restores the starting value. A drag scrolls and snaps; a tap selects the row under it.",
+      "defaultGeometry": { "width": 120, "height": 140 },
+      "xml": {
+        "element": "wheelpicker",
+        "elementAliases": ["wheel-picker"],
+        "legacyClass": "LCDWHEELPICKERVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame", "runtime-id", "background-color", "foreground-color", "accent-color",
+        "border-color", "focused-background-color", "focused-foreground-color",
+        "pressed-background-color", "pressed-foreground-color", "disabled-background-color",
+        "disabled-foreground-color", "selected-background-color", "selected-foreground-color",
+        "text-scale", "border-width", "visible", "enabled", "focus-policy", "items",
+        "selected-index", "wrap", "row-height", "font"
+      ],
+      "actions": [
+        {
+          "id": "selection-changed",
+          "displayName": "Selection Changed",
+          "event": "selection-changed",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        { "id": "visible", "displayName": "Visible" },
+        { "id": "disabled", "displayName": "Disabled" },
+        { "id": "focused", "displayName": "Focused" },
+        { "id": "pressed", "displayName": "Pressed" },
+        { "id": "selected", "displayName": "Selected" }
+      ],
+      "inputCapabilities": ["keys", "pointerInput"],
+      "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.drop-down",
+      "displayName": "Drop-down",
+      "runtimeKind": "dropDown",
+      "cppType": "lithe::DropDownView",
+      "paletteGroup": "Input",
+      "help": "Compact selector with up to 255 immutable pipe-delimited items. Select opens or commits; arrows navigate; Back, focus loss or an outside press cancels. Tap a row to commit; drag the popup to scroll. At most five rows are shown, below or above the control within the root surface.",
+      "defaultGeometry": {
+        "width": 160,
+        "height": 28
+      },
+      "xml": {
+        "element": "dropdown",
+        "elementAliases": [
+          "drop-down"
+        ],
+        "legacyClass": "LCDDROPDOWNVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": [
+          "lithe.widget.panel",
+          "lithe.widget.scroll",
+          "lithe.widget.table"
+        ]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame",
+        "runtime-id",
+        "background-color",
+        "foreground-color",
+        "accent-color",
+        "border-color",
+        "focused-background-color",
+        "focused-foreground-color",
+        "pressed-background-color",
+        "pressed-foreground-color",
+        "disabled-background-color",
+        "disabled-foreground-color",
+        "selected-background-color",
+        "selected-foreground-color",
+        "text-scale",
+        "border-width",
+        "visible",
+        "enabled",
+        "focus-policy",
+        "items",
+        "selected-index",
+        "wrap",
+        "row-height",
+        "font"
+      ],
+      "actions": [
+        {
+          "id": "selection-changed",
+          "displayName": "Selection Changed",
+          "event": "selection-changed",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        {
+          "id": "visible",
+          "displayName": "Visible"
+        },
+        {
+          "id": "disabled",
+          "displayName": "Disabled"
+        },
+        {
+          "id": "focused",
+          "displayName": "Focused"
+        },
+        {
+          "id": "pressed",
+          "displayName": "Pressed"
+        },
+        {
+          "id": "selected",
+          "displayName": "Selected"
+        }
+      ],
+      "inputCapabilities": [
+        "keys",
+        "pointerInput"
+      ],
+      "resources": [
+        {
+          "kind": "font",
+          "propertyId": "font",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "migrations": []
+}

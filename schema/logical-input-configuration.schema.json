@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/logical-input-configuration.schema.json",
+  "title": "LitheView logical input configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "pointer",
+    "keys",
+    "text",
+    "encoder",
+    "select"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "pointer": {
+      "type": "boolean"
+    },
+    "keys": {
+      "type": "boolean"
+    },
+    "text": {
+      "type": "boolean"
+    },
+    "encoder": {
+      "type": "boolean"
+    },
+    "select": {
+      "type": "boolean"
+    }
+  }
+}

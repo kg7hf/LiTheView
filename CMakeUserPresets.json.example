@@ -1,0 +1,19 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "cortex-m33-gcc-release-local",
+      "displayName": "LitheView | U545 acceptance probes | Release",
+      "inherits": "cortex-m33-gcc-release",
+      "cacheVariables": {
+        "LITHEVIEW_ARM_TOOLCHAIN_ROOT": "REPLACE_WITH_ARM_GNU_TOOLCHAIN_ROOT"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "cortex-m33-gcc-release-local",
+      "configurePreset": "cortex-m33-gcc-release-local"
+    }
+  ]
+}

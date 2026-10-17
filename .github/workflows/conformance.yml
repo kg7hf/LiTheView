@@ -1,0 +1,130 @@
+name: LitheView conformance
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Select only the evidence needed for this manual run
+        required: true
+        default: host
+        type: choice
+        options:
+          - host
+          - arm
+          - static-analysis
+          - all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: litheview-conformance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host:
+    name: ${{ matrix.os }} / ${{ matrix.configuration }}
+    if: inputs.scope == 'host' || inputs.scope == 'all'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            configuration: Debug
+            build_win32: OFF
+          - os: ubuntu-latest
+            configuration: Release
+            build_win32: OFF
+          - os: windows-latest
+            configuration: Debug
+            build_win32: ON
+          - os: windows-latest
+            configuration: Release
+            build_win32: ON
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure
+        run: >-
+          cmake --fresh -S . -B build/host -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          -DLITHEVIEW_BUILD_WIN32=${{ matrix.build_win32 }}
+          -DLITHEVIEW_BUILD_TESTS=ON
+          -DLITHEVIEW_WARNINGS_AS_ERRORS=ON
+
+      - name: Build
+        run: cmake --build build/host --parallel
+
+      - name: Test
+        run: ctest --test-dir build/host --output-on-failure
+
+      - name: Install package
+        run: cmake --install build/host --prefix build/installed
+
+      - name: Configure installed-package consumer
+        run: >-
+          cmake --fresh -S tests/package_consumer -B build/package-consumer -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+          -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build/installed
+
+      - name: Build installed-package consumer
+        run: cmake --build build/package-consumer --parallel
+
+      - name: Test installed-package consumer
+        run: ctest --test-dir build/package-consumer --output-on-failure
+
+  arm-cross-builds:
+    name: Cortex-M33 and Cortex-M7 offline gates
+    if: inputs.scope == 'arm' || inputs.scope == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Arm GNU Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib ninja-build
+
+      - name: Configure Cortex-M33
+        run: >-
+          cmake --fresh --preset cortex-m33-gcc-release-ninja -B build/ci-m33
+          -DLITHEVIEW_WARNINGS_AS_ERRORS=ON
+
+      - name: Build Cortex-M33 and enforce budgets
+        run: cmake --build build/ci-m33 --parallel
+
+      - name: Configure Cortex-M7
+        run: >-
+          cmake --fresh --preset cortex-m7-gcc-release-ninja -B build/ci-m7
+          -DLITHEVIEW_WARNINGS_AS_ERRORS=ON
+
+      - name: Build Cortex-M7 portable Core
+        run: cmake --build build/ci-m7 --parallel
+
+      - name: Report embedded budget metrics
+        run: |
+          echo 'Cortex-M33 metrics'
+          cat build/ci-m33/litheview_embedded_metrics.json
+          echo 'Cortex-M7 is a portable Core cross-build; its preset does not create U545 budget metrics.'
+
+  static-analysis:
+    name: Critical static-analysis profile
+    if: inputs.scope == 'static-analysis' || inputs.scope == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install analysis tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes clang-tidy cppcheck ninja-build ripgrep
+
+      - name: Run compiler, Cppcheck, and Clang-Tidy gates
+        shell: pwsh
+        run: ./tools/run-static-analysis.ps1 -Generator Ninja

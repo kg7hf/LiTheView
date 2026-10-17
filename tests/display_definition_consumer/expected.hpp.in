@@ -1,0 +1,30 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include "lithe/display_definition.hpp"
+#include "lithe/painter.hpp"
+
+namespace lithe
+{
+const Bitmap& @expected_resource@() noexcept;
+}
+
+namespace fixture
+{
+
+// Handwritten expectations, independent of the JSON loader and C++ exporter.
+inline constexpr lithe::DisplayDefinition kExpected{
+    "litheview.definition.software.@DISPLAY_EXAMPLE@",
+    {@expected_width@, @expected_height@}, lithe::ViewportShape::@expected_shape@,
+    {@expected_safe_x@, @expected_safe_y@, @expected_safe_width@, @expected_safe_height@},
+    lithe::PixelFormat::@expected_format@, lithe::DisplayAddressSpace::@expected_address@
+};
+
+inline const lithe::Bitmap& expectedBitmap() noexcept
+{
+    return lithe::@expected_resource@();
+}
+
+} // namespace fixture

@@ -1,0 +1,351 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-mingw-debug",
+      "displayName": "LitheView | Win32 simulators + tests | XRGB8888 | Debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/windows-mingw-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "LITHEVIEW_DESTINATION_FORMAT": "ALL",
+        "LITHEVIEW_DEMO_FONT_BACKEND": "AUTO",
+        "LITHEVIEW_BUILD_RENDERING_FIXTURES": "ON",
+        "LITHEVIEW_BUILD_WIN32": "ON",
+        "LITHEVIEW_WIN32_COLOR_DEPTH": "XRGB8888",
+        "LITHEVIEW_BUILD_DESIGNER_PREVIEW": "ON",
+        "LITHEVIEW_BUILD_STM32U545_PROBE": "ON",
+        "LITHEVIEW_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "host-debug",
+      "displayName": "LitheView | Linux/macOS tests + designer preview worker | Debug",
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/host-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "LITHEVIEW_DESTINATION_FORMAT": "ALL",
+        "LITHEVIEW_BUILD_RENDERING_FIXTURES": "ON",
+        "LITHEVIEW_BUILD_DESIGNER_PREVIEW": "ON",
+        "LITHEVIEW_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "windows-mingw-rgb565-debug",
+      "displayName": "LitheView | Win32 simulators + tests | RGB565 | Debug",
+      "inherits": "windows-mingw-debug",
+      "binaryDir": "${sourceDir}/build/windows-mingw-rgb565-debug",
+      "cacheVariables": {
+        "LITHEVIEW_WIN32_COLOR_DEPTH": "RGB565"
+      }
+    },
+    {
+      "name": "windows-mingw-release",
+      "displayName": "LitheView | Win32 simulators + tests | XRGB8888 | Release",
+      "inherits": "windows-mingw-debug",
+      "binaryDir": "${sourceDir}/build/windows-mingw-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "windows-mingw-rgb565-release",
+      "displayName": "LitheView | Win32 simulators + tests | RGB565 | Release",
+      "inherits": "windows-mingw-rgb565-debug",
+      "binaryDir": "${sourceDir}/build/windows-mingw-rgb565-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "windows-mingw-rgb565-product-release",
+      "displayName": "LitheView | Fixed RGB565 Win32 products | Release",
+      "inherits": "windows-mingw-rgb565-release",
+      "binaryDir": "${sourceDir}/build/windows-mingw-rgb565-product-release",
+      "cacheVariables": {
+        "LITHEVIEW_DESTINATION_FORMAT": "RGB565",
+        "LITHEVIEW_BUILD_RENDERING_FIXTURES": "ON",
+        "LITHEVIEW_BUILD_TESTS": "OFF",
+        "LITHEVIEW_BUILD_DESIGNER_PREVIEW": "OFF",
+        "LITHEVIEW_BUILD_STM32U545_PROBE": "OFF",
+        "LITHEVIEW_WIN32_EXAMPLE_SET": "RGB",
+        "LITHEVIEW_WIN32_COLOR_DEPTH": "RGB565",
+        "LITHEVIEW_DEMO_FONT_BACKEND": "COMPACT5X7",
+        "LITHEVIEW_DEMO_ANIMATION_FORMAT": "ALPHA1"
+      }
+    },
+    {
+      "name": "windows-mingw-xrgb8888-product-release",
+      "displayName": "LitheView | Fixed XRGB8888 Win32 products | Release",
+      "inherits": "windows-mingw-release",
+      "binaryDir": "${sourceDir}/build/windows-mingw-xrgb8888-product-release",
+      "cacheVariables": {
+        "LITHEVIEW_DESTINATION_FORMAT": "XRGB8888",
+        "LITHEVIEW_BUILD_RENDERING_FIXTURES": "ON",
+        "LITHEVIEW_BUILD_TESTS": "OFF",
+        "LITHEVIEW_BUILD_DESIGNER_PREVIEW": "OFF",
+        "LITHEVIEW_BUILD_STM32U545_PROBE": "OFF",
+        "LITHEVIEW_WIN32_EXAMPLE_SET": "RGB",
+        "LITHEVIEW_WIN32_COLOR_DEPTH": "XRGB8888",
+        "LITHEVIEW_DEMO_FONT_BACKEND": "GENERATED_SANS",
+        "LITHEVIEW_DEMO_ANIMATION_FORMAT": "INDEXED4"
+      }
+    },
+    {
+      "name": "windows-mingw-r2-product-release",
+      "displayName": "LitheView | Fixed native R2 core | Release",
+      "inherits": "windows-mingw-release",
+      "binaryDir": "${sourceDir}/build/windows-mingw-r2-product-release",
+      "cacheVariables": {
+        "LITHEVIEW_DESTINATION_FORMAT": "R2_PACKED2X2",
+        "LITHEVIEW_BUILD_RENDERING_FIXTURES": "OFF",
+        "LITHEVIEW_BUILD_WIN32": "OFF",
+        "LITHEVIEW_BUILD_TESTS": "OFF",
+        "LITHEVIEW_BUILD_DESIGNER_PREVIEW": "OFF",
+        "LITHEVIEW_BUILD_STM32U545_PROBE": "OFF",
+        "LITHEVIEW_DEMO_FONT_BACKEND": "COMPACT5X7",
+        "LITHEVIEW_DEMO_ANIMATION_FORMAT": "ALPHA1"
+      }
+    },
+    {
+      "name": "windows-mingw-rgb565-product-debug",
+      "displayName": "LitheView | Fixed RGB565 Win32 products | Debug",
+      "inherits": "windows-mingw-rgb565-product-release",
+      "binaryDir": "${sourceDir}/build/windows-mingw-rgb565-product-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-mingw-xrgb8888-product-debug",
+      "displayName": "LitheView | Fixed XRGB8888 Win32 products | Debug",
+      "inherits": "windows-mingw-xrgb8888-product-release",
+      "binaryDir": "${sourceDir}/build/windows-mingw-xrgb8888-product-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "arm-gcc-release-base",
+      "hidden": true,
+      "toolchainFile": "${sourceDir}/cmake/arm-none-eabi-gcc.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "LITHEVIEW_DESTINATION_FORMAT": "ALL",
+        "LITHEVIEW_DEMO_FONT_BACKEND": "AUTO",
+        "LITHEVIEW_BUILD_RENDERING_FIXTURES": "ON",
+        "LITHEVIEW_BUILD_WIN32": "OFF",
+        "LITHEVIEW_BUILD_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "cortex-m33-gcc-release-base",
+      "hidden": true,
+      "inherits": "arm-gcc-release-base",
+      "cacheVariables": {
+        "LITHEVIEW_DESTINATION_FORMAT": "RGB565",
+        "LITHEVIEW_ARM_CPU": "cortex-m33",
+        "LITHEVIEW_ARM_FLOAT_ABI": "soft",
+        "LITHEVIEW_ARM_FPU": "",
+        "LITHEVIEW_BUILD_STM32U545_PROBE": "ON"
+      }
+    },
+    {
+      "name": "cortex-m7-gcc-release-base",
+      "hidden": true,
+      "inherits": "arm-gcc-release-base",
+      "cacheVariables": {
+        "LITHEVIEW_ARM_CPU": "cortex-m7",
+        "LITHEVIEW_ARM_FLOAT_ABI": "hard",
+        "LITHEVIEW_ARM_FPU": "fpv5-d16",
+        "LITHEVIEW_BUILD_STM32U545_PROBE": "OFF"
+      }
+    },
+    {
+      "name": "cortex-m33-gcc-release",
+      "hidden": true,
+      "displayName": "LitheView | Cortex-M33 probe | MinGW Release",
+      "inherits": "cortex-m33-gcc-release-base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/stm32u545-cortex-m33-release"
+    },
+    {
+      "name": "cortex-m7-gcc-release",
+      "hidden": true,
+      "displayName": "LitheView | Cortex-M7 core and demo | MinGW Release",
+      "inherits": "cortex-m7-gcc-release-base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/cortex-m7-release"
+    },
+    {
+      "name": "cortex-m33-gcc-release-ninja",
+      "displayName": "LitheView | U545 acceptance probes | Release",
+      "inherits": "cortex-m33-gcc-release-base",
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/stm32u545-cortex-m33-ninja-release"
+    },
+    {
+      "name": "cortex-m7-gcc-release-ninja",
+      "displayName": "LitheView | Portable Cortex-M7 gate | Release",
+      "inherits": "cortex-m7-gcc-release-base",
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/cortex-m7-ninja-release"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-mingw-rgb565-product-debug",
+      "configurePreset": "windows-mingw-rgb565-product-debug",
+      "targets": [
+        "litheview_win32"
+      ]
+    },
+    {
+      "name": "windows-mingw-xrgb8888-product-debug",
+      "configurePreset": "windows-mingw-xrgb8888-product-debug",
+      "targets": [
+        "litheview_win32"
+      ]
+    },
+    {
+      "name": "windows-mingw-round-rgb565-debug",
+      "configurePreset": "windows-mingw-rgb565-product-debug",
+      "targets": [
+        "litheview_win32_round"
+      ]
+    },
+    {
+      "name": "windows-mingw-round-xrgb8888-debug",
+      "configurePreset": "windows-mingw-xrgb8888-product-debug",
+      "targets": [
+        "litheview_win32_round"
+      ]
+    },
+    {
+      "name": "windows-mingw-r2-product-release",
+      "configurePreset": "windows-mingw-r2-product-release"
+    },
+    {
+      "name": "windows-mingw-rgb565-product-release",
+      "configurePreset": "windows-mingw-rgb565-product-release"
+    },
+    {
+      "name": "windows-mingw-xrgb8888-product-release",
+      "configurePreset": "windows-mingw-xrgb8888-product-release"
+    },
+    {
+      "name": "windows-mingw-debug",
+      "configurePreset": "windows-mingw-debug"
+    },
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug"
+    },
+    {
+      "name": "windows-mingw-rgb565-debug",
+      "configurePreset": "windows-mingw-rgb565-debug"
+    },
+    {
+      "name": "windows-mingw-release",
+      "configurePreset": "windows-mingw-release"
+    },
+    {
+      "name": "windows-mingw-rgb565-release",
+      "configurePreset": "windows-mingw-rgb565-release"
+    },
+    {
+      "name": "cortex-m33-gcc-release-ninja",
+      "configurePreset": "cortex-m33-gcc-release-ninja",
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "cortex-m7-gcc-release-ninja",
+      "configurePreset": "cortex-m7-gcc-release-ninja",
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-mingw-debug",
+      "configurePreset": "windows-mingw-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "windows-mingw-rgb565-debug",
+      "configurePreset": "windows-mingw-rgb565-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "windows-mingw-release",
+      "configurePreset": "windows-mingw-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "windows-mingw-rgb565-release",
+      "configurePreset": "windows-mingw-rgb565-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

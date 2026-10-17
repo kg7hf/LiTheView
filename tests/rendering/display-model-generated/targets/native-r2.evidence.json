@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "measurements": [
+    {
+      "value": 256,
+      "source": "Synthetic 512 x 2 logical emitter block row",
+      "metric": "tileWorkspaceAllocatedBytes",
+      "kind": "calculated"
+    },
+    {
+      "value": 49152,
+      "source": "Synthetic raw storage transfer, 192 block rows x 256 bytes; no protocol header",
+      "metric": "transferWireBytes",
+      "kind": "calculated"
+    }
+  ],
+  "resourcePlacement": "internalFlash",
+  "expectedDisplayDefinitionId": "litheview.definition.software.synthetic-r2",
+  "transferLimits": {
+    "source": "Synthetic acceptance-test limits; timing unevaluated",
+    "maximumDurationMicroseconds": 33334,
+    "maximumWireBytes": 50000
+  }
+}

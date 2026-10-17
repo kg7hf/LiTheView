@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "measurements": [
+    {
+      "value": 261120,
+      "source": "Fixture declares one tightly packed 480 x 272 x 2-byte RGB565 buffer; no total MCU memory measurement",
+      "metric": "framebufferAllocatedBytes",
+      "kind": "calculated"
+    }
+  ],
+  "resourcePlacement": "internalFlash",
+  "expectedDisplayDefinitionId": "litheview.definition.software.rk043fn48h-rgb565"
+}

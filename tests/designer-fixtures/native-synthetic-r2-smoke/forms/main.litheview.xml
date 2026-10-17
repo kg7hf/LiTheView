@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.main" displayName="Native synthetic packed display Red Smoke Main Form" surfaceProfileId="litheview.definition.software.synthetic-r2"-->
+<!--litheview-component id="component.main.root" name="rootPanel"-->
+<panel frame="0,0,512,384" backgroundColor="0x00201810" />

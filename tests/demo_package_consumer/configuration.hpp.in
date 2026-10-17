@@ -1,0 +1,12 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include "demo.hpp"
+
+inline constexpr auto kFormat = lithe::PixelFormat::@expected_format@;
+inline constexpr std::uint32_t kExpectedCrc = @expected_crc@;
+static_assert(lithe::supportsDestination(kFormat));
+static_assert(lithe::demo::config::kFontBackend == lithe::BuiltInFontBackend::@expected_font@);
+static_assert(lithe::demo::config::kAnimationFormat == lithe::demo::GallopResourceFormat::@expected_animation@);

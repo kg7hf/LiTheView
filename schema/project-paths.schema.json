@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/project-paths.schema.json",
+  "title": "LitheView application integration paths",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "applicationRoot", "libraryRoot", "componentDirectory", "buildDirectory"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "applicationRoot": { "type": "string", "minLength": 1, "description": "Relative to the project manifest directory, or absolute." },
+    "libraryRoot": { "type": "string", "minLength": 1, "description": "LitheView source checkout, relative to applicationRoot or absolute." },
+    "componentDirectory": { "type": "string", "minLength": 1, "description": "Generated portable UI component and host entrypoints, relative to applicationRoot or absolute." },
+    "buildDirectory": { "type": "string", "minLength": 1, "description": "Simulator build root, relative to applicationRoot or absolute. Configuration subdirectories are added below it." }
+  }
+}

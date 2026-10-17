@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.setpoint" displayName="Text Setpoint" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-binding id="binding.setpoint" runtimeName="setpoint" symbol="Setpoint" kind="mutableText" capacityBytes="4"-->
+<!--litheview-component id="root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00261b13">
+  <!--litheview-component id="title" name="title"-->
+  <label frame="20,16,440,28" textColor="0x00ffffff" textScale="2" text="TEXT SETPOINT" />
+  <!--litheview-component id="caption" name="caption"-->
+  <label frame="20,54,440,20" textColor="0x00ffffff" text="SETPOINT: INTEGER 0 TO 100" />
+  <!--litheview-component id="setpoint" name="setpoint"-->
+  <textfield frame="20,82,180,40" backgroundColor="0x00473526" textColor="0x00ffffff" accentColor="0x00efca6b" textScale="2" binding="setpoint" placeholder="0 TO 100" maxLength="3" />
+  <!--litheview-component id="applied-caption" name="appliedCaption"-->
+  <label frame="20,140,100,24" textColor="0x00ffffff" text="APPLIED:" />
+  <!--litheview-component id="applied" name="applied"-->
+  <label frame="120,140,100,24" textColor="0x00efca6b" textScale="2" text="25" />
+  <!--litheview-component id="status" name="status"-->
+  <label frame="20,182,440,20" textColor="0x00ffffff" text="READY" />
+  <!--litheview-component id="help" name="help"-->
+  <label frame="20,220,440,20" textColor="0x00c6b59d" text="BACKSPACE TO EDIT / ENTER APPLY / ESC CANCEL" />
+</panel>

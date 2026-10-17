@@ -1,0 +1,16 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include "@litheview_rgb_configuration_header@"
+
+namespace lithe::examples
+{
+
+// This alias is private to the configured adapter build. Its source definition
+// is also used by the dedicated product entry point.
+using ProductConfiguration = @litheview_rgb_configuration_type@;
+static_assert(supportsDestination(ProductConfiguration::kFormat));
+
+} // namespace lithe::examples

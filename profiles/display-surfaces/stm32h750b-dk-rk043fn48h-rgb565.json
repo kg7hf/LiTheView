@@ -1,0 +1,46 @@
+{
+  "$schema": "../../schema/display-surface.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.surface.stm32h750b-dk-rk043fn48h-rgb565",
+  "displayName": "STM32H750B-DK RK043FN48H RGB565",
+  "compatibilityFamily": "litheview.surface-family.rk043fn48h-480x272",
+  "shape": "rectangle",
+  "physicalSize": {
+    "widthMillimeters": 95.04,
+    "heightMillimeters": 53.86
+  },
+  "pixelSize": {
+    "width": 480,
+    "height": 272
+  },
+  "coordinateSystem": {
+    "origin": "topLeft",
+    "rotationDegrees": 0
+  },
+  "painterSurface": {
+    "format": "rgb565",
+    "colorDepthBits": 16,
+    "storageBitsPerPixel": 16
+  },
+  "nativeDisplay": {
+    "colorModel": "rgb",
+    "colorDepthBits": 24,
+    "transferUnitBits": 24,
+    "transferFormat": "rgb888Parallel"
+  },
+  "safeArea": {
+    "x": 0,
+    "y": 0,
+    "width": 480,
+    "height": 272
+  },
+  "inputCapabilities": ["touch"],
+  "provenance": {
+    "manufacturer": "Rocktech Displays Limited",
+    "model": "RK043FN48H-CT672B",
+    "sourceUrl": "https://www.rocktech.com.hk/lcd-product/rk043fn48h-ct672b/",
+    "sourceDocument": "Rocktech RK043FN48H-CT672B product specification page",
+    "sourceSha256": null,
+    "notes": "The manufacturer lists a 95.04 by 53.86 mm active area and 480 by 272 RGB pixels. The painter format records the selected LitheView RGB565 framebuffer mode; the panel input remains RGB24."
+  }
+}

@@ -1,0 +1,28 @@
+# Shared portable/managed contract. Fields are literal integers; no quoted CSV fields.
+# name,shape,width,height,safeX,safeY,safeWidth,safeHeight,x,y,rectWidth,rectHeight,policy,expected
+rectangle-full,rectangle,480,272,0,0,480,272,0,0,480,272,safeArea,OK
+rectangle-visible,rectangle,480,272,0,0,480,272,479,271,1,1,visibleShape,OK
+rectangle-right-edge,rectangle,480,272,0,0,480,272,480,271,1,1,visibleShape,LVSL3005
+rectangle-partial,rectangle,480,272,0,0,480,272,-10,-10,11,11,clipToViewport,OK
+rectangle-fully-clipped,rectangle,480,272,0,0,480,272,-10,-10,10,10,clipToViewport,LVSL3006
+round-safe,circle,240,240,36,36,168,168,36,36,168,168,safeArea,OK
+round-outside-safe,circle,240,240,36,36,168,168,20,80,20,20,safeArea,LVSL3004
+round-explicit-visible,circle,240,240,36,36,168,168,20,80,20,20,visibleShape,OK
+round-root-visible,circle,240,240,36,36,168,168,0,0,240,240,visibleShape,LVSL3005
+round-root-clipped,circle,240,240,36,36,168,168,0,0,240,240,clipToViewport,OK
+round-decorative-partial,circle,240,240,36,36,168,168,0,0,40,40,clipToViewport,OK
+round-invisible-corner,circle,240,240,36,36,168,168,0,0,10,10,clipToViewport,LVSL3006
+round-top-two,circle,20,20,3,3,14,14,9,0,2,1,visibleShape,OK
+round-left-two,circle,20,20,3,3,14,14,0,9,1,2,visibleShape,OK
+round-corner-pixel,circle,20,20,3,3,14,14,0,0,1,1,visibleShape,LVSL3005
+odd-round-top,circle,5,5,1,1,3,3,2,0,1,1,visibleShape,OK
+odd-round-corner,circle,5,5,1,1,3,3,0,0,1,1,clipToViewport,LVSL3006
+zero-width,rectangle,480,272,0,0,480,272,0,0,0,1,safeArea,LVSL3003
+negative-height,rectangle,480,272,0,0,480,272,0,0,1,-1,clipToViewport,LVSL3003
+exclusive-right-overflow,rectangle,480,272,0,0,480,272,2147483647,0,1,1,clipToViewport,LVSL3003
+exclusive-bottom-overflow,rectangle,480,272,0,0,480,272,0,2147483640,1,8,clipToViewport,LVSL3003
+representable-max-edge,rectangle,480,272,0,0,480,272,2147483646,0,1,1,clipToViewport,LVSL3006
+representable-min-range,rectangle,480,272,0,0,480,272,-2147483648,0,2147483647,1,clipToViewport,LVSL3006
+invalid-policy,rectangle,480,272,0,0,480,272,0,0,1,1,invalid,LVSL3002
+invalid-definition,rectangle,0,272,0,0,1,1,0,0,1,1,safeArea,LVSL3001
+invalid-round-safe,circle,240,240,0,0,240,240,0,0,1,1,clipToViewport,LVSL3001

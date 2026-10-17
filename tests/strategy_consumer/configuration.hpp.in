@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2026 Paul R. Decker
+// SPDX-License-Identifier: GPL-3.0-only
+
+#pragma once
+
+#include <lithe/pixel_format.hpp>
+
+namespace strategy_fixture
+{
+
+inline constexpr auto kFormat = lithe::PixelFormat::@expected_destination_enum@;
+inline constexpr char kFormatName[]{"@EXPECTED_DESTINATION_FORMAT@"};
+inline constexpr char kStrategyName[]{"@STRATEGY@"};
+
+} // namespace strategy_fixture

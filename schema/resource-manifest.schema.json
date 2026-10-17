@@ -1,0 +1,752 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://litheview.dev/schema/resource-manifest.schema.json",
+  "title": "LitheView resource manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "displayName",
+    "kind",
+    "source",
+    "compliance",
+    "variants"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "kind": {
+      "enum": ["font", "image", "icon", "animation"]
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "compliance": {
+      "$ref": "#/$defs/compliance"
+    },
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "$ref": "#/$defs/variant"
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "projectPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "nullableProjectPath": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/projectPath"
+        }
+      ]
+    },
+    "nullableSha256": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/sha256"
+        }
+      ]
+    },
+    "boundedText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "nullableBoundedText": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/boundedText"
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "byteCount", "mediaType", "provenance"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/projectPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byteCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "provenance": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/provenance"
+            }
+          ]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "author", "sourceUri", "notes", "license"],
+      "properties": {
+        "origin": {
+          "$ref": "#/$defs/boundedText"
+        },
+        "author": {
+          "$ref": "#/$defs/nullableBoundedText"
+        },
+        "sourceUri": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          ]
+        },
+        "notes": {
+          "$ref": "#/$defs/nullableBoundedText"
+        },
+        "license": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/license"
+            }
+          ]
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spdxId",
+        "licenseTextPath",
+        "licenseTextSha256",
+        "attribution",
+        "redistributionApproved"
+      ],
+      "properties": {
+        "spdxId": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          ]
+        },
+        "licenseTextPath": {
+          "$ref": "#/$defs/nullableProjectPath"
+        },
+        "licenseTextSha256": {
+          "$ref": "#/$defs/nullableSha256"
+        },
+        "attribution": {
+          "$ref": "#/$defs/nullableBoundedText"
+        },
+        "redistributionApproved": {
+          "type": "boolean"
+        }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["missingProvenance", "missingLicense", "unapprovedRedistribution"],
+      "properties": {
+        "missingProvenance": {
+          "$ref": "#/$defs/policyAction"
+        },
+        "missingLicense": {
+          "$ref": "#/$defs/policyAction"
+        },
+        "unapprovedRedistribution": {
+          "$ref": "#/$defs/policyAction"
+        }
+      }
+    },
+    "policyAction": {
+      "enum": ["allow", "warning", "error"]
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "compatiblePainterFormats",
+        "converter",
+        "output",
+        "integration"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "compatiblePainterFormats": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["rgb565", "rgb888", "xrgb8888", "argb8888", "r2Packed2x2", "rrrr2222", "ryry2222"]
+          }
+        },
+        "converter": {
+          "$ref": "#/$defs/converter"
+        },
+        "output": {
+          "$ref": "#/$defs/output"
+        },
+        "font": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/fontVariant"
+            }
+          ]
+        },
+        "image": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/imageVariant"
+            }
+          ]
+        },
+        "animation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/animationVariant"
+            }
+          ]
+        },
+        "integration": {
+          "$ref": "#/$defs/integration"
+        }
+      }
+    },
+    "converter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "options"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "options": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "pattern": "^[a-z][A-Za-z0-9.-]{0,63}$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byteCount",
+        "format",
+        "pixelSize",
+        "frameCount"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/projectPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byteCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "format": {
+          "enum": ["alpha1", "alpha8", "indexed4", "rgb565", "rgb888", "xrgb8888", "argb8888", "r2Packed2x2"]
+        },
+        "pixelSize": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/pixelSize"
+            }
+          ]
+        },
+        "frameCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "format": { "const": "r2Packed2x2" } } },
+          "then": {
+            "properties": {
+              "frameCount": { "const": 1 },
+              "pixelSize": {
+                "type": "object",
+                "properties": {
+                  "width": { "multipleOf": 2 },
+                  "height": { "multipleOf": 2 }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pixelSize": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        }
+      }
+    },
+    "fontVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "style",
+        "weight",
+        "pixelSize",
+        "coverage",
+        "repertoire",
+        "fallback",
+        "glyphCount",
+        "coverageBytes",
+        "recordBytes",
+        "estimatedRomBytes",
+        "dataChecksumFnv1a32",
+        "lineHeight",
+        "baseline",
+        "underlinePosition",
+        "underlineThickness"
+      ],
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "style": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "pixelSize": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 64
+        },
+        "coverage": {
+          "enum": ["alpha1", "alpha8"]
+        },
+        "repertoire": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "fallback": {
+          "type": "string",
+          "pattern": "^U\\+[0-9A-F]{4,6}$"
+        },
+        "glyphCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "coverageBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recordBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "estimatedRomBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dataChecksumFnv1a32": {
+          "type": "string",
+          "pattern": "^0x[0-9a-f]{8}$"
+        },
+        "lineHeight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "baseline": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "underlinePosition": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "underlineThickness": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        }
+      }
+    },
+    "imageVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tintable",
+        "sourcePixelSize",
+        "crop",
+        "scaleMode",
+        "alphaMode",
+        "alphaThreshold",
+        "dither",
+        "tintArgb",
+        "matteArgb",
+        "paletteArgb",
+        "strideBytes",
+        "pixelBytes",
+        "paletteBytes",
+        "estimatedRomBytes",
+        "pixelChecksumFnv1a32",
+        "paletteChecksumFnv1a32",
+        "dataChecksumFnv1a32"
+      ],
+      "properties": {
+        "tintable": {
+          "type": "boolean"
+        },
+        "sourcePixelSize": {
+          "$ref": "#/$defs/pixelSize"
+        },
+        "crop": {
+          "$ref": "#/$defs/cropRectangle"
+        },
+        "scaleMode": {
+          "enum": ["nearestNeighbor", "bilinear"]
+        },
+        "alphaMode": {
+          "enum": ["preserve", "threshold", "opaque"]
+        },
+        "alphaThreshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "dither": {
+          "enum": ["none", "ordered4x4"]
+        },
+        "tintArgb": {
+          "$ref": "#/$defs/argbColor"
+        },
+        "matteArgb": {
+          "$ref": "#/$defs/argbColor"
+        },
+        "paletteArgb": {
+          "type": "string",
+          "maxLength": 143
+        },
+        "strideBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pixelBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "paletteBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "estimatedRomBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pixelChecksumFnv1a32": {
+          "$ref": "#/$defs/fnv1a32"
+        },
+        "paletteChecksumFnv1a32": {
+          "$ref": "#/$defs/fnv1a32"
+        },
+        "dataChecksumFnv1a32": {
+          "$ref": "#/$defs/fnv1a32"
+        }
+      }
+    },
+    "animationVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tintable",
+        "sourcePixelSize",
+        "sourceGrid",
+        "sourceFramePixelSize",
+        "columns",
+        "scaleMode",
+        "alphaMode",
+        "alphaThreshold",
+        "dither",
+        "tintArgb",
+        "matteArgb",
+        "paletteArgb",
+        "frameIntervalMilliseconds",
+        "repeatIndex",
+        "autoplay",
+        "strideBytes",
+        "framePixelBytes",
+        "pixelBytes",
+        "paletteBytes",
+        "estimatedRomBytes",
+        "pixelChecksumFnv1a32",
+        "paletteChecksumFnv1a32",
+        "dataChecksumFnv1a32"
+      ],
+      "properties": {
+        "tintable": {
+          "type": "boolean"
+        },
+        "sourcePixelSize": {
+          "$ref": "#/$defs/pixelSize"
+        },
+        "sourceGrid": {
+          "$ref": "#/$defs/cropRectangle"
+        },
+        "sourceFramePixelSize": {
+          "$ref": "#/$defs/pixelSize"
+        },
+        "columns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "scaleMode": {
+          "enum": ["nearestNeighbor", "bilinear"]
+        },
+        "alphaMode": {
+          "enum": ["preserve", "threshold", "opaque"]
+        },
+        "alphaThreshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "dither": {
+          "enum": ["none", "ordered4x4"]
+        },
+        "tintArgb": {
+          "$ref": "#/$defs/argbColor"
+        },
+        "matteArgb": {
+          "$ref": "#/$defs/argbColor"
+        },
+        "paletteArgb": {
+          "type": "string",
+          "maxLength": 143
+        },
+        "frameIntervalMilliseconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "repeatIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65534
+        },
+        "autoplay": {
+          "type": "boolean"
+        },
+        "strideBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "framePixelBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pixelBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "paletteBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "estimatedRomBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pixelChecksumFnv1a32": {
+          "$ref": "#/$defs/fnv1a32"
+        },
+        "paletteChecksumFnv1a32": {
+          "$ref": "#/$defs/fnv1a32"
+        },
+        "dataChecksumFnv1a32": {
+          "$ref": "#/$defs/fnv1a32"
+        }
+      }
+    },
+    "cropRectangle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16383
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16383
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        }
+      }
+    },
+    "argbColor": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}$"
+    },
+    "fnv1a32": {
+      "type": "string",
+      "pattern": "^0x[0-9a-f]{8}$"
+    },
+    "integration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ownership", "lifetime", "providerId", "notes"],
+      "properties": {
+        "ownership": {
+          "enum": ["application", "library", "provider"]
+        },
+        "lifetime": {
+          "enum": ["static", "callerOwned", "providerManaged"]
+        },
+        "providerId": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/identifier"
+            }
+          ]
+        },
+        "notes": {
+          "$ref": "#/$defs/nullableBoundedText"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "../../schema/display-surface.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.surface.synthetic-red-staging",
+  "displayName": "Synthetic legacy staging test: red-staging",
+  "compatibilityFamily": "litheview.surface-family.synthetic-red-staging",
+  "shape": "rectangle",
+  "physicalSize": {
+    "widthMillimeters": 51.2,
+    "heightMillimeters": 38.4
+  },
+  "pixelSize": {
+    "width": 512,
+    "height": 384
+  },
+  "coordinateSystem": {
+    "origin": "topLeft",
+    "rotationDegrees": 0
+  },
+  "painterSurface": {
+    "format": "rgb565",
+    "colorDepthBits": 16,
+    "storageBitsPerPixel": 16
+  },
+  "nativeDisplay": {
+    "colorModel": "redLuminanceSubpixels",
+    "colorDepthBits": 2,
+    "transferUnitBits": 8,
+    "transferFormat": "packed8"
+  },
+  "safeArea": {
+    "x": 0,
+    "y": 0,
+    "width": 512,
+    "height": 384
+  },
+  "inputCapabilities": [
+    "encoder",
+    "pushButton"
+  ],
+  "provenance": {
+    "manufacturer": "LiTheView test fixture",
+    "model": "synthetic-red-staging",
+    "sourceUrl": "https://github.com/kg7hf/LiTheView",
+    "sourceDocument": "Synthetic software contract for regression tests",
+    "sourceSha256": null,
+    "notes": "Invented geometry and dimensions. This fixture is not a hardware display or a driver specification."
+  }
+}

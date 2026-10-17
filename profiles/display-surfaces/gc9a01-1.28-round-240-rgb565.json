@@ -1,0 +1,45 @@
+{
+  "$schema": "../../schema/display-surface.schema.json",
+  "schemaVersion": 1,
+  "id": "litheview.surface.gc9a01-1-28-round-240-rgb565",
+  "displayName": "GC9A01 1.28-inch Round RGB565",
+  "compatibilityFamily": "litheview.surface-family.gc9a01-240-round",
+  "shape": "circle",
+  "physicalSize": {
+    "diameterMillimeters": 32.4
+  },
+  "pixelSize": {
+    "width": 240,
+    "height": 240
+  },
+  "coordinateSystem": {
+    "origin": "topLeft",
+    "rotationDegrees": 0
+  },
+  "painterSurface": {
+    "format": "rgb565",
+    "colorDepthBits": 16,
+    "storageBitsPerPixel": 16
+  },
+  "nativeDisplay": {
+    "colorModel": "rgb",
+    "colorDepthBits": 16,
+    "transferUnitBits": 16,
+    "transferFormat": "rgb565"
+  },
+  "safeArea": {
+    "x": 36,
+    "y": 36,
+    "width": 168,
+    "height": 168
+  },
+  "inputCapabilities": [],
+  "provenance": {
+    "manufacturer": "Winstar Display Co., Ltd.",
+    "model": "WFN0128A2T0YADNN000",
+    "sourceUrl": "https://www.winstar.com.tw/products/tft-lcd/round-tft-lcd-display/wfn0128a2t0yadnn000.html",
+    "sourceDocument": "Winstar WFN0128A2T0YADNN000 product specification page",
+    "sourceSha256": null,
+    "notes": "The manufacturer lists a 32.4 mm circular active area and 240 by 240 RGB pixels. This profile selects a 16-bit RGB565 LitheView/transfer mode and records no panel-integrated input device."
+  }
+}
