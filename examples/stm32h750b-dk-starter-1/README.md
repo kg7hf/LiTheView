@@ -633,3 +633,18 @@ Generate UI emits a portable component and its ownership marker, not an applicat
 simulator. The existing CMake presets and launchers remain the only build/debug workflow. Earlier
 `simulation.json` exports are accepted during migration; generation verifies their owned files before
 retiring unused scaffold. Application-owned handlers are preserved and remain outside generated code.
+
+## Designer setup troubleshooting
+
+Opening this starter in a new checkout does not update an older LiTheView
+extension already installed in VS Code. Install the matching extension, prepare
+the tools in this application's `Middlewares/Third_Party/LiTheView` submodule,
+and run **Developer: Reload Window**. An outer checkout's prepared tools do not
+prepare this submodule automatically.
+
+A widget-catalog error indicates mismatched service/library versions. Missing
+`libstdc++-6.dll` or `libgcc_s_seh-1.dll` indicates that the native preview worker
+cannot find its compiler runtime; the current preparation script supplies the
+matching DLLs locally. See the [setup guide](../../tools/vscode/README.md#updating-an-existing-designer-installation)
+for SDK selection, tool overrides and recovery steps. These tooling repairs do not
+require regenerating the UI or changing the application's CMake presets.

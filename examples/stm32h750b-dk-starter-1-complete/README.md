@@ -18,6 +18,12 @@ The adapters, generated counter and front-view configuration are included here.
 [bonus step 8](../stm32h750b-dk-starter-1/README.md#8-bonus-a-physical-push-button-and-a-board-front-view)
 for the complete sequence, persistent label buffer and shared debounce logic.
 
+![LiTheView form designer in VS Code with the H750 starter running in the Windows simulator](../../docs/images/designer-and-windows-simulator.png)
+
+*Design the form in VS Code, then build and debug the application in Windows.
+The foreground window is the simulator using a board photograph; the Windows
+and STM32 targets share the application logic and generated UI.*
+
 ## Build and run
 
 Download [STM32CubeMX from STMicroelectronics](https://www.st.com/en/development-tools/stm32cubemx.html) and install it separately under ST's terms.
@@ -99,3 +105,18 @@ Generate UI emits a portable component and its ownership marker, not an applicat
 simulator. The existing CMake presets and launchers remain the only build/debug workflow. Earlier
 `simulation.json` exports are accepted during migration; generation verifies their owned files before
 retiring unused scaffold. Application-owned handlers are preserved and remain outside generated code.
+
+## Designer setup troubleshooting
+
+Opening this starter in a new checkout does not update an older LiTheView
+extension already installed in VS Code. Install the matching extension, prepare
+the tools in this application's `Middlewares/Third_Party/LiTheView` submodule,
+and run **Developer: Reload Window**. An outer checkout's prepared tools do not
+prepare this submodule automatically.
+
+A widget-catalog error indicates mismatched service/library versions. Missing
+`libstdc++-6.dll` or `libgcc_s_seh-1.dll` indicates that the native preview worker
+cannot find its compiler runtime; the current preparation script supplies the
+matching DLLs locally. See the [setup guide](../../tools/vscode/README.md#updating-an-existing-designer-installation)
+for SDK selection, tool overrides and recovery steps. These tooling repairs do not
+require regenerating the UI or changing the application's CMake presets.

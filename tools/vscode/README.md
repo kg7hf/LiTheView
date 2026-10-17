@@ -64,6 +64,41 @@ LiTheView checkout still supplies its widget catalog, profiles and Core sources.
 The installed extension uses its matching bundled tooling. A source extension
 falls back to prepared tools; explicit settings can select development tools.
 
+### Updating an existing designer installation
+
+Moving to another clone or updating a LiTheView submodule does not update an
+extension already installed in VS Code. Check **Extensions > LiTheView Designer**
+for the installed version. Install the matching VSIX, then run **Developer: Reload
+Window**. Validation in an isolated editor does not change your normal editor.
+
+For a source-only VSIX, prepare tools inside the application's actual LiTheView
+submodule, not just an outer library checkout. From the application root:
+
+```powershell
+./Middlewares/Third_Party/LiTheView/tools/prepare-vscode-designer.ps1
+```
+
+If the required .NET SDK is installed separately, pass `-Dotnet` with its executable
+path. `dotnet --list-sdks` in that environment must satisfy the submodule's
+`tools/designer/global.json`; installing only the runtime does not provide an SDK.
+The VS Code C# extension can also select a different SDK from the one used by the
+preparation command.
+
+**Widget catalog mismatch:** an older bundled service or an explicitly configured
+`litheview.servicePath` can disagree with the application's pinned library. Install
+the matching extension and prepare that library. Check the **LiTheView** Output
+channel for the service actually selected, and remove obsolete tool overrides.
+
+**Missing `libstdc++-6.dll`, `libgcc_s_seh-1.dll` or `libwinpthread-1.dll`:** the
+native preview worker needs the runtime from the same compiler that built it.
+The updated preparation script copies that matching runtime set beside the worker
+in its ignored build directory. This is a local build operation; the source-only
+VSIX still contains no DLLs. A terminal preview can succeed while VS Code fails
+because their inherited PATH values differ. Do not download individual DLLs or
+mix compiler distributions. Close any error dialogs, rerun preparation with the
+updated script, then close and reopen the form. Reload the window when changing
+the installed extension.
+
 ## Add UI to an application
 
 Initialize LiTheView in your application's dependency folder, open the application

@@ -36,11 +36,19 @@ async function run() {
       assert.equal(settings.get('servicePath'), '');
       assert.equal(settings.get('previewWorkerPath'), '');
       assert.ok(extension.extensionPath.toLowerCase().includes(`${path.sep}extensions${path.sep}`));
+      for (const entry of (process.env.PATH || '').split(path.delimiter).filter(Boolean)) {
+        for (const dll of ['libstdc++-6.dll', 'libgcc_s_seh-1.dll', 'libwinpthread-1.dll']) {
+          await assert.rejects(fs.access(path.join(entry, dll)), { code: 'ENOENT' });
+        }
+      }
       if (packaged.sourceOnly) {
         await assert.rejects(fs.access(path.join(extension.extensionPath, 'runtime')), { code: 'ENOENT' });
         await fs.access(path.join(packaged.libraryRoot, 'build/vscode-designer/service/LitheView.Designer.Service.dll'));
         await fs.access(path.join(packaged.libraryRoot, 'build/windows-mingw-debug/litheview_designer_preview_worker.exe'));
-        record('Installed source-only VSIX uses locally prepared tools without service or worker overrides');
+        for (const dll of ['libstdc++-6.dll', 'libgcc_s_seh-1.dll', 'libwinpthread-1.dll']) {
+          await fs.access(path.join(packaged.libraryRoot, 'build/windows-mingw-debug', dll));
+        }
+        record('Installed source-only VSIX uses locally prepared tools without overrides or MinGW on PATH');
       } else {
         await fs.access(path.join(extension.extensionPath, 'runtime/service/LitheView.Designer.Service.dll'));
         await fs.access(path.join(extension.extensionPath, 'runtime/native/litheview_designer_preview_worker.exe'));

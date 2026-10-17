@@ -154,6 +154,18 @@ Open your **application root** in VS Code. Initialize its LiTheView submodule, t
 Use your application's normal CMake preset, Build command and F5 launcher for the Windows simulator
 or embedded target. The designer does not build or launch the application.
 
+### Existing VS Code installation and a new checkout
+
+An already-installed designer is not updated by cloning or pulling LiTheView.
+Install the matching extension and run **Developer: Reload Window**. With a
+source-only extension, prepare the designer in the application's LiTheView
+submodule even if tools were already built in the outer checkout.
+
+The updated preparation step places matching MinGW runtime DLLs beside the local
+preview worker so a VS Code process without the compiler directory on PATH can
+render forms. See [designer setup troubleshooting](../tools/vscode/README.md#updating-an-existing-designer-installation)
+for catalog mismatch, SDK selection and missing-DLL errors.
+
 ## 6. Continue with an application or H750 starter
 
 An existing application supplies its own hardware, RTOS, compiler and debug integration. It can put
