@@ -40,3 +40,38 @@ The completed reference's `tiny_gecko.bin` SHA-256 is
 It matches the retained pre-split firmware exactly. Previous human Windows and
 hardware acceptance is recorded in the [completed reference](../efm32tg-stk3300-menu-1-complete/VALIDATION.md); it is not a
 new physical test of the blank starter. Existing STM32 starters were not edited.
+
+## Windows board-photo overlay
+
+Both examples build with the photo copied beside the executable. The completed
+example passes 4/4 tests and the blank starter passes 3/3, including their actual
+Win32 mouse/keyboard workflow at the photographed PB0, PB1 and slider positions.
+The input test also exercises SETUP -> LIGHT. An application-rendered snapshot
+was inspected for LCD, button, slider and LED placement. The blank starter still
+has no generated UI; its glass remains unlit. No firmware or FSM changes and no
+hardware flash were needed for this Windows-only presentation change.
+
+## Fresh configure recovery
+
+The user's VS Code log exposed missing g++, Arm GCC and Ninja after loss of the
+old cache. Tool discovery now checks explicit settings, PATH and known Windows
+installation locations. Fresh Windows and Arm configurations and builds passed
+with compiler directories removed from PATH and GCC_HOME/ARM_GCC_BIN unset.
+Both examples' ordinary win32-debug and efm32-debug presets also configure and
+build successfully under that restricted environment. Evidence is retained in
+`build/tiny-configure-recovery` in the library checkout. No GUI was launched and
+no hardware was accessed for this recovery check.
+
+## Overlay release acceptance
+
+The owner confirmed the board overlay and Configure recovery work, then confirmed
+the corrected orange LED position below and left of PB0. This is human Windows
+acceptance; it is not a new hardware test. The release preserves the application
+FSM, generated segment encoder and embedded adapters.
+
+Final source-release checks passed in both private and public checkouts: fresh
+Windows and ARM builds with tool directories removed from PATH; Windows CTest
+3/3 for the blank starter and 4/4 for the completed reference; and the repository
+cast audit. Each example produces identical firmware bytes in both checkouts.
+Changed Markdown links and whitespace checks passed. No hardware was flashed.
+Local evidence is under `build/tiny-overlay-release` in the private checkout.

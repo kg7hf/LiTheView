@@ -4,7 +4,7 @@ The Tiny Gecko has fixed electrodes. We can turn each one on or off, but we cann
 move a button or draw arbitrary text on the glass. The designer needs that physical
 description before it can show us the fields we can use.
 
-This lesson uses the VS Code plug-in, version 0.2.16 or later, with its matching
+This lesson uses the VS Code plug-in, version 0.2.18 or later, with its matching
 service and native worker. Windows and the Tiny Gecko now consume the generated
 encoder through the same handwritten presenter. The application-owned FSM in
 `Application/menu.hpp` stays unchanged.
@@ -116,7 +116,7 @@ Your application is the project root. LiTheView can live under
 folder. Start with your application's Windows build and input adapters in place.
 The designer adds presentation files; it does not create an MCU project or menu FSM.
 
-Prepare the matching designer service and install the 0.2.16 or later plug-in.
+Prepare the matching designer service and install the 0.2.18 or later plug-in.
 Open your application root in VS Code and trust it. Keep your existing application
 build presets and launchers.
 

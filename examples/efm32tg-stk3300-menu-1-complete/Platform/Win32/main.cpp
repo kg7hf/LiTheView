@@ -6,6 +6,7 @@
 #define _UNICODE
 #include "Devices/slider.hpp"
 #include "UI/presenter.hpp"
+#include "Platform/Win32/board_image.hpp"
 
 #include <algorithm>
 #include <array>
@@ -18,10 +19,14 @@
 
 namespace
 {
-constexpr RECT kPb0{560, 335, 660, 405};
-constexpr RECT kPb1{690, 335, 790, 405};
-constexpr RECT kSlider{80, 440, 790, 510};
-constexpr COLORREF kBoard{RGB(26, 67, 59)};
+// Image is 465x288, displayed at 2x. These bounds are Windows presentation only.
+constexpr int kWidth = 930;
+constexpr int kHeight = 640;
+constexpr RECT kPb0{590, 320, 644, 374};
+constexpr RECT kPb1{670, 320, 724, 374};
+constexpr RECT kSlider{554, 398, 758, 452};
+constexpr RECT kLed{524, 368, 536, 390};
+constexpr RECT kDisplay{210, 174, 558, 300};
 constexpr COLORREF kGlass{RGB(178, 194, 162)};
 constexpr COLORREF kOn{RGB(24, 42, 38)};
 constexpr COLORREF kOff{RGB(162, 179, 147)};
@@ -86,6 +91,11 @@ class Window
 public:
     [[nodiscard]] bool create(HINSTANCE instance)
     {
+        if (!mImage.load())
+        {
+            std::fputs("Cannot load board-front.png beside tiny_gecko.exe (expected 465x288).\n", stderr);
+            return false;
+        }
         WNDCLASSW definition{};
         definition.lpfnWndProc = procedure;
         definition.hInstance = instance;
@@ -93,7 +103,7 @@ public:
         definition.hCursor = LoadCursorW(nullptr, IDC_ARROW);
         if (!RegisterClassW(&definition))
             return false;
-        RECT size{0, 0, 870, 600};
+        RECT size{0, 0, kWidth, kHeight};
         constexpr DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
         if (!AdjustWindowRect(&size, style, FALSE))
             return false;
@@ -146,9 +156,22 @@ public:
     }
     void draw(HDC dc)
     {
-        fill(dc, {0, 0, 870, 600}, RGB(17, 29, 28));
-        fill(dc, {35, 55, 835, 535}, kBoard);
-        text(dc, 35, 20, L"TINY GECKO   /   SEGMENTED MENU   /   BRD2100A A03");
+        fill(dc, {0, 0, kWidth, kHeight}, RGB(17, 29, 28));
+        if (!mImage.draw(dc))
+            mFailed = true;
+        // Preserve the existing segment geometry; map its glass rectangle onto
+        // the photograph. Only Windows drawing scales, never the encoded bits.
+        const auto saved = SaveDC(dc);
+        if (saved == 0)
+        {
+            mFailed = true;
+            return;
+        }
+        SetMapMode(dc, MM_ANISOTROPIC);
+        SetWindowOrgEx(dc, 65, 80, nullptr);
+        SetWindowExtEx(dc, 740, 235, nullptr);
+        SetViewportOrgEx(dc, kDisplay.left, kDisplay.top, nullptr);
+        SetViewportExtEx(dc, kDisplay.right - kDisplay.left, kDisplay.bottom - kDisplay.top, nullptr);
         fill(dc, {65, 80, 805, 315}, kGlass);
         // Numeric cells 8..11 above the seven alphanumeric cells.
         for (std::size_t i = 0; i < 4; ++i)
@@ -191,34 +214,24 @@ public:
             SelectObject(dc, oldBrush);
             DeleteObject(brush);
         }
-        text(dc, 225, 105, L"VOLUME RING", kOn);
-        text(dc, 225, 130, L"8 fixed segments", kOn);
-        text(dc, 225, 155, L"Draft while editing", kOn);
-        fill(dc, kPb0, mPressed == Press::pb0 ? RGB(95, 144, 183) : RGB(210, 218, 215));
-        fill(dc, kPb1, mPressed == Press::pb1 ? RGB(95, 144, 183) : RGB(210, 218, 215));
-        text(dc, 575, 348, L"PB0", kOn);
-        text(dc, 575, 375, L"SELECT", kOn);
-        text(dc, 705, 348, L"PB1", kOn);
-        text(dc, 705, 375, L"BACK", kOn);
-        fill(dc, {90, 350, 115, 375}, mLed ? RGB(100, 250, 80) : RGB(35, 90, 49));
-        text(dc, 125, 355, L"USER LED");
-        text(dc, 80, 412, L"TOUCH SLIDER   |   drag left / right to browse or adjust");
-        for (int i = 0; i < 4; ++i)
-            fill(dc, {80 + i * 178, 440, 80 + i * 178 + 172, 510}, RGB(39, 100, 85));
+        if (!RestoreDC(dc, saved))
+            mFailed = true;
+        // Leave the photo visible. Highlight only the active physical control.
+        const auto brush = CreateSolidBrush(RGB(35, 140, 235));
+        if (brush)
+        {
+            if (mPressed == Press::pb0) FrameRect(dc, &kPb0, brush);
+            if (mPressed == Press::pb1) FrameRect(dc, &kPb1, brush);
+            if (mPressed == Press::slider) FrameRect(dc, &kSlider, brush);
+            DeleteObject(brush);
+        }
+        fill(dc, kLed, mLed ? RGB(255, 128, 24) : RGB(90, 48, 12));
         if (mPressed == Press::slider)
-            fill(dc, {mSliderX - 4, 447, mSliderX + 4, 503}, RGB(195, 231, 179));
-        text(dc, 80, 465, L"<        PREVIOUS                         NEXT        >");
-        text(
-            dc,
-            35,
-            550,
-            L"Arrows: slider steps     Enter: PB0     Esc: PB1     Volume: PB0 saves, PB1 cancels");
+            fill(dc, {mSliderX - 2, kSlider.top, mSliderX + 2, kSlider.bottom}, RGB(195, 231, 179));
+        text(dc, 20, 582, L"PB0: select / save    PB1: back / cancel    Touch slider: drag left / right");
+        text(dc, 20, 607, L"Keyboard: arrows, Enter and Esc    |    SETUP > LIGHT controls the user LED");
         if (mFailed)
-            text(dc,
-                 35,
-                 575,
-                 L"ENCODING ERROR: last valid segment frame retained",
-                 RGB(255, 120, 120));
+            text(dc, 20, 559, L"SIMULATOR DRAW / ENCODING ERROR", RGB(255, 70, 70));
     }
 
 private:
@@ -247,7 +260,7 @@ private:
     }
     void slide(int x)
     {
-        // LITHEVIEW_CAST_BOUNDARY: fixed Win32 LONG coordinates 80..790 fit int.
+        // LITHEVIEW_CAST_BOUNDARY: fixed photograph slider coordinates 554..758 fit int.
         mSliderX = std::clamp(x, static_cast<int>(kSlider.left), static_cast<int>(kSlider.right));
         // LITHEVIEW_CAST_BOUNDARY: clamped slider scales to 0..1000, fits uint16_t.
         const auto position = static_cast<std::uint16_t>((mSliderX - kSlider.left) * 1000 /
@@ -267,12 +280,12 @@ private:
             const auto dc = BeginPaint(mHandle, &paint);
             // Single buffered host paint; the portable path owns only segment bits.
             const auto buffer = CreateCompatibleDC(dc);
-            const auto bitmap = CreateCompatibleBitmap(dc, 870, 600);
+            const auto bitmap = CreateCompatibleBitmap(dc, kWidth, kHeight);
             if (buffer && bitmap)
             {
                 const auto previous = SelectObject(buffer, bitmap);
                 draw(buffer);
-                BitBlt(dc, 0, 0, 870, 600, buffer, 0, 0, SRCCOPY);
+                BitBlt(dc, 0, 0, kWidth, kHeight, buffer, 0, 0, SRCCOPY);
                 SelectObject(buffer, previous);
             }
             else
@@ -355,12 +368,13 @@ private:
         return window ? window->message(message, wParam, lParam)
                       : DefWindowProcW(handle, message, wParam, lParam);
     }
+    tiny::host::BoardImage mImage;
     HWND mHandle{};
     tiny::Menu mMenu{};
     tiny::Frame mFrame{};
     tiny::Slider mSlider{};
     Press mPressed{Press::none};
-    int mSliderX{80};
+    int mSliderX{kSlider.left};
     bool mLed{};
     bool mFailed{};
 };
@@ -402,57 +416,57 @@ bool smoke(Window& window)
         SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(x, y));
         SendMessageW(window.handle(), WM_LBUTTONUP, 0, MAKELPARAM(x, y));
     };
-    click(600, 360);
+    click(616, 346);
     if (!window.menu().playing())
         return false;
     SendMessageW(window.handle(), WM_KEYDOWN, VK_RIGHT, 0);
-    click(600, 360);
+    click(616, 346);
     if (window.menu().page() != tiny::Page::volume)
         return false;
-    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(200, 475));
-    SendMessageW(window.handle(), WM_MOUSEMOVE, MK_LBUTTON, MAKELPARAM(300, 475));
-    SendMessageW(window.handle(), WM_LBUTTONUP, 0, MAKELPARAM(300, 475));
+    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(570, 426));
+    SendMessageW(window.handle(), WM_MOUSEMOVE, MK_LBUTTON, MAKELPARAM(610, 426));
+    SendMessageW(window.handle(), WM_LBUTTONUP, 0, MAKELPARAM(610, 426));
     if (window.menu().draft() != 51)
         return false;
-    click(730, 360);
+    click(696, 346);
     if (window.menu().volume() != 50 || window.menu().page() != tiny::Page::home)
         return false;
-    click(600, 360);
+    click(616, 346);
     SendMessageW(window.handle(), WM_KEYDOWN, VK_RIGHT, 0);
-    click(600, 360);
+    click(616, 346);
     if (window.menu().volume() != 51)
         return false;
     SendMessageW(window.handle(), WM_KEYDOWN, VK_RIGHT, 0);
-    click(600, 360);
-    click(600, 360);
+    click(616, 346);
+    click(616, 346);
     if (!window.menu().light())
         return false;
     SendMessageW(window.handle(), WM_KEYDOWN, VK_RIGHT, 0);
-    click(600, 360);
+    click(616, 346);
     if (window.menu().page() != tiny::Page::info)
         return false;
-    click(730, 360);
-    click(730, 360);
+    click(696, 346);
+    click(696, 346);
     // Auto-repeat must not duplicate selection or navigation.
     SendMessageW(window.handle(), WM_KEYDOWN, VK_RETURN, 1LL << 30);
     SendMessageW(window.handle(), WM_KEYDOWN, VK_RIGHT, 1LL << 30);
     if (window.menu().page() != tiny::Page::home || window.menu().selection() != 2)
         return false;
     // Releasing outside PB0 cancels the click.
-    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(600, 360));
+    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(616, 346));
     SendMessageW(window.handle(), WM_LBUTTONUP, 0, MAKELPARAM(20, 20));
     if (window.menu().page() != tiny::Page::home)
         return false;
     // Focus loss breaks slider contact; a later mouse move cannot navigate.
-    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(200, 475));
+    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(570, 426));
     SendMessageW(window.handle(), WM_KILLFOCUS, 0, 0);
-    SendMessageW(window.handle(), WM_MOUSEMOVE, MK_LBUTTON, MAKELPARAM(700, 475));
+    SendMessageW(window.handle(), WM_MOUSEMOVE, MK_LBUTTON, MAKELPARAM(720, 426));
     if (window.menu().selection() != 2)
         return false;
     // Capture loss must cancel PB0, not activate it on a later release.
-    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(600, 360));
+    SendMessageW(window.handle(), WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(616, 346));
     SendMessageW(window.handle(), WM_CANCELMODE, 0, 0);
-    SendMessageW(window.handle(), WM_LBUTTONUP, 0, MAKELPARAM(600, 360));
+    SendMessageW(window.handle(), WM_LBUTTONUP, 0, MAKELPARAM(616, 346));
     return window.menu().page() == tiny::Page::home && !window.failed();
 }
 
@@ -463,7 +477,7 @@ bool snapshot(Window& window, const char* path)
     if (!screen)
         return false;
     const auto dc = CreateCompatibleDC(screen);
-    const auto bitmap = CreateCompatibleBitmap(screen, 870, 600);
+    const auto bitmap = CreateCompatibleBitmap(screen, kWidth, kHeight);
     bool saved = false;
     if (dc && bitmap)
     {
@@ -472,18 +486,18 @@ bool snapshot(Window& window, const char* path)
         SelectObject(dc, previous);
         BITMAPINFO info{};
         info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        info.bmiHeader.biWidth = 870;
-        info.bmiHeader.biHeight = -600;
+        info.bmiHeader.biWidth = kWidth;
+        info.bmiHeader.biHeight = -kHeight;
         info.bmiHeader.biPlanes = 1;
         info.bmiHeader.biBitCount = 32;
         info.bmiHeader.biCompression = BI_RGB;
-        std::vector<unsigned char> pixels(870U * 600U * 4U);
-        if (GetDIBits(dc, bitmap, 0, 600, pixels.data(), &info, DIB_RGB_COLORS) == 600)
+        std::vector<unsigned char> pixels(kWidth * kHeight * 4U);
+        if (GetDIBits(dc, bitmap, 0, kHeight, pixels.data(), &info, DIB_RGB_COLORS) == kHeight)
         {
             BITMAPFILEHEADER header{};
             header.bfType = 0x4D42;
             header.bfOffBits = sizeof(header) + sizeof(info.bmiHeader);
-            // LITHEVIEW_CAST_BOUNDARY: fixed 870*600*4 host image fits DWORD.
+            // LITHEVIEW_CAST_BOUNDARY: fixed 930*640*4 host image fits DWORD.
             header.bfSize = header.bfOffBits + static_cast<DWORD>(pixels.size());
             if (auto* file = std::fopen(path, "wb"))
             {

@@ -45,7 +45,7 @@ $managed = Join-Path $run 'managed'
 if ($SegmentedTutorial) {
     $starter = Join-Path $repository 'examples/efm32tg-stk3300-menu-1'
     New-Item -ItemType Directory -Force -Path $application, (Join-Path $application 'UI') | Out-Null
-    foreach ($entry in @('Application', 'Devices', 'Platform', 'Tests', 'cmake', 'CMakePresets.json', 'CMakeLists.txt')) {
+    foreach ($entry in @('Application', 'Devices', 'Platform', 'Tests', 'cmake', 'CMakePresets.json', 'CMakeLists.txt', 'board-front.png')) {
         Copy-Item -LiteralPath (Join-Path $starter $entry) -Destination $application -Recurse
     }
     foreach ($entry in @('glass.hpp', 'presenter.hpp')) { Copy-Item -LiteralPath (Join-Path $starter "UI/$entry") -Destination (Join-Path $application 'UI') }

@@ -29,7 +29,7 @@ path must resolve to that same checkout.
 Install CMake 3.25 or newer, Ninja, a C++23 MinGW-w64 compiler and its matching GDB.
 GCC 14.2 is tested. Put the tools on PATH before starting VS Code. Install CMake
 Tools and Microsoft C/C++. Follow the [designer setup](../../tools/vscode/README.md)
-for the matching .NET SDK, service, native worker and plug-in (0.2.16 or later).
+for the matching .NET SDK, service, native worker and plug-in (0.2.18 or later).
 The designer needs those tools; building generated C++ does not need .NET.
 
 Select `win32-debug`, configure and build. Select **Tiny Gecko: Windows** and press
@@ -37,7 +37,7 @@ F5. The debugger stops at `main`; press Continue to open the simulator window.
 Configuration finds GDB beside the selected MinGW compiler and creates an ignored
 `build/tool-links/mingw` junction to the complete toolchain. The launcher uses it
 automatically, including GDB's adjacent Python files. No debugger-path prompt or
-global PATH change is needed. From the terminal:
+global PATH change is needed.
 
 The pre-launch tasks use CMake Tools and explicit presets, so F5 uses the same
 CMake executable as the IDE build. If CMake is not on PATH, set **CMake: Cmake
@@ -188,3 +188,47 @@ See [validation](VALIDATION.md) for this split's build evidence and
 Read the [annotated glass definition and segment naming reference](UI/design/glass.segment-display.md)
 beside the JSON before adapting it to your device. It explains preview geometry,
 logical segment IDs, character stroke order, named fields and platform wiring.
+
+## Windows board picture
+
+The simulator uses `board-front.png`, copied beside the executable by CMake.
+It loads that copy relative to the executable, so launching from another working
+directory works too. The live segment display covers the photographed LCD.
+Click the photographed **PB0** and **PB1**, or drag across the printed slider.
+**SETUP -> LIGHT** switches the simulated orange user LED below and to the left of PB0.
+The arrow keys, Enter and Esc still work as before.
+
+The 465 by 288 image is shown at twice its size. `Platform/Win32/main.cpp` keeps
+all placement rectangles in window coordinates: `kDisplay`, `kPb0`, `kPb1`,
+`kSlider` and `kLed`. Update those bounds when using a different board picture.
+The image decoder and display scaling belong only to the Windows example;
+the generated segment bits, application FSM and embedded LCD driver are unchanged.
+
+## Tool discovery
+
+CMake checks explicit tool settings, then a valid cached selection or PATH. On
+Windows it also checks installed WinLibs (WinGet), MSYS2, MCUXpresso and STM32Cube
+tool locations. The fallback candidates within each location are sorted by
+version-like path order, newest first. Configuration prints the selected paths.
+No tools are downloaded, and no machine-specific paths are committed.
+
+For a custom installation or to select a particular version, put these cache
+variables in an ignored `CMakeUserPresets.json`, or set the same environment
+variables before starting VS Code:
+
+| Setting | Value |
+| --- | --- |
+| `TINY_MINGW_BIN` | Directory containing the Windows `g++.exe` and matching GDB |
+| `ARM_GCC_BIN` | Directory containing `arm-none-eabi-gcc` and its companion tools |
+| `TINY_NINJA` | Full path to Ninja |
+
+A missing explicit override is an error; it does not silently select another
+installation. Standard `CMAKE_CXX_COMPILER`, `CMAKE_C_COMPILER` and
+`CMAKE_MAKE_PROGRAM` cache settings are also supported. Configure with `--fresh`
+when deliberately switching toolchains. Git must be available for the hardware
+build's SDK pin check. Command-line use still needs a way to locate CMake itself;
+VS Code uses the executable selected by CMake Tools.
+
+If configuration reports that `g++`, `arm-none-eabi-gcc` or Ninja cannot be found,
+check the selected paths and overrides above. A previous successful build may
+have used cached paths; a fresh configure must be able to discover the tools too.

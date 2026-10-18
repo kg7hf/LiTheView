@@ -5,9 +5,11 @@ Copyright 2026 Paul R. Decker, GPL-3.0-only. See the LiTheView repository LICENS
 
 The electrical mapping is transcribed from Energy Micro's original
 EFM32TG-STK3300 user manual, t0011_1.00, page 26. The original document and its
-notices remain the vendor's work. No vendor font table, logo, photograph
-or manual PDF is copied into this example. The simulated board is an authored
-schematic presentation, not a photograph or pixel-exact model of the glass.
+notices remain the vendor's work. No vendor font table or manual PDF is copied into this example.
+`board-front.png` is the board image supplied by the project owner for the Windows
+simulator. Board markings and logos retain their respective ownership; the code
+license above does not relicense them. The live glass drawing is authored
+schematic geometry over the photograph, not a pixel-exact glass model.
 
 Hardware builds use the unmodified [Silicon Labs Gecko SDK](https://github.com/SiliconLabs/gecko_sdk)
 submodule at v4.4.6, commit `59d2160fe448b13730a91c0f019a8b4c53c43eb2`, under
