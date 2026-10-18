@@ -53,6 +53,7 @@ window, VS Code designer setup and the additional H750 application requirements.
 | Edit forms inside your existing application | [Prepare the VS Code designer](docs/BUILD_ENVIRONMENT.md#5-prepare-the-vs-code-designer), then [application integration](docs/APPLICATION_INTEGRATION.md) |
 | Follow the Windows/STM32 lesson | [H750 starter](examples/stm32h750b-dk-starter-1/README.md), after its application prerequisites |
 | Build a menu with volume, playback and a selectable Load list | [Completed H750 menu](examples/stm32h750b-dk-menu-1-complete/README.md) and [blank-to-menu round L4R9 tutorial](examples/stm32l4r9i-disco-menu-1/README.md); both use FreeRTOS on Windows and STM32 |
+| Build a segmented menu on Tiny Gecko | [Blank guided starter](examples/efm32tg-stk3300-menu-1/README.md) and [completed reference](examples/efm32tg-stk3300-menu-1-complete/README.md); Windows and bare-metal EFM32 share the FSM |
 
 The starter pair includes the physical-button bonus, native RGB565 rendering and
 portable application tool discovery. The guided starter remains blank; the completed

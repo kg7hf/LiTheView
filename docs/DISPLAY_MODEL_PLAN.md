@@ -1270,7 +1270,7 @@ The foundation is useful at the M1 gate. The full workstream is successful when:
 ## Tiny Gecko segmented-menu plan
 
 Implementation checkpoint: 2026-10-17. The first Windows increment is in
-`examples/efm32tg-stk3300-menu`: display-independent FSM, PB0/PB1/slider input,
+`examples/efm32tg-stk3300-menu-1-complete`: display-independent FSM, PB0/PB1/slider input,
 character/digit encoder and a segment-driven Win32 view. Three test suites pass,
 including a native-window message walkthrough. The `LitheView::Segments` target
 has an installed-consumer check and no raster dependency. G0/G2 currently cover
@@ -1483,7 +1483,7 @@ as part of that increment. No changes to the existing STM32 starter pair are nee
 Proposed consuming application layout, independent of where its repository lives:
 
 ```text
-efm32tg-stk3300-menu/
+efm32tg-stk3300-menu-1-complete/
   Application/                 # FSM, state, events and typed effects
   UI/                          # presenter, glass bindings and glyph subset
   Devices/                     # small application device contracts
@@ -1565,3 +1565,16 @@ Gecko frames with the accepted encoder and a separate ring oracle, and exercise
 a synthetic glass. This starts S0/S1; project integration and the segmented
 plug-in/preview workflow remain pending. The FSM and running example are unchanged.
 See tests/segmented_designer_consumer/README.md and the segmented designer plan.
+
+
+### Segmented project onboarding (2026-10-18 UTC)
+
+VS Code 0.2.16 now creates segmented projects from imported glass definitions.
+The wizard previews fixed geometry and field capacity, collects logical input and
+application paths, and opens a blank form. Core validation/generation is shared
+with the CLI. A blank application outside the library passes the installed plug-in
+workflow through Windows build and input tests with its FSM unchanged. See the
+[segmented designer plan](SEGMENTED_DESIGNER_PLAN.md) and
+[Tiny Gecko tutorial](../examples/efm32tg-stk3300-menu-1-complete/docs/segmented-designer.md).
+The next authoring stage is reusable visual patterns mapped to logical glass
+outputs; hardware controller mapping remains in the application adapter.

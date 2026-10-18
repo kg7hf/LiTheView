@@ -1,0 +1,42 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "win32-debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/win32-debug",
+      "toolchainFile": "${sourceDir}/cmake/host.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "efm32-debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/efm32-debug",
+      "toolchainFile": "${sourceDir}/cmake/arm.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "win32-debug",
+      "configurePreset": "win32-debug"
+    },
+    {
+      "name": "efm32-debug",
+      "configurePreset": "efm32-debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "win32-debug",
+      "configurePreset": "win32-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

@@ -42,6 +42,7 @@ internal sealed record RequestParameters
     public int? DocumentVersion { get; init; }
     public EditOperation? Operation { get; init; }
     public ProjectCreationRequest? Project { get; init; }
+    public JsonElement? SegmentGlass { get; init; }
     public string? ScreenName { get; init; }
     public string? LogicalInput { get; init; }
     public ProjectSetupRequest? Setup { get; init; }
@@ -75,6 +76,8 @@ internal sealed record ProjectCreationRequest
     public JsonElement? CustomSurface { get; init; }
     public string? NativeDisplayId { get; init; }
     public NativeDisplayCreationRequest? CustomNativeDisplay { get; init; }
+    public JsonElement? SegmentGlass { get; init; }
+    public LogicalInputSetupRequest? Input { get; init; }
     public required string LogicalInput { get; init; }
     public required string ComponentDirectory { get; init; }
     public required string BuildDirectory { get; init; }

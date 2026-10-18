@@ -93,6 +93,17 @@ function creationRequest(values, applicationRoot, surfaces, nativeDisplays = [])
     componentDirectory: required(values.componentDirectory, 'Generated component folder'),
     buildDirectory: required(values.buildDirectory ?? 'build', 'Build folder')
   };
+  if (values.displayKind && !['pixel', 'segmented'].includes(values.displayKind)) throw new Error('Choose pixel or segmented display.');
+  if (values.displayKind === 'segmented') {
+    if (typeof values.glass !== 'string' || Buffer.byteLength(values.glass, 'utf8') > 1024 * 1024) throw new Error('Import a glass JSON definition (at most 1 MiB).');
+    request.segmentGlass = JSON.parse(values.glass);
+    if (values.logicalInput === 'custom') {
+      const keys = ['pointer', 'keys', 'text', 'encoder', 'select'];
+      if (!keys.every(key => typeof values.input?.[key] === 'boolean')) throw new Error('Choose logical input capabilities.');
+      request.input = Object.fromEntries(keys.map(key => [key, values.input[key]]));
+    } else if (!['outputOnly', 'touch', 'touchKeys', 'encoderSelect'].includes(values.logicalInput)) throw new Error('Choose a logical input configuration.');
+    return request;
+  }
   if (!['outputOnly', 'touch', 'touchKeys', 'encoderSelect'].includes(values.logicalInput)) throw new Error('Choose a logical input configuration.');
   if (values.surfaceId === 'custom') {
     if (['r2Packed2x2', 'rrrr2222', 'ryry2222'].includes(values.custom?.format)) {
@@ -110,7 +121,7 @@ function creationRequest(values, applicationRoot, surfaces, nativeDisplays = [])
   return request;
 }
 
-function renderNewProject({ scriptUri, styleUri, cspSource, nonce, setup = false, frontScriptUri = '' }) {
+function renderNewProject({ scriptUri, styleUri, cspSource, nonce, setup = false, frontScriptUri = '', glassScriptUri = '' }) {
   const escape = value => String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
   return `<!doctype html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -125,7 +136,13 @@ function renderNewProject({ scriptUri, styleUri, cspSource, nonce, setup = false
 <label>UI source folder<input name="projectDirectory" value="Tasks/UI" required></label>
 <label>Generated component folder<input name="componentDirectory" value="Tasks/UI/Generated" required></label>
 </div><p class="hint">Folders are relative to your application root. Existing application files are preserved; conflicting UI files stop creation.</p></section>
-<section><h2>${setup ? 'Display' : '2. Display'}</h2><label ${setup ? 'hidden' : ''}>Display configuration<select name="surfaceId" id="surface"></select></label>
+<section><h2>${setup ? 'Display' : '2. Display'}</h2>
+${setup ? '' : `<label>Display type<select name="displayKind" id="display-kind"><option value="pixel">Pixel display</option><option value="segmented">Segmented display</option></select></label>
+<div id="segmented" hidden><button type="button" id="glass-import">Import glass JSON…</button>
+<p>Use a supplied glass definition, or author one using the segment-glass schema. Fixed shapes and fields are independent of the MCU.</p>
+<p id="glass-summary" role="status">No glass imported.</p><canvas id="glass-preview" width="600" height="300" aria-label="Imported glass geometry" hidden></canvas>
+<p id="glass-fields" class="hint"></p></div>`}
+<div id="pixel-display"><label ${setup ? 'hidden' : ''}>Display configuration<select name="surfaceId" id="surface"></select></label>
 <p id="surface-description" class="hint"></p>
 <div id="custom" hidden><div class="grid">
 <label>Shape<select name="shape"><option value="rectangle">Rectangle</option><option value="square">Square</option><option value="circle">Circle</option></select></label>
@@ -140,15 +157,15 @@ function renderNewProject({ scriptUri, styleUri, cspSource, nonce, setup = false
 <label class="rgb-field">Datasheet HTTPS URL<input name="sourceUrl" type="url" placeholder="https://..."></label>
 <label class="rgb-field">Datasheet title / revision<input name="sourceDocument" maxlength="240"></label>
 <label id="native-reference" hidden>Display specification reference<input name="sourceReference" maxlength="1024" placeholder="Manufacturer, model, datasheet revision and page or document path"></label>
-</div><p id="format-description" class="hint"></p><p class="hint">Coordinates start at the top left, with zero rotation. Safe area uses the same logical coordinates as the form. Declare specifications from your display documentation. These fields do not configure pins, buses, clocks or the MCU.</p></div></section>
-<section><h2>${setup ? 'Input' : '3. Input'}</h2><label>Application input<select name="logicalInput"><option value="outputOnly">Output only — first display check</option><option value="touch">Touch</option><option value="touchKeys">Touch + keys</option><option value="encoderSelect">Encoder + select button</option>${setup ? '<option value="custom">Custom capabilities</option>' : ''}</select></label>
-${setup ? `<div class="grid" id="input-capabilities" hidden>
+</div><p id="format-description" class="hint"></p><p class="hint">Coordinates start at the top left, with zero rotation. Safe area uses the same logical coordinates as the form. Declare specifications from your display documentation. These fields do not configure pins, buses, clocks or the MCU.</p></div></div></section>
+<section><h2>${setup ? 'Input' : '3. Input'}</h2><label>Application input<select name="logicalInput"><option value="outputOnly">Output only — first display check</option><option value="touch">Touch</option><option value="touchKeys">Touch + keys</option><option value="encoderSelect">Encoder + select button</option><option value="custom">Custom capabilities</option></select></label>
+<div class="grid" id="input-capabilities" hidden>
 <label class="check"><input type="checkbox" name="pointer">Touch / pointer (PC mouse)</label>
 <label class="check"><input type="checkbox" name="keys">Navigation keys</label>
 <label class="check"><input type="checkbox" name="text">Text input</label>
 <label class="check"><input type="checkbox" name="encoder">Rotary encoder</label>
 <label class="check"><input type="checkbox" name="select">Select button</label>
-</div>` : ''}
+</div>
 <p class="hint">PC mouse and keyboard input stand in for the selected devices. Hardware drivers are connected later.</p></section>
 ${setup ? `<section><h2>PC front view (optional)</h2>
 <p>Use a board or enclosure image for your application's simulator. Mark the LCD area and the physical push-buttons that the PC mouse should operate.</p>
@@ -174,6 +191,7 @@ ${setup ? `<section><h2>PC front view (optional)</h2>
 ${setup ? `<p>Apply updates the display and input settings for this UI project. Return to your form, Generate UI, then build and debug as usual.</p><p class="hint">Form coordinates stay as authored. After changing display dimensions, adjust the root panel and controls to fit. Assets and application adapters must match the selected display.</p>` : `<p>Creates editable form, display/input profiles and path settings. Add your controls and properties, save, then use Generate UI to produce the C++ component. Build and debug with your application's existing configurations.</p>`}
 <button type="submit">${setup ? 'Apply' : 'Create UI'}</button><button type="button" id="cancel" class="secondary">Cancel</button></section>
 </fieldset></form><p id="status" role="status" aria-live="polite"></p></main>
+${glassScriptUri ? `<script nonce="${escape(nonce)}" src="${escape(glassScriptUri)}"></script>` : ''}
 ${setup ? `<script nonce="${escape(nonce)}" src="${escape(frontScriptUri)}"></script>` : ''}
 <script nonce="${escape(nonce)}" src="${escape(scriptUri)}"></script></body></html>`;
 }

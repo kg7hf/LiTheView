@@ -11,7 +11,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/Segments.cmake")
 add_executable(segmented_designer_consumer main.cpp)
 target_link_libraries(segmented_designer_consumer PRIVATE LitheView::Segments)
 target_include_directories(segmented_designer_consumer PRIVATE "${GENERATED_DIRECTORY}"
-    "${CMAKE_CURRENT_LIST_DIR}/../../examples/efm32tg-stk3300-menu")
+    "${CMAKE_CURRENT_LIST_DIR}/../../examples/efm32tg-stk3300-menu-1-complete")
 if(MSVC)
     target_compile_options(segmented_designer_consumer PRIVATE /W4 /WX /GR-)
 else()

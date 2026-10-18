@@ -389,17 +389,33 @@ open VS Code windows and starter files are not used as test fixtures.
 
 ## Segmented glass projects
 
-Version 0.2.15 supports explicit version-4 segmented projects. Open a segmented
+Use extension 0.2.18 or later with the prepared segmented-capable service.
+If Configure shows an empty pixel Display section and later reports
+`Cannot read properties of undefined (reading 'geometry')`, check the installed
+extension version: 0.2.13 cannot configure segmented projects. Preparing the
+service or testing a VSIX in an isolated profile does not update your normal
+extension installation. Install the current VSIX, run **Developer: Reload Window**,
+then reopen the form. Segmented Configure presents the same glass diagram and field summary as New
+Project, with logical-input checkboxes and a validated Import glass JSON action.
+It does not show the pixel/front-view setup page.
+Initialization is validated before opening a tab, so an incomplete service
+response cannot leave a half-initialized dialog behind.
+
+Version 0.2.16 introduced creation and editing of explicit version-4 segmented projects. Open a segmented
 `.litheview.xml` form to see fixed glass fields and native segment preview. Bind
 named application values and edit their preview samples; use Configure to import
-or edit glass JSON and logical input. Add screen and Generate UI use the same
+a glass definition or change logical input. Add screen and Generate UI use the same
 application-owned project and paths. No raster framebuffer or MCU selection is
 required. Segmented preview returns bounded RGBA host pixels inline on all hosts,
 after encoding the native segment bits; raster Windows preview still uses shared memory.
 
-Follow [the Tiny Gecko segmented designer lesson](../../examples/efm32tg-stk3300-menu/docs/segmented-designer.md).
-Initial segmented creation uses `segment create-project`; the New Project wizard
-and standalone desktop designer do not yet create segmented projects. Rebuild the
+Follow [the Tiny Gecko segmented designer lesson](../../examples/efm32tg-stk3300-menu-1-complete/docs/segmented-designer.md).
+Run **LiTheView: Add LiTheView UI**, choose **Segmented display**, import a
+glass definition, choose logical input and paths, then create the blank form. The
+import shows fixed geometry, fields and segment-state size. Creation requires a new
+UI source directory and leaves application code/build settings alone. A matching
+prepared service is required; older services report an update diagnostic. The
+standalone desktop designer still does not create segmented projects. Prepare the
 service and native worker together. An older worker is rejected with a rebuild
 diagnostic rather than being sent an unsupported segmented request.
 
@@ -407,10 +423,12 @@ The installed-package integration exercise is:
 
 ```powershell
 ./tools/test-vscode-designer.ps1 -Dotnet dotnet -SegmentedTutorial `
-  -FixtureProject examples/efm32tg-stk3300-menu/UI/designer `
-  -PackagedExtensionPath build/vscode-designer/litheview-designer-0.2.15-source.vsix -SourceOnlyPackage
+  -PackagedExtensionPath build/vscode-designer/litheview-designer-0.2.18-source.vsix -SourceOnlyPackage
 ```
 
-It uses a copied application and a private VS Code profile. It covers the real
-extension-host edit, preview, Configure, Add screen and generation paths. It does
-not automate physical hardware or certify the visual appearance of every widget.
+It creates an application outside the checkout with no designer manifest, using
+a private VS Code profile. It builds a blank Windows target, exercises import,
+cancel, New Project, edit, preview, Configure, Add screen and generation, then
+builds the completed simulator with the same preset and checks its input workflow.
+The application FSM and build tasks must remain unchanged. No physical hardware is
+accessed, and this does not certify the visual appearance of every widget.

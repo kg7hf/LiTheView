@@ -15,7 +15,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-if ($SegmentedTutorial -and (!$FixtureProject -or $BlankMenuTutorial)) { throw '-SegmentedTutorial requires a segmented -FixtureProject.' }
+if ($SegmentedTutorial -and ($FixtureProject -or $BlankMenuTutorial -or !$SourceOnlyPackage)) { throw '-SegmentedTutorial starts a blank application and requires -SourceOnlyPackage, without -FixtureProject.' }
 if ($SourceOnlyPackage -and !$PackagedExtensionPath) { throw '-SourceOnlyPackage requires -PackagedExtensionPath.' }
 $repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $dotnetCommand = (Get-Command $Dotnet -CommandType Application -ErrorAction Stop).Source
@@ -38,10 +38,24 @@ foreach ($required in $requiredArtifacts) {
     if (!(Test-Path -LiteralPath $required -PathType Leaf)) { throw "Required prepared artifact is missing: $required" }
 }
 $run = Join-Path $repository ('build/vscode-designer/integration-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfff'))
-$application = Join-Path $run 'application with spaces'
-$project = Join-Path $application 'Tasks/UI'
+$application = if ($SegmentedTutorial) { Join-Path ([IO.Path]::GetTempPath()) ('litheview-segmented-' + [guid]::NewGuid().ToString('N') + '/application with spaces') } else { Join-Path $run 'application with spaces' }
+New-Item -ItemType Directory -Force -Path $run | Out-Null
+$project = Join-Path $application $(if ($SegmentedTutorial) { 'UI/designer' } else { 'Tasks/UI' })
 $managed = Join-Path $run 'managed'
-if ($BlankMenuTutorial) {
+if ($SegmentedTutorial) {
+    $starter = Join-Path $repository 'examples/efm32tg-stk3300-menu-1'
+    New-Item -ItemType Directory -Force -Path $application, (Join-Path $application 'UI') | Out-Null
+    foreach ($entry in @('Application', 'Devices', 'Platform', 'Tests', 'cmake', 'CMakePresets.json', 'CMakeLists.txt')) {
+        Copy-Item -LiteralPath (Join-Path $starter $entry) -Destination $application -Recurse
+    }
+    foreach ($entry in @('glass.hpp', 'presenter.hpp')) { Copy-Item -LiteralPath (Join-Path $starter "UI/$entry") -Destination (Join-Path $application 'UI') }
+    Copy-Item -LiteralPath (Join-Path $starter 'UI/design/glass.segment-display.json') -Destination $application
+    $compilerLine = Select-String -LiteralPath (Join-Path $repository 'build/windows-mingw-debug/CMakeCache.txt') -Pattern '^CMAKE_CXX_COMPILER:(FILEPATH|STRING)='
+    if (!$compilerLine) { throw 'Prepared worker compiler not found.' }
+    @{libraryRoot=$repository; compiler=($compilerLine.Line -split '=',2)[1]} | ConvertTo-Json |
+        Set-Content -LiteralPath (Join-Path $application 'build-inputs.json')
+    $application | Set-Content -LiteralPath (Join-Path $run 'external-application.txt')
+} elseif ($BlankMenuTutorial) {
     if (!$SourceOnlyPackage) { throw 'The blank application exercise requires the prepared source-only package.' }
     $starter = Join-Path $repository 'examples/stm32l4r9i-disco-menu-1'
     New-Item -ItemType Directory -Force -Path $application | Out-Null
@@ -57,7 +71,7 @@ if ($BlankMenuTutorial) {
 } else { New-Item -ItemType Directory -Force -Path $project | Out-Null }
 Copy-Item -LiteralPath (Join-Path $repository 'examples/stm32h750b-dk-starter-1/board-front.png') -Destination $application
 $cli = Join-Path $managed 'bin/LitheView.Designer.Cli/debug/LitheView.Designer.Cli.dll'
-if ($BlankMenuTutorial) {
+if ($BlankMenuTutorial -or $SegmentedTutorial) {
     # The installed extension wizard creates the first manifest.
 } elseif ($FixtureProject) {
     $fixture = [IO.Path]::GetFullPath($FixtureProject)
@@ -102,7 +116,7 @@ if ($PackagedExtensionPath -and !$SourceOnlyPackage) {
     foreach ($name in @('schema', 'profiles')) { Copy-Item -LiteralPath (Join-Path $repository $name) -Destination $projectLibrary -Recurse }
     Copy-Item -LiteralPath (Join-Path $repository 'tools/designer/templates') -Destination (Join-Path $projectLibrary 'tools/designer') -Recurse
 }
-if (!$BlankMenuTutorial) {
+if (!$BlankMenuTutorial -and !$SegmentedTutorial) {
 @{schemaVersion=1; applicationRoot='../..'; libraryRoot=$projectLibrary;
   componentDirectory='Tasks/UI/Generated'; buildDirectory='out/simulator'} | ConvertTo-Json |
   Set-Content -LiteralPath (Join-Path $project 'project.litheview.paths.json') -Encoding utf8
@@ -186,7 +200,7 @@ if ($PackagedExtensionPath -and !$SourceOnlyPackage) {
     $worker = Join-Path $result.extensionPath 'runtime/native/litheview_designer_preview_worker.exe'
 }
 [ordered]@{run=$run; application=$application; manifest=$manifest;
-    cli=$(if ($FixtureProject) { $null } else { $cli }); fixtureProject=$FixtureProject;
+    cli=$(if ($FixtureProject -or $BlankMenuTutorial -or $SegmentedTutorial) { $null } else { $cli }); fixtureProject=$FixtureProject;
     packagedExtension=$PackagedExtensionPath; sourceOnlyPackage=[bool]$SourceOnlyPackage; libraryRoot=$projectLibrary; removedPathEntries=$removedPathEntries;
     packageSha256=$(if ($PackagedExtensionPath) { (Get-FileHash -LiteralPath $PackagedExtensionPath).Hash.ToLowerInvariant() } else { $null });
     serviceSha256=(Get-FileHash -LiteralPath $service).Hash.ToLowerInvariant();

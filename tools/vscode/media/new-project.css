@@ -21,3 +21,5 @@ fieldset:disabled { opacity: 0.65; } [hidden] { display: none !important; }
 #front-canvas { display: block; width: 100%; height: auto; margin: 16px 0; cursor: crosshair; touch-action: none; }
 .front-coordinates { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }
+
+#glass-preview { max-width: 100%; height: auto; margin: 12px 0; }

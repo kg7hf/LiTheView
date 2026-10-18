@@ -40,6 +40,7 @@ internal static partial class Program
         await using DesignerService service = new(library, worker);
         try
         {
+            await CheckSegmentCreationAsync(service, library, Path.Combine(directory, "segmented-creation")).ConfigureAwait(false);
             await CheckSegmentedAsync(service, library, Path.Combine(directory, "segmented"), worker is not null).ConfigureAwait(false);
             await CheckProtocolAsync(service, workspace, original).ConfigureAwait(false);
             await CheckNativeDisplayWorkflowAsync(service, workspace, library, Path.Combine(directory, "native-display"),

@@ -13,7 +13,7 @@ internal static class SegmentDesignerTests
 {
     public static void Run(string repositoryRoot)
     {
-        string tiny = Path.Combine(repositoryRoot, "examples", "efm32tg-stk3300-menu", "UI", "design");
+        string tiny = Path.Combine(repositoryRoot, "examples", "efm32tg-stk3300-menu-1-complete", "UI", "design");
         byte[] glass = File.ReadAllBytes(Path.Combine(tiny, "glass.segment-display.json"));
         byte[] form = File.ReadAllBytes(Path.Combine(tiny, "presentation.litheview.xml"));
         SegmentCompilation compiled = SegmentCppCompiler.Compile(glass, form);

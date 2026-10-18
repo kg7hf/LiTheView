@@ -90,3 +90,22 @@ test('native creation rejects incomplete blocks and presentation sizes before re
     assert.throws(() => creationRequest({ ...values, surfaceId: 'custom', custom: { ...native, ...change } }, root, surfaces));
   }
 });
+
+
+test('segmented creation is independent of raster catalog and requires bounded glass and explicit input', () => {
+  const next = { ...values, displayKind: 'segmented', surfaceId: undefined, glass: '{"schemaVersion":1}', logicalInput: 'custom',
+    input: { pointer: false, keys: true, text: false, encoder: true, select: true } };
+  const request = creationRequest(next, root, []);
+  assert.deepEqual(request.segmentGlass, { schemaVersion: 1 });
+  assert.deepEqual(request.input, next.input);
+  assert.equal(request.surfaceId, undefined);
+  assert.equal(request.customSurface, undefined);
+  assert.equal(request.componentDirectory, values.componentDirectory);
+  for (const change of [{ glass: undefined }, { glass: '{' }, { glass: ' '.repeat(1048577) }, { input: {} }, { displayKind: 'unknown' }]) {
+    assert.throws(() => creationRequest({ ...next, ...change }, root, []));
+  }
+  const html = renderNewProject({ scriptUri: 'script', styleUri: 'style', cspSource: 'webview:', nonce: 'abc' });
+  assert.match(html, /Segmented display/);
+  assert.match(html, /Import glass JSON/);
+  assert.match(html, /glass-preview/);
+});

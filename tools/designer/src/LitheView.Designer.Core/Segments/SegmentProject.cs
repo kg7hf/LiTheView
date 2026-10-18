@@ -15,7 +15,8 @@ public sealed record SegmentProject(string ManifestPath, DesignerProjectManifest
     public const string InputPath = "profiles/logical-input.json";
     public string Directory => Path.GetDirectoryName(ManifestPath)!;
 
-    public static string Create(string directory, byte[] glassBytes, byte[] inputBytes)
+    public static string Create(string directory, byte[] glassBytes, byte[] inputBytes,
+        string projectId = "application.segmented", string displayName = "Segmented display", DesignerProjectPaths? paths = null)
     {
         SegmentGlass glass = SegmentDocuments.ReadGlass(glassBytes);
         var input = LogicalInputConfigurationLoader.Load(inputBytes);
@@ -27,7 +28,7 @@ public sealed record SegmentProject(string ManifestPath, DesignerProjectManifest
         var manifest = new DesignerProjectManifest
         {
             Schema = "https://litheview.dev/schema/project-manifest.schema.json", SchemaVersion = 4,
-            DisplayKind = "segmented", Id = "application.segmented", DisplayName = "Segmented display",
+            DisplayKind = "segmented", Id = projectId, DisplayName = displayName,
             SchemaCompatibility = new() { ProjectManifest = 4, SegmentGlass = 1, LogicalInput = 1, Form = 1, ResourceManifest = 1, ExtensionManifest = 1 },
             SegmentGlass = new() { Id = glass.Id, Sha256 = SegmentDocuments.GlassHash(glass) },
             LogicalInput = new() { Id = input.Configuration!.Id, Sha256 = input.Sha256! },
@@ -36,6 +37,7 @@ public sealed record SegmentProject(string ManifestPath, DesignerProjectManifest
         string path = Path.Combine(directory, "project.litheview.json");
         var validated = DesignerProjectLoader.Load(DesignerProjectCanonicalizer.Canonicalize(manifest));
         if (!validated.IsValid) throw new InvalidDataException("Invalid segmented project manifest.");
+        if (paths is not null) DesignerProjectPathService.Resolve(path, paths, manifest);
         string parent = Path.GetDirectoryName(directory)!;
         string staging = Path.Combine(parent, ".segment-project-" + Guid.NewGuid().ToString("N"));
         try
@@ -44,6 +46,7 @@ public sealed record SegmentProject(string ManifestPath, DesignerProjectManifest
             AtomicFileWriter.WriteAllBytes(Path.Combine(staging, InputPath), input.CanonicalUtf8!);
             AtomicFileWriter.WriteAllBytes(Path.Combine(staging, manifest.Forms[0]), SegmentDocuments.WriteForm(new("home", glass.Id, manifest.SegmentGlass.Sha256, []), glass));
             AtomicFileWriter.WriteAllBytes(Path.Combine(staging, "project.litheview.json"), validated.CanonicalUtf8!);
+            if (paths is not null) AtomicFileWriter.WriteAllBytes(Path.Combine(staging, "project.litheview.paths.json"), DesignerProjectPathService.Serialize(paths));
             System.IO.Directory.Move(staging, directory);
         }
         finally { if (System.IO.Directory.Exists(staging)) System.IO.Directory.Delete(staging, recursive: true); }

@@ -8,6 +8,141 @@ Use the current `.gitmodules`, build presets and
 [publication validation record](PUBLICATION_VALIDATION.md). The owner's
 retained local exercise work is outside this public snapshot.
 
+## Tiny Gecko publication scope and glass guide (2026-10-17, America/New_York)
+
+Publication includes the blank Tiny Gecko starter, completed reference, segmented
+New Project/Configure workflow, and compiler-matched GDB/CMake Tools launch fixes.
+Both examples include UI/design/glass.segment-display.md beside the strict JSON:
+an annotated custom indicator, field/cell/stroke explanations, A03 mapping, and
+134 descriptive segment names. Import JSON and generated encoder are unchanged.
+The stripped teaching sample passes the real CLI glass validator.
+
+Final publication checks: extension 97/97, blank Windows 3/3, completed Windows
+4/4, matching FSM/platform sources, valid local documentation links. Earlier
+solution/Core/Service and packaged workflow evidence remains under
+build/tiny-gecko-split. User confirmed both F5 and Run/Debug stop at main then
+run the simulator. No new hardware flash. Publication excludes existing STM32
+starter work, root board photographs, private hardware documents and local
+article drafts. Protected starter hashes are in build/tiny-publication.
+
+
+## Tiny Gecko full F5 pre-launch validation (2026-10-17, America/New_York)
+
+The user confirmed the designer preview but reported F5 still did not start.
+The earlier direct-adapter test omitted preLaunchTask and therefore was not
+end-to-end F5 evidence. VS Code logged spawn ctest ENOENT while its CMake Tools
+build used an absolute discovered CMake executable. Both Tiny examples now use
+CMake Tools tasks with explicit win32-debug/efm32-debug presets instead of bare
+cmake/ctest process tasks. Existing launch labels and dependencies remain.
+
+An isolated VS Code extension-host run called debug.startDebugging with the actual
+Tiny Gecko: Windows configuration, including preLaunchTask. CMake was removed
+from that process PATH; CMake Tools had an explicit test-profile tool path.
+Configure and build exited zero, GDB stopped at main (line 508), and Continue
+reached line 525 after window.show(). Only the owned debug session was stopped.
+Evidence: build/tiny-gecko-split/f5-integration/result.json and test.cjs.
+This verifies the VS Code launch API and tasks, not the user's physical F5 key.
+User subsequently confirmed both F5 and the green Run and Debug triangle work
+in the existing editor: each stopped at main, then Continue ran the Windows
+simulator. This closes the reported Windows launch failure. No hardware access,
+commits or pushes; existing STM32 starter work unchanged.
+
+
+## Tiny Gecko debugger and visual Configure (2026-10-17, America/New_York)
+
+Both Tiny example launchers now stop at main and use the compiler-matched GDB
+through ignored build/tool-links/mingw/bin/gdb.exe. CMake creates a junction to
+the entire MinGW installation; linking only bin breaks this WinLibs GDB's Python
+lookup. The previous manual gdb.exe prompt did not resolve in the user's VS Code
+environment. The installed C++ debug adapter was exercised with the actual launch
+configuration: stopped in main, continued past window.show(), then terminated only
+the test process. Evidence: build/tiny-gecko-split/vscode-gdb-validation.json and
+vscode-gdb-trace.json. No firmware changes or board access.
+
+Designer extension 0.2.18 is installed in the normal VS Code profile. Reload Window
+is needed for an already-open editor. Segmented Configure now shares New Project's
+glass geometry/field rendering helper and shows named logical input capabilities.
+Import validates through project.segmentGlass before replacing the preview. Failed
+imports preserve the old glass, and Cancel remains available during import.
+No raw JSON editor is presented. The FSM stays application-owned.
+
+97 Node tests pass, including canvas drawing, import failure recovery, Apply and
+Cancel. Installed-package blank-starter integration passes with the automatic GDB
+setup and both pre/post-generation builds. Logs: visual-configure-tests.log and
+visual-configure-integration.log under build/tiny-gecko-split. A standalone browser
+render of Configure was inspected there; it lacks VS Code's injected theme values
+and is not a screenshot of the user's editor. Existing STM32 starters untouched.
+No commits or pushes. User confirmation of F5 and the updated Configure is pending.
+
+
+## Segmented Configure recovery (2026-10-17, America/New_York)
+
+The user's normal VS Code profile still had extension 0.2.13. Its pixel-only
+Configure opened a partial tab for the new segmented service response and threw
+on missing displayDefinition.geometry. The newer extension had only been tested
+in an isolated profile. Source extension 0.2.17 is now installed in the normal
+profile; the existing VS Code window still needs Developer: Reload Window.
+
+Pixel and segmented setup values are now checked before creating the tab. Added
+host/webview tests for routing, initialized input values, Apply, failed Apply,
+Cancel, tab disposal and malformed responses. All 96 Node tests pass. Installed
+0.2.17 integration passes the actual blank Tiny starter workflow, including
+Configure Cancel, tab close, reopen and Apply. Evidence:
+`build/tiny-gecko-split/configure-node-tests.log`, `configure-integration.log`,
+`configure-integration-evidence.json` and `configure-validation.json`.
+Normal-profile installation is verified, but user confirmation after reload is
+pending. No starter source, firmware or FSM was changed by this fix. No push.
+
+
+## Tiny Gecko guided starter and completed reference (2026-10-18 UTC)
+
+`examples/efm32tg-stk3300-menu-1` starts with no designer project or generated
+headers. `examples/efm32tg-stk3300-menu-1-complete` contains the finished reference.
+The old `efm32tg-stk3300-menu` source location is retired; its SDK remains ignored
+locally. Each new example has its own pinned SDK submodule. The FSM, device
+adapters and platform sources are identical across the pair. A build-time
+header-presence check enables the generated presenter on the next ordinary build;
+there are no separate blank/UI presets or launchers.
+
+The starter README walks New Project, glass import, three field bindings,
+Generate UI, Windows checks and hardware configuration. Visual pattern authoring
+remains planned. Packaged integration now copies the actual blank starter, not a
+synthetic no-op main. It passes from blank through generation with the unchanged
+build preset and without a manual second configure. Windows CTest: starter 3/3,
+complete 4/4; both EFM32 links pass. Completed firmware is byte-identical to the
+previously validated binary. No flash in this increment. Designer build has zero
+warnings; Core 101/101, Service 953, generated consumer 2/2 and cast audit pass.
+Evidence: `build/tiny-gecko-split`. Existing STM32 starter work remains untouched.
+Changes are local and uncommitted; nothing was pushed for this split.
+
+
+## Segmented New Project in VS Code (2026-10-18 UTC)
+
+Implemented locally in plug-in/service 0.2.16. New Project offers pixel or segmented
+displays, imports bounded validated glass, shows fixed geometry/field capacities,
+and creates a blank v4 form with an application-selected name, logical input and
+paths sidecar. Core creation stages the sidecar with the manifest and validates
+paths before writes. Existing directories are rejected. The application FSM,
+presenter and hardware adapters are not generated or modified.
+
+Tutorial: examples/efm32tg-stk3300-menu-1-complete/docs/segmented-designer.md now starts with
+LiTheView: Add LiTheView UI, not CLI creation. docs/SEGMENTED_DESIGNER_PLAN.md records
+the next visual pattern-authoring stage: reference art and reusable digit/ring/icon
+templates expanded into the current glass contract, with controller mapping kept
+in application adapters. That visual pattern editor is planned, not implemented.
+
+Validation: zero-warning solution build; Core 101/101, Service 953, App 18/18,
+Node 93/93. The installed source-only VSIX passes the blank external application
+workflow, then the unchanged Windows preset builds the generated simulator and
+passes all four tests. Native worker and embedded code were unchanged. No flash.
+Evidence: build/segmented-new-project and build/vscode-designer/latest-integration.json.
+A sandbox temp-rename failure was resolved by running tests with normal permissions.
+Preparation published the service but its runtime-copy step hit a DLL held by an
+existing process; no developer process was terminated. The new service and existing
+worker passed packaged integration. Normal-profile extension installation unchanged.
+No commits or pushes for this increment; existing STM32 starters/private references
+remain untouched.
+
 ## Generated Tiny Gecko runtime integration (2026-10-18 UTC)
 
 The presenter now calls UI/Generated/segmented/home.hpp on both Windows and EFM32.
@@ -55,7 +190,7 @@ VS Code/service version 0.2.15. Prepared service/worker are under
 build/vscode-designer/service and build/windows-mingw-debug. Source-only package:
 build/segmented-designer/litheview-segmented-source.vsix. It was installed only
 in an isolated test profile, not the owner's normal VS Code profile. Tutorial:
-examples/efm32tg-stk3300-menu/docs/segmented-designer.md; project: UI/designer.
+examples/efm32tg-stk3300-menu-1-complete/docs/segmented-designer.md; project: UI/designer.
 Initial creation remains CLI (`segment create-project`); New Project and the
 standalone desktop do not yet author new segmented projects. Polygon editing
 is JSON-based; native preview is bounded to 1024 by 1024 and a work limit.
@@ -79,7 +214,7 @@ Private hardware PDFs and root photographs remain outside publication scope.
 
 The owner requested the Windows-first segmented-menu implementation with PB0,
 PB1 and the touch slider, preserving existing starters. New application:
-`examples/efm32tg-stk3300-menu`. It has a display-independent FSM, typed effects,
+`examples/efm32tg-stk3300-menu-1-complete`. It has a display-independent FSM, typed effects,
 bounded slider translator, A03 character/digit mapping and Win32 segment drawing.
 The new header-only `LitheView::Segments` target has no raster dependency.
 
@@ -381,7 +516,7 @@ for a good pause point. This is that completed control increment. Both local H75
 starter baseline is unchanged. No hardware was accessed and no Git history reset was performed.
 
 `DropDownView` is an extensible `ControlView` with immutable caller-owned, pipe-delimited items
-(1Ã¢â‚¬â€œ255 entries), index identity and typed selection/edit notifications. Selection is tentative while
+(1-255 entries), index identity and typed selection/edit notifications. Selection is tentative while
 open; commit accepts it, cancellation restores the initial index, and application refresh is silent.
 It shares the synchronous, guarded control-hook-before-form-handler contract. Pointer/touch and
 keyboard input use the same model. A bounded five-row popup opens above or below its anchor; pointer
@@ -706,7 +841,7 @@ The Win32 rendering was deliberately left unchanged during this hardware port.
 Added named eight-electrode volume ring, nearest-eighth scale, presenter binding
 (saved volume normally, draft in editor), shared atomic presentation encoding,
 and matching Windows polygons. FSM and device/LCD adapters unchanged. Tutorial:
-examples/efm32tg-stk3300-menu/docs/volume-ring.md. It explicitly explains that the
+examples/efm32tg-stk3300-menu-1-complete/docs/volume-ring.md. It explicitly explains that the
 current raster designer cannot yet author segmented forms and identifies the
 future field/binding/generation responsibilities without claiming that work done.
 
@@ -741,7 +876,7 @@ C++ presentation encoders. CLI: `segment glass-hash`, `segment check`,
 icons, ordered scaled groups, ASCII character cells and unsigned decimal fields.
 No raster profile, SDK, MCU selection, task or FSM is generated.
 
-Tiny Gecko's definitions are in examples/efm32tg-stk3300-menu/UI/design; the
+Tiny Gecko's definitions are in examples/efm32tg-stk3300-menu-1-complete/UI/design; the
 accepted runtime still uses UI/glass.hpp and its handwritten presenter/FSM.
 Synthetic glass and individual-piece fixtures are in tests/designer-fixtures/
 segmented-icons. Reproduction and contract details: tests/segmented_designer_consumer/

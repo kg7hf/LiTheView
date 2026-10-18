@@ -82,6 +82,10 @@
 [submodule "examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/FreeRTOS-Kernel"]
 	path = examples/stm32l4r9i-disco-menu-1/Middlewares/Third_Party/FreeRTOS-Kernel
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
-[submodule "examples/efm32tg-stk3300-menu/Drivers/GeckoSDK"]
-	path = examples/efm32tg-stk3300-menu/Drivers/GeckoSDK
+[submodule "examples/efm32tg-stk3300-menu-1-complete/Drivers/GeckoSDK"]
+	path = examples/efm32tg-stk3300-menu-1-complete/Drivers/GeckoSDK
+	url = https://github.com/SiliconLabs/gecko_sdk.git
+
+[submodule "examples/efm32tg-stk3300-menu-1/Drivers/GeckoSDK"]
+	path = examples/efm32tg-stk3300-menu-1/Drivers/GeckoSDK
 	url = https://github.com/SiliconLabs/gecko_sdk.git

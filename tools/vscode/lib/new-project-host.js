@@ -9,6 +9,7 @@ const { ServiceClient } = require('./service-client');
 const { resolveDotnet } = require('./dotnet');
 const { exists, submoduleRoots, defaultPreviewWorker } = require('./project-paths');
 const { creationRequest, renderNewProject } = require('./new-project');
+const { readGlassJson } = require('./segment-setup');
 
 async function isLibrary(directory) {
   return await exists(path.join(directory, 'include/lithe/application.hpp')) && await exists(path.join(directory, 'schema/widgets.json'));
@@ -76,14 +77,28 @@ async function openNewProject(vscode, context, output, configuration) {
     panel = vscode.window.createWebviewPanel('litheview.newProject', 'Add LiTheView UI', vscode.ViewColumn.Active,
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')] });
     const asset = name => panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', name)).toString();
-    panel.webview.html = renderNewProject({ scriptUri: asset('new-project.js'), styleUri: asset('new-project.css'),
+    panel.webview.html = renderNewProject({ scriptUri: asset('new-project.js'), styleUri: asset('new-project.css'), glassScriptUri: asset('glass-preview.js'),
       cspSource: panel.webview.cspSource, nonce: crypto.randomBytes(24).toString('base64') });
     let creating = false, disposed = false;
+    const importGlass = async file => {
+      if (disposed || creating) return;
+      if (!vscode.workspace.isTrusted) throw new Error('Trust this workspace before importing glass.');
+      if (!hello.capabilities?.includes('project.createSegmented')) throw new Error('Update the prepared designer service for segmented New Project support.');
+      const glass = await client.request('project.segmentGlass', { segmentGlass: JSON.parse(await readGlassJson(file)) });
+      if (!disposed) await panel.webview.postMessage({ type: 'glass', glass });
+      return glass;
+    };
     const handleMessage = async message => {
       if (disposed || !message || typeof message.type !== 'string') return;
       if (message.type === 'ready') {
         await panel.webview.postMessage({ type: 'initialize', ...options, applicationRoot: folder.uri.fsPath, libraryRoot });
       } else if (message.type === 'cancel' && !creating) panel.dispose();
+      else if (message.type === 'importGlass' && !creating) {
+        try {
+          const selected = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { 'Glass JSON': ['json'] } });
+          if (selected?.length) await importGlass(selected[0].fsPath);
+        } catch (error) { if (!disposed) await panel.webview.postMessage({ type: 'error', message: error.message }); }
+      }
       else if (message.type === 'create' && !creating) {
         creating = true;
         try {
@@ -92,6 +107,7 @@ async function openNewProject(vscode, context, output, configuration) {
           if ((request.nativeDisplayId || request.customNativeDisplay) && !hello.capabilities?.includes('project.createNative')) {
             throw new Error('Update LiTheView Designer to create native packed displays.');
           }
+          if (request.segmentGlass && !hello.capabilities?.includes('project.createSegmented')) throw new Error('Update the prepared designer service for segmented New Project support.');
           await panel.webview.postMessage({ type: 'busy', busy: true });
           const result = await client.request('project.create', { project: request });
           output.appendLine(`Created LiTheView UI: ${result.manifestPath}`);
@@ -113,7 +129,7 @@ async function openNewProject(vscode, context, output, configuration) {
     const subscription = panel.webview.onDidReceiveMessage(handleMessage);
     panel.onDidDispose(() => { disposed = true; subscription.dispose(); if (!creating) client.dispose(); });
     context.subscriptions.push(panel);
-    return { submit: values => handleMessage({ type: 'create', values }), isOpen: () => !disposed };
+    return { submit: values => handleMessage({ type: 'create', values }), importGlass, cancel: () => handleMessage({ type: 'cancel' }), isOpen: () => !disposed };
   } catch (error) { client.dispose(); panel?.dispose(); throw error; }
 }
 

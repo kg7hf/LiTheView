@@ -1,5 +1,27 @@
 # Segmented displays in the designer
 
+## Tutorial pair implemented (2026-10-18 UTC)
+
+`examples/efm32tg-stk3300-menu-1` starts with no designer project or generated
+headers. `examples/efm32tg-stk3300-menu-1-complete` contains the finished reference.
+The old `efm32tg-stk3300-menu` source location is retired; its SDK remains ignored
+locally. Each new example has its own pinned SDK submodule. The FSM, device
+adapters and platform sources are identical across the pair. A build-time
+header-presence check enables the generated presenter on the next ordinary build;
+there are no separate blank/UI presets or launchers.
+
+The starter README walks New Project, glass import, three field bindings,
+Generate UI, Windows checks and hardware configuration. Visual pattern authoring
+remains planned. Packaged integration now copies the actual blank starter, not a
+synthetic no-op main. It passes from blank through generation with the unchanged
+build preset and without a manual second configure. Windows CTest: starter 3/3,
+complete 4/4; both EFM32 links pass. Completed firmware is byte-identical to the
+previously validated binary. No flash in this increment. Designer build has zero
+warnings; Core 101/101, Service 953, generated consumer 2/2 and cast audit pass.
+Evidence: `build/tiny-gecko-split`. Existing STM32 starter work remains untouched.
+Changes are local and uncommitted; nothing was pushed for this split.
+
+
 Status: project integration and VS Code authoring implemented, 2026-10-17.
 Generated-runtime adoption and automated target validation are implemented.
 The owner accepted the generated build on the PCB2100 A03 board, confirming
@@ -7,7 +29,7 @@ play/pause, slider navigation, volume adjustment, cancel/save and the ring.
 The owner also confirmed "The Windows simulator works too" for the generated
 presenter. Both platforms now have automated checks and owner acceptance.
 The exact scope and firmware identity are recorded in the example's
-[validation report](../examples/efm32tg-stk3300-menu/VALIDATION.md).
+[validation report](../examples/efm32tg-stk3300-menu-1-complete/VALIDATION.md).
 
 ### First implementation increment
 
@@ -21,10 +43,11 @@ Version-4 projects now lock a segmented glass and logical input without a raster
 surface. Core/CLI resolve and generate every screen; the native worker previews
 segment bits with capability negotiation. VS Code 0.2.15 supports field bindings,
 preview values, Configure/import glass, screen navigation and Add screen.
-See the [Tiny Gecko designer lesson](../examples/efm32tg-stk3300-menu/docs/segmented-designer.md).
+See the [Tiny Gecko designer lesson](../examples/efm32tg-stk3300-menu-1-complete/docs/segmented-designer.md).
 
-S0-S3 now have implementation and service/extension-host evidence. Initial project
-creation remains CLI-based, polygon editing is JSON-based, and native preview is
+S0-S3 now have implementation and service/extension-host evidence. Version 0.2.16
+New Project imports validated glass and creates a blank segmented project through
+the VS Code plug-in. Polygon editing remains JSON-based, and native preview is
 bounded to 1024 by 1024. The standalone desktop designer rejects v4 with an
 explicit diagnostic. S4 now connects the generated header to both platform mains
 through the handwritten presenter. The FSM is unchanged. Windows tests and target
@@ -245,8 +268,36 @@ original STM32 starters, unrelated local changes and private reference documents
   and [preview surfaces](../tools/designer/src/LitheView.Designer.Core/Preview/PreviewSurfaceFactory.cs).
 - [VS Code extension](../tools/vscode/extension.js), its Configure and Add screen
   flows, and the existing designer service protocol.
-- [Tiny Gecko presenter](../examples/efm32tg-stk3300-menu/UI/presenter.hpp),
-  [glass mapping](../examples/efm32tg-stk3300-menu/UI/glass.hpp) and
-  [volume-ring lesson](../examples/efm32tg-stk3300-menu/docs/volume-ring.md).
+- [Tiny Gecko presenter](../examples/efm32tg-stk3300-menu-1-complete/UI/presenter.hpp),
+  [glass mapping](../examples/efm32tg-stk3300-menu-1-complete/UI/glass.hpp) and
+  [volume-ring lesson](../examples/efm32tg-stk3300-menu-1-complete/docs/volume-ring.md).
 - [House style](style_guide.md), [embedded C++ philosophy](02-embedded-cpp-philosophy.md)
   and [overall display plan](DISPLAY_MODEL_PLAN.md).
+
+
+## Next authoring stage: patterns mapped to glass
+
+A developer should be able to use a glass drawing as a reference, place reusable
+seven-segment digits, fourteen-segment characters, ring pieces and individual icon
+shapes, then assign those named pattern segments to logical glass outputs. Printed
+markings remain background artwork. Verify independent electrodes against the
+glass documentation rather than assuming every visible mark is controllable.
+
+Keep template-local segment names separate from instance assignments. Two digits
+can share the same pattern and glyph definitions but map to different logical
+outputs. Expand template instances into the existing bounded glass definition
+when authoring/exporting. The target continues to consume encoding tables and
+segment bits; no template interpreter, drawing geometry or reference image is
+required by the embedded runtime.
+
+The form binds application values to fields in that expanded definition. The
+hardware adapter separately maps logical outputs to controller COM/SEG signals or
+register bits. Physical pin numbering must not enter the generic pattern format
+or the application-owned FSM. Reject missing assignments and accidental duplicate
+writers; any intentional alias must be explicit and obey existing form ownership
+rules. Keep stable output identities when geometry alone changes.
+
+This is a planned visual authoring tool, not part of version 0.2.16. The current
+New Project workflow imports the expanded JSON, previews fixed geometry and fields,
+and creates a blank screen. A future pattern editor should produce that same
+contract so current forms, generated encoders and hardware adapters remain useful.

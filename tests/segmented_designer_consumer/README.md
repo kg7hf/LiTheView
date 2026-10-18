@@ -7,7 +7,7 @@ Gecko runtime now consumes generated code and its FSM remains unchanged.
 
 Segmented projects now support the VS Code editor, native preview, Configure and
 multi-screen generation. The loose-file commands below remain useful for testing
-the encoder independently. See the [Tiny Gecko designer walkthrough](../../examples/efm32tg-stk3300-menu/docs/segmented-designer.md)
+the encoder independently. See the [Tiny Gecko designer walkthrough](../../examples/efm32tg-stk3300-menu-1-complete/docs/segmented-designer.md)
 for the project workflow.
 
 ## Generate and build
@@ -21,7 +21,7 @@ their actual installations on your machine; no personal tool path is required.
 $Dotnet = 'dotnet'
 & $Dotnet build tools/designer/src/LitheView.Designer.Cli --nologo -m:1
 $Cli = 'tools/designer/src/LitheView.Designer.Cli/bin/Debug/net10.0/LitheView.Designer.Cli.dll'
-$Tiny = 'examples/efm32tg-stk3300-menu/UI/design'
+$Tiny = 'examples/efm32tg-stk3300-menu-1-complete/UI/design'
 $Small = 'tests/designer-fixtures/segmented-icons'
 $Generated = "$PWD/build/segmented-designer/generated"
 
@@ -135,6 +135,6 @@ A03 mapping oracle. Preview expansion occurs after native electrode encoding.
 
 These are host compiler and behavior checks. The generated encoder now drives
 both example platforms; fresh hardware observations are recorded separately in
-[the example validation report](../../examples/efm32tg-stk3300-menu/VALIDATION.md). See
+[the example validation report](../../examples/efm32tg-stk3300-menu-1-complete/VALIDATION.md). See
 [the implementation plan](../../docs/SEGMENTED_DESIGNER_PLAN.md) for the remaining
 runtime integration and hardware acceptance stages.

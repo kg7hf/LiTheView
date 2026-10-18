@@ -17,7 +17,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
 {
     private static readonly StringComparison PathComparison = OperatingSystem.IsWindows()
         ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-    private static readonly string[] Capabilities = ["inspect", "edit", "render", "export", "handlers", "controlEvents", "project.options", "project.create", "project.createNative", "project.input", "project.setup", "project.addScreen"];
+    private static readonly string[] Capabilities = ["inspect", "edit", "render", "export", "handlers", "controlEvents", "project.options", "project.create", "project.createNative", "project.createSegmented", "project.input", "project.setup", "project.addScreen"];
     private readonly string _libraryRoot;
     private readonly WidgetCatalog _catalog;
     private readonly string _catalogHash;
@@ -75,7 +75,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
                 return new(id, true, new
                 {
                     protocolVersion = Protocol.Version,
-                    serviceVersion = "0.2.15",
+                    serviceVersion = "0.2.16",
                     widgetCatalogSha256 = _catalogHash,
                     capabilities = Capabilities
                 });
@@ -83,6 +83,11 @@ internal sealed partial class DesignerService : IAsyncDisposable
             if (request.Method == "project.options")
             {
                 return new(id, true, ProjectOptions());
+            }
+            if (request.Method == "project.segmentGlass")
+            {
+                var glass = request.Params.SegmentGlass ?? throw new ServiceException("InvalidRequest", "Import a glass definition.");
+                return new(id, true, LitheView.Designer.Core.Segments.SegmentDocuments.ReadGlass(Encoding.UTF8.GetBytes(glass.GetRawText())));
             }
             if (request.Method == "project.create")
             {

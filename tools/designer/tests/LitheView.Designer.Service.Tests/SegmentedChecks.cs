@@ -12,7 +12,7 @@ internal static partial class Program
     private static async Task CheckSegmentedAsync(DesignerService service, string library, string directory, bool native)
     {
         string manifest = SegmentProject.Create(directory,
-            File.ReadAllBytes(Path.Combine(library, "examples/efm32tg-stk3300-menu/UI/design/glass.segment-display.json")),
+            File.ReadAllBytes(Path.Combine(library, "examples/efm32tg-stk3300-menu-1-complete/UI/design/glass.segment-display.json")),
             File.ReadAllBytes(Path.Combine(library, "profiles/logical-inputs/encoder-select.json")));
         string path = Path.Combine(directory, "forms/home.litheview.xml"), xml = File.ReadAllText(path);
         ValueTask<ServiceResponse> Request(string method, EditOperation? edit = null, ProjectSetupRequest? setup = null, string? screen = null) =>

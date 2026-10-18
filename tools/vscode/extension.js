@@ -318,7 +318,7 @@ class DesignerProvider {
           ? 'Project settings saved. Review the form, Generate UI, then build and debug with your existing application configurations.'
           : 'Project settings are unchanged.');
         return changed;
-      }, finished);
+      }, finished, async glass => client.request('project.segmentGlass', { segmentGlass: glass }));
       if (state.disposed) { state.setup.cancel(); return; }
       return state.setup;
     } catch (error) { finished(); throw error; }
@@ -468,6 +468,8 @@ function activate(context) {
   // Also used by the integration test running in an actual VS Code host.
   return {
     // Exercise the same submitted wizard data in the actual VS Code integration host.
+    importNewProjectGlass: file => projectWizard?.importGlass(file),
+    cancelNewProject: () => projectWizard?.cancel(),
     async submitNewProject(values) {
       if (!projectWizard?.isOpen()) throw new Error('Open Add LiTheView UI first.');
       return projectWizard.submit(values);

@@ -9,6 +9,8 @@
   const status = document.getElementById('status');
   let surfaces = [];
   let setup = false;
+  let glass = null;
+  const displayKind = document.getElementById('display-kind');
   const format = document.getElementById('format');
   if (window.litheviewFrontPanel) window.litheviewFrontPanel.connect(vscode);
   function updateFormat(custom) {
@@ -33,7 +35,11 @@
       : 'Choose the framebuffer storage and panel transfer formats independently.';
   }
   function updateSurface() {
-    const custom = surface.value === 'custom';
+    const segmented = displayKind?.value === 'segmented';
+    document.getElementById('pixel-display').hidden = segmented;
+    if (displayKind) document.getElementById('segmented').hidden = !segmented;
+    surface.disabled = segmented;
+    const custom = !segmented && surface.value === 'custom';
     document.getElementById('custom').hidden = !custom;
     for (const input of document.querySelectorAll('#custom input, #custom select')) input.disabled = !custom;
     const selected = surfaces.find(item => item.id === surface.value);
@@ -41,11 +47,17 @@
       ? `${selected.width} × ${selected.height} ${selected.addressSpace || 'pixels'} · ${selected.format} · ${selected.shape}. This is a fixed display configuration, independent of the MCU.`
       : 'Define your geometry using a supported native storage format. New pixel encodings require library support.';
     updateFormat(custom);
+    const customInput = form.elements.logicalInput.querySelector('option[value=custom]');
+    customInput.hidden = !setup && !segmented;
+    if (customInput.hidden && form.elements.logicalInput.value === 'custom') form.elements.logicalInput.value = 'outputOnly';
+    updateInput();
   }
+  displayKind?.addEventListener('change', updateSurface);
+  document.getElementById('glass-import')?.addEventListener('click', () => vscode.postMessage({ type: 'importGlass' }));
   surface.addEventListener('change', updateSurface);
   format.addEventListener('change', updateSurface);
   function updateInput() {
-    if (setup) document.getElementById('input-capabilities').hidden = form.elements.logicalInput.value !== 'custom';
+    document.getElementById('input-capabilities').hidden = form.elements.logicalInput.value !== 'custom';
   }
   form.elements.logicalInput.addEventListener('change', updateInput);
   document.getElementById('cancel').addEventListener('click', () => vscode.postMessage({ type: 'cancel' }));
@@ -54,10 +66,11 @@
     const values = Object.fromEntries(new FormData(form));
     const custom = {};
     for (const input of document.querySelectorAll('#custom input, #custom select')) custom[input.name] = input.value;
-    const input = setup ? Object.fromEntries(['pointer', 'keys', 'text', 'encoder', 'select'].map(key => [key, form.elements[key].checked])) : undefined;
+    const input = (setup || values.logicalInput === 'custom') ? Object.fromEntries(['pointer', 'keys', 'text', 'encoder', 'select'].map(key => [key, form.elements[key].checked])) : undefined;
     vscode.postMessage({ type: setup ? 'apply' : 'create', values: {
       name: values.name, projectDirectory: values.projectDirectory, componentDirectory: values.componentDirectory,
       surfaceId: values.surfaceId, logicalInput: values.logicalInput, custom, input,
+      displayKind: displayKind?.value, glass: glass ? JSON.stringify(glass) : undefined,
       frontPanel: setup ? window.litheviewFrontPanel.value() : undefined
     } });
   });
@@ -85,6 +98,11 @@
       updateSurface();
       updateInput();
       if (message.frontPanel?.warning) status.textContent = message.frontPanel.warning;
+    }
+    if (message.type === 'glass') {
+      glass = message.glass;
+      window.litheviewGlassPreview.render(glass);
+      status.textContent = 'Glass validated. Choose input and create the blank form.';
     }
     if (message.type === 'front-image') window.litheviewFrontPanel.load(null, message.image);
     if (message.type === 'busy') {

@@ -4,6 +4,7 @@
 using System.Text;
 using LitheView.Designer.Core.Profiles;
 using LitheView.Designer.Core.Projects;
+using LitheView.Designer.Core.Segments;
 
 namespace LitheView.Designer.Service;
 
@@ -49,11 +50,13 @@ internal sealed partial class DesignerService
             throw new ServiceException("InvalidProjectPath", "Choose an application UI directory outside LiTheView library sources.");
         }
         int selections = (request.CustomSurface is null ? 0 : 1) + (request.SurfaceId is null ? 0 : 1) +
-            (request.NativeDisplayId is null ? 0 : 1) + (request.CustomNativeDisplay is null ? 0 : 1);
+            (request.NativeDisplayId is null ? 0 : 1) + (request.CustomNativeDisplay is null ? 0 : 1) + (request.SegmentGlass is null ? 0 : 1);
         if (selections != 1)
         {
             throw new ServiceException("InvalidSurface", "Select one catalog display or define one custom display.");
         }
+        if (request.SegmentGlass is not null) return CreateSegmentedProject(request, application, directory);
+        if (request.Input is not null) throw new ServiceException("InvalidInput", "Custom input capabilities are supported here for segmented creation only.");
         bool native = request.NativeDisplayId is not null || request.CustomNativeDisplay is not null;
         DisplayDefinitionLoadResult? definition = request.CustomNativeDisplay is { } nativeCustom
             ? CreateNativeDefinition(request, nativeCustom)
@@ -109,6 +112,28 @@ internal sealed partial class DesignerService
                 message = item.Message, path = item.Path
             }).ToArray()
         };
+    }
+
+    private object CreateSegmentedProject(ProjectCreationRequest request, string application, string directory)
+    {
+        LogicalInputConfigurationProfile input = request.LogicalInput == "custom" && request.Input is { } selected
+            ? Input("custom") with { Pointer = selected.Pointer, Keys = selected.Keys, Text = selected.Text,
+                Encoder = selected.Encoder, Select = selected.Select }
+            : SelectInput(request.LogicalInput);
+        if (request.LogicalInput != "custom" && request.Input is not null)
+            throw new ServiceException("InvalidInput", "Choose either a preset or custom input capabilities.");
+        DesignerProjectPaths paths = new()
+        {
+            ApplicationRoot = Path.GetRelativePath(directory, application).Replace('\\', '/'),
+            LibraryRoot = Path.GetRelativePath(application, _libraryRoot).Replace('\\', '/'),
+            ComponentDirectory = request.ComponentDirectory, BuildDirectory = request.BuildDirectory
+        };
+        string manifest = SegmentProject.Create(directory, Encoding.UTF8.GetBytes(request.SegmentGlass!.Value.GetRawText()),
+            LogicalInputConfigurationCanonicalizer.Canonicalize(input), request.ProjectId, request.DisplayName, paths);
+        var resolved = DesignerProjectPathService.Load(manifest, _libraryRoot);
+        return new { manifestPath = manifest, formPath = Path.Combine(directory, "forms/home.litheview.xml"),
+            applicationRoot = application, libraryRoot = _libraryRoot, outputDirectory = resolved.ComponentDirectory,
+            buildDirectory = resolved.BuildDirectory, diagnostics = Array.Empty<DiagnosticView>() };
     }
 
     private static DisplayDefinitionLoadResult CreateNativeDefinition(ProjectCreationRequest request,

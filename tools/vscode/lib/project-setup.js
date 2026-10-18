@@ -39,6 +39,10 @@ async function assertSetupSaved(vscode, project) {
 }
 
 function setupValues(current) {
+  if (!current?.displayDefinition?.geometry?.safeArea || !current.displayDefinition.source ||
+      !keys.every(key => typeof current.input?.[key] === 'boolean')) {
+    throw new Error('Incomplete pixel display configuration. Update the LiTheView extension and its designer service, then reopen Configure.');
+  }
   const surface = current.displaySurface, definition = current.displayDefinition;
   const geometry = definition.geometry, safe = geometry.safeArea;
   const custom = { width: geometry.width, height: geometry.height, shape: geometry.shape, format: definition.format,
@@ -149,8 +153,10 @@ async function applySetupPlan(vscode, project, plan, isCurrent, frontEdit) {
   return true;
 }
 
-async function openProjectSetup(vscode, context, project, current, apply, finished) {
-  if (current.displayKind === 'segmented') return openSegmentSetup(vscode, context, current, apply, finished);
+async function openProjectSetup(vscode, context, project, current, apply, finished, validateGlass) {
+  if (current?.displayKind === 'segmented') return openSegmentSetup(vscode, context, current, apply, finished, validateGlass);
+  // Validate before opening a tab: initialization failure must not strand a dialog.
+  const values = setupValues(current);
   const frontPanel = await readFrontPanel(project);
   const panel = vscode.window.createWebviewPanel('litheview.projectSetup', 'LiTheView: Configure', vscode.ViewColumn.Active,
     { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')] });
@@ -161,7 +167,7 @@ async function openProjectSetup(vscode, context, project, current, apply, finish
   const handleMessage = async message => {
     if (disposed || !message || applying) return;
     if (message.type === 'ready') await panel.webview.postMessage({ type: 'initialize', setup: true,
-      packed: !current.displaySurface, values: setupValues(current), surfaces: [], frontPanel,
+      packed: !current.displaySurface, values, surfaces: [], frontPanel,
       applicationRoot: project.applicationRoot, libraryRoot: project.libraryRoot });
     else if (message.type === 'cancel') panel.dispose();
     else if (message.type === 'front-image') {
@@ -188,7 +194,7 @@ async function openProjectSetup(vscode, context, project, current, apply, finish
   const subscription = panel.webview.onDidReceiveMessage(handleMessage);
   panel.onDidDispose(() => { disposed = true; subscription.dispose(); if (!applying) finished(); });
   context.subscriptions.push(panel);
-  return { values: { ...setupValues(current), frontPanel: frontPanel.value }, submit: values => handleMessage({ type: 'apply', values }),
+  return { values: { ...values, frontPanel: frontPanel.value }, submit: values => handleMessage({ type: 'apply', values }),
     chooseImage: relative => handleMessage({ type: 'front-image', relative }),
     cancel: () => panel.dispose(), isOpen: () => !disposed };
 }
