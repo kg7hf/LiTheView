@@ -193,6 +193,7 @@ public sealed record PreviewWorkerCapabilities(
     public bool InlinePixels { get; init; }
 
     // The worker renders the native packed pixel formats directly into their storage.
+    public bool SegmentedDisplays { get; init; }
     public bool NativePackedSurfaces { get; init; }
 }
 

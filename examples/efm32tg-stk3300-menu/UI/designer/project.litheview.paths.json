@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "applicationRoot": "../..",
+  "libraryRoot": "../..",
+  "componentDirectory": "UI/Generated/segmented",
+  "buildDirectory": "build/segmented-designer"
+}

@@ -1,0 +1,1 @@
+{"$schema":"../../schema/logical-input-configuration.schema.json","schemaVersion":1,"id":"application.input.buttons-slider","pointer":false,"keys":true,"text":false,"encoder":true,"select":true}

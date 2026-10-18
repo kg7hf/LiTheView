@@ -235,7 +235,7 @@ class DesignerProvider {
     this.post(state, { type: 'busy', busy: true });
     try {
       const plan = await client.request('handlers', params);
-      if (await exists(plan.handlerPath)) {
+      if (plan.handlerPath && await exists(plan.handlerPath)) {
         const handlers = await vscode.workspace.openTextDocument(vscode.Uri.file(plan.handlerPath));
         validateBindings(handlers.getText(), plan);
       }

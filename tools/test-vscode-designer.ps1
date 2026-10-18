@@ -10,10 +10,12 @@ param(
     [string] $PackagedExtensionPath = '',
     [switch] $SourceOnlyPackage,
     [switch] $BlankMenuTutorial,
+    [switch] $SegmentedTutorial,
     [ValidateRange(30, 600)][int] $TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+if ($SegmentedTutorial -and (!$FixtureProject -or $BlankMenuTutorial)) { throw '-SegmentedTutorial requires a segmented -FixtureProject.' }
 if ($SourceOnlyPackage -and !$PackagedExtensionPath) { throw '-SourceOnlyPackage requires -PackagedExtensionPath.' }
 $repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $dotnetCommand = (Get-Command $Dotnet -CommandType Application -ErrorAction Stop).Source
@@ -163,7 +165,7 @@ if ($PackagedExtensionPath) {
 $arguments = @('--new-window', '--disable-workspace-trust', '--skip-welcome', '--skip-release-notes',
     '--user-data-dir', (Join-Path $run 'user-data'), '--extensions-dir', (Join-Path $run 'extensions'),
     '--extensionDevelopmentPath', $developmentExtension,
-    '--extensionTestsPath', (Join-Path $repository $(if ($BlankMenuTutorial) { 'tools/vscode/integration/menu-tutorial.js' } else { 'tools/vscode/integration/run.js' })), $application, '--wait')
+    '--extensionTestsPath', (Join-Path $repository $(if ($SegmentedTutorial) { 'tools/vscode/integration/segmented-tutorial.js' } elseif ($BlankMenuTutorial) { 'tools/vscode/integration/menu-tutorial.js' } else { 'tools/vscode/integration/run.js' })), $application, '--wait')
 $quotedArguments = ($arguments | ForEach-Object { '"' + $_.Replace('"', '\"') + '"' }) -join ' '
 try {
     $testProcess = Start-Process -FilePath $codeCommand -ArgumentList $quotedArguments -WindowStyle Hidden -PassThru `

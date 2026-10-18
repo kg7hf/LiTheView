@@ -386,3 +386,31 @@ adds screens, renders native previews and generates every lesson. The test then 
 the application's existing Windows/STM32 presets and host tests after each step.
 No board access occurs. Failed runs and logs remain available for diagnosis. Your
 open VS Code windows and starter files are not used as test fixtures.
+
+## Segmented glass projects
+
+Version 0.2.15 supports explicit version-4 segmented projects. Open a segmented
+`.litheview.xml` form to see fixed glass fields and native segment preview. Bind
+named application values and edit their preview samples; use Configure to import
+or edit glass JSON and logical input. Add screen and Generate UI use the same
+application-owned project and paths. No raster framebuffer or MCU selection is
+required. Segmented preview returns bounded RGBA host pixels inline on all hosts,
+after encoding the native segment bits; raster Windows preview still uses shared memory.
+
+Follow [the Tiny Gecko segmented designer lesson](../../examples/efm32tg-stk3300-menu/docs/segmented-designer.md).
+Initial segmented creation uses `segment create-project`; the New Project wizard
+and standalone desktop designer do not yet create segmented projects. Rebuild the
+service and native worker together. An older worker is rejected with a rebuild
+diagnostic rather than being sent an unsupported segmented request.
+
+The installed-package integration exercise is:
+
+```powershell
+./tools/test-vscode-designer.ps1 -Dotnet dotnet -SegmentedTutorial `
+  -FixtureProject examples/efm32tg-stk3300-menu/UI/designer `
+  -PackagedExtensionPath build/vscode-designer/litheview-designer-0.2.15-source.vsix -SourceOnlyPackage
+```
+
+It uses a copied application and a private VS Code profile. It covers the real
+extension-host edit, preview, Configure, Add screen and generation paths. It does
+not automate physical hardware or certify the visual appearance of every widget.

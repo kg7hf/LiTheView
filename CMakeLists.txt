@@ -18,6 +18,7 @@ endif()
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+include(cmake/Segments.cmake)
 
 option(LITHEVIEW_BUILD_RENDERING_FIXTURES "Build internal rendering regression fixtures" ${LITHEVIEW_IS_TOP_LEVEL})
 set(litheview_win32_default OFF)
@@ -429,7 +430,7 @@ install(FILES LICENSE NOTICE.md THIRD_PARTY_NOTICES.md
     DESTINATION ${CMAKE_INSTALL_DATADIR}/LitheView)
 install(DIRECTORY licenses/ DESTINATION ${CMAKE_INSTALL_DATADIR}/LitheView/licenses)
 
-install(TARGETS litheview_core
+install(TARGETS litheview_core litheview_segments
     EXPORT LitheViewTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

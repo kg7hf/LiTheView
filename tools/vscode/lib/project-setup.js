@@ -8,6 +8,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { isInside, samePath } = require('./project-paths');
 const { customSurface, customNativeDisplay, renderNewProject } = require('./new-project');
+const { openSegmentSetup } = require('./segment-setup');
 const { frontPanelPath, readFrontPanel, frontPanelEdit, chooseFrontImage } = require('./front-panel');
 const normalize = text => text.replace(/^\uFEFF/, '').replace(/\r\n|\r/g, '\n');
 const keys = ['pointer', 'keys', 'text', 'encoder', 'select'];
@@ -24,9 +25,16 @@ function configurationPaths(project) {
 }
 
 async function assertSetupSaved(vscode, project) {
-  const paths = [...configurationPaths(project), frontPanelPath(project)];
+  const paths = [...configurationPaths(project), path.join(path.dirname(project.manifestPath), 'profiles/glass.segment-display.json'), frontPanelPath(project)];
+  // Multi-form generation must not silently export an older disk copy of another screen.
+  if (vscode.workspace.textDocuments.some(document => document.isDirty && document.uri.fsPath.endsWith('.litheview.xml'))) {
+    if ((await fs.stat(project.manifestPath)).size > 1024 * 1024) throw new Error('Manifest exceeds 1 MiB.');
+    const manifest = JSON.parse((await fs.readFile(project.manifestPath, 'utf8')).replace(/^\uFEFF/, ''));
+    if (manifest.schemaVersion === 4 && Array.isArray(manifest.forms))
+      for (const form of manifest.forms) if (typeof form === 'string') paths.push(path.resolve(path.dirname(project.manifestPath), form));
+  }
   if (vscode.workspace.textDocuments.some(document => document.isDirty && paths.some(file => samePath(document.uri.fsPath, file)))) {
-    throw new Error('Save the project manifest and display/input profiles before Configure or Generate UI.');
+    throw new Error('Save the project manifest, segmented screens and display/input profiles before Configure or Generate UI.');
   }
 }
 
@@ -62,7 +70,16 @@ function setupRequest(values, current) {
 
 async function applySetupPlan(vscode, project, plan, isCurrent, frontEdit) {
   const allowed = configurationPaths(project);
-  const expected = plan.displaySurface ? allowed : allowed.filter(file => !file.endsWith('display-surface.json'));
+  let expected = plan.displaySurface ? allowed : allowed.filter(file => !file.endsWith('display-surface.json'));
+  if (plan.displayKind === 'segmented') {
+    if ((await fs.stat(project.manifestPath)).size > 1024 * 1024) throw new Error('Manifest exceeds 1 MiB.');
+    const manifest = JSON.parse((await fs.readFile(project.manifestPath, 'utf8')).replace(/^\uFEFF/, ''));
+    if (manifest.schemaVersion !== 4 || !Array.isArray(manifest.forms) || manifest.forms.length > 512 ||
+        manifest.forms.some(form => typeof form !== 'string' || path.isAbsolute(form) || form.split('/').some(p => !p || p === '..' || p === '.') || form.includes('\\') || form.includes(':'))) throw new Error('Invalid segmented manifest.');
+    const directory = path.dirname(project.manifestPath);
+    expected = [path.join(directory, 'profiles/logical-input.json'), path.join(directory, 'profiles/glass.segment-display.json'),
+      ...manifest.forms.map(form => path.resolve(directory, form)), project.manifestPath];
+  }
   if (!Array.isArray(plan.documents) || plan.documents.length !== expected.length || !Array.isArray(plan.edits) ||
       (plan.edits.length > 0 && (plan.edits.length < 2 || !samePath(plan.edits.at(-1).path, project.manifestPath)))) {
     throw new Error('Invalid project setup edit plan.');
@@ -133,6 +150,7 @@ async function applySetupPlan(vscode, project, plan, isCurrent, frontEdit) {
 }
 
 async function openProjectSetup(vscode, context, project, current, apply, finished) {
+  if (current.displayKind === 'segmented') return openSegmentSetup(vscode, context, current, apply, finished);
   const frontPanel = await readFrontPanel(project);
   const panel = vscode.window.createWebviewPanel('litheview.projectSetup', 'LiTheView: Configure', vscode.ViewColumn.Active,
     { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')] });

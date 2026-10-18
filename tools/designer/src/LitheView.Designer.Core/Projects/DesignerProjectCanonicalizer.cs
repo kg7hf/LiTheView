@@ -18,6 +18,7 @@ public static class DesignerProjectCanonicalizer
             writer.WriteStartObject();
             writer.WriteString("$schema", manifest.Schema);
             writer.WriteNumber("schemaVersion", manifest.SchemaVersion);
+            if (manifest.DisplayKind is not null) writer.WriteString("displayKind", manifest.DisplayKind);
             writer.WriteString("id", manifest.Id);
             writer.WriteString("displayName", manifest.DisplayName);
 
@@ -28,6 +29,7 @@ public static class DesignerProjectCanonicalizer
                 writer.WriteNumber("displaySurface", surfaceVersion);
             }
             writer.WriteNumber("projectManifest", manifest.SchemaCompatibility.ProjectManifest);
+            if (manifest.SchemaCompatibility.SegmentGlass is int glassVersion) writer.WriteNumber("segmentGlass", glassVersion);
             if (manifest.SchemaCompatibility.DisplayDefinition is int definitionVersion)
             {
                 writer.WriteNumber("displayDefinition", definitionVersion);
@@ -45,6 +47,7 @@ public static class DesignerProjectCanonicalizer
             {
                 WriteProfileReference(writer, "surfaceProfile", manifest.SurfaceProfile);
             }
+            if (manifest.SegmentGlass is not null) WriteProfileReference(writer, "segmentGlass", manifest.SegmentGlass);
             if (manifest.DisplayDefinition is not null)
             {
                 WriteProfileReference(writer, "displayDefinition", manifest.DisplayDefinition);

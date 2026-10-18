@@ -1,5 +1,10 @@
 # Display model and rendering implementation plan
 
+The next constrained-display investigation is the
+[Tiny Gecko segmented-menu plan](#tiny-gecko-segmented-menu-plan).
+It starts with Windows simulation and an application-owned FSM. It does not
+change the existing pixel-display contract or the starter applications.
+
 Host device presentation now has a separate application-owned front-view sidecar
 (Designer 0.2.8). It describes a PC board/enclosure PNG, LCD placement and named
 physical-button hit regions. It does not alter display compatibility, native
@@ -1262,3 +1267,301 @@ The foundation is useful at the M1 gate. The full workstream is successful when:
 - acceptance records distinguish implemented behavior, passed checks, estimates, unevaluated target
   constraints, and physical hardware evidence still required.
 
+## Tiny Gecko segmented-menu plan
+
+Implementation checkpoint: 2026-10-17. The first Windows increment is in
+`examples/efm32tg-stk3300-menu`: display-independent FSM, PB0/PB1/slider input,
+character/digit encoder and a segment-driven Win32 view. Three test suites pass,
+including a native-window message walkthrough. The `LitheView::Segments` target
+has an installed-consumer check and no raster dependency. G0/G2 currently cover
+character/digit fields only; decorative symbols and full-glass coverage remain
+open. GPIO debounce, physical capacitive sampling, firmware budgets, board
+acceptance and designer support are not implemented. Existing starters are untouched.
+See the example README and VALIDATION.md for the tested scope and next steps.
+
+### Purpose and boundary
+
+Build a small menu on Windows first, then run the same application logic on the
+original EFM32TG-STK3300. This is a useful test of how much presentation machinery
+the application actually needs. Bare metal means one bounded foreground loop and
+small interrupt adapters; it does not mean moving application logic into ISRs.
+
+The current `Surface`, `PixelFormat`, painter and generated widget paths assume
+pixels. A segmented glass is a fixed collection of electrodes. Do not add a fake
+pixel format, rasterize a form and infer segments from pixels, or pull the raster
+widget tree into this application just to retain familiar class names.
+
+The existing menu example's `Application/navigation.hpp` demonstrates an
+application-owned state machine. Reuse that separation, not its specific pages or
+its `Menu` class, which deliberately integrates generated raster forms.
+
+The portable segmented facility belongs to LiTheView once its contract is proven.
+Board geometry, glyph wiring, menus, input bindings, startup, clock configuration
+and Silicon Labs dependencies belong to the consuming application. Initial API
+names below are provisional. Do not promise existing forms can target this glass.
+
+### A03 documentation and hardware evidence
+
+The correct primary document is Energy Micro's **Starter Kit EFM32TG-STK3300
+User Manual**, `t0011_1.00`, dated 2011-05-13, preserved by RS:
+[original manual and A03 schematic](https://docs.rs-online.com/30b1/0900766b814a5093.pdf).
+Page 20 identifies BRD2100A A03. Pages 21-30 contain its ten schematic sheets.
+The title, user-interface, signal-assignment, MCU I/O and LCD sheets were visually
+inspected; their title blocks explicitly identify A03. The local research copy is
+`build/tiny-gecko-plan/efm32tg-stk3300-t0011-1.00.pdf`, SHA-256
+`3ADD7DED19671A2B9A637A391848618363CB8149166D69B2174A5A0BCF6E939D`.
+It is an ignored research artifact, not a redistributed vendor document.
+
+Relevant A03 connections, transcribed from pages 22-26:
+
+| Function | Connection / order |
+| --- | --- |
+| User PB0 / PB1 | PD8 / PB11; active low |
+| User LED | PD7; active high |
+| Slider electrodes 0, 1, 2, 3 | PC5, PC7, PC12, PC13 |
+| Glass COM0 through COM7 (MCU COM7 through COM0) | PB6, PB5, PB4, PB3, PE7, PE6, PE5, PE4 |
+| Glass S0 through S9 (MCU SEG0 through SEG9) | PF2, PF3, PF4, PF5, PE8, PE9, PE10, PE11, PE12, PE13 |
+| Glass S10 through S19 (MCU SEG10 through SEG19) | PE14, PE15, PA15, PA0, PA1, PA2, PA3, PA4, PA5, PA6 |
+| LCD boost connections | PA12, PA13, PA14 |
+| Glass layout | Seven alphanumeric positions, four numeric positions and fixed symbols; 8 commons x 20 segment lines |
+
+Page 26 also contains the glass-position-to-COM/SEG matrix. Transcribe that into a
+reviewed constexpr mapping, with independent expected values for representative
+glyphs and every indicator. The schematic is evidence of wiring, not evidence of
+physical segment behavior. Verify every segment with a walking-segment test before
+claiming board acceptance. Slider electrical order does not prove swipe direction.
+
+Use the [EFM32TG840 datasheet](https://www.silabs.com/documents/public/data-sheets/EFM32TG840.pdf)
+and [Tiny Gecko reference manual](https://www.silabs.com/documents/public/reference-manuals/EFM32TG-RM.pdf)
+for the EFM32TG840F32 target: 32 KiB flash and 4 KiB RAM. Identify the actual silicon
+revision and applicable errata before selecting chip initialization. Record LCD
+bias, multiplexing, voltage/boost and clock settings from the appropriate manuals
+and a reviewed vendor driver; do not infer them solely from this pin table.
+
+The [current UG420](https://www.silabs.com/documents/public/user-guides/ug420-efm32tg-stk3300.pdf)
+is useful for revision history, but its current board layout is not the A03 wiring
+authority. Later A04/A05 schematics are comparison material only.
+
+### Shared application and display contracts
+
+```text
+Windows input adapter                EFM32 input adapter
+mouse / keyboard / simulated slider  GPIO / capacitive scan / clock
+                 \                    /
+                  logical input events
+                           |
+               application-owned menu FSM
+                  state + typed effects
+                           |
+                 read-only presentation model
+                           |
+                 segmented menu presenter
+                           |
+             bounded segment encoder + glass definition
+                           |
+                 complete SegmentFrame
+                    /             \
+          Windows glass view       EFM32 LCD adapter
+```
+
+- The FSM has no LiTheView, Win32, EFM32, RTOS, font, COM/SEG or clock dependency.
+  It accepts typed events, updates bounded state and returns typed application
+  effects. Unit tests compile it without any display library.
+- The presenter reads state and chooses a label, value and supported indicators.
+  Display failure cannot silently commit or roll back a menu operation. The last
+  valid frame remains available and a failed transfer stays pending for retry.
+- The portable encoder validates position bounds, glyph support, numeric range,
+  segment IDs and overlapping field ownership. Unsupported content is an explicit
+  result, not truncation, a guessed glyph or a partially modified output frame.
+- Keep logical segment IDs separate from MCU register packing. Use bounded arrays,
+  spans and typed references. A candidate compact frame has 160 bits / 20 bytes;
+  register packing may need additional storage. Measure total live storage,
+  including previous/pending frames and adapter scratch, rather than advertising
+  the bit count as the complete RAM requirement.
+- The simulator draws the encoded frame using host-only segment outlines keyed by
+  segment ID. It must not draw strings from FSM state and bypass the encoder.
+  Host rasterization at the final presentation step is expected. None of the
+  window graphics, outlines or board-photo data belongs in the firmware binary.
+- Use synchronous typed calls/handlers, explicit lifetimes and no internal
+  function-pointer-plus-`void*` contexts. An unavoidable Win32 or vendor C boundary
+  contains its own checked conversion. No generic FSM framework is required.
+
+A future `LitheView::Segments` target should build independently of the raster
+renderer, compact font, XML parser, designer, Win32 and vendor SDK. Confirm the
+target dependency graph and installed consumer before settling the public name.
+Prefer a small separate facility over broad changes to the existing Core target.
+
+### First menu and input behavior
+
+Start with Home entries **PLAY**, **VOLUME** and **SETUP**. PLAY toggles simulated
+playback state; VOLUME opens an editor for 0-100; SETUP contains **LIGHT** and
+**INFO**. LIGHT controls the board LED through an application effect; INFO shows
+a fixed example identifier. This exercises hierarchy, toggle state, editing and
+application output without a filesystem, audio driver or persistence subsystem.
+Keep labels within the verified glass alphabet and capacity. If a glyph is
+ambiguous, choose an explicit supported spelling during design.
+
+Logical events are Previous, Next, Select and Back. Input adapters translate
+physical actions; the FSM does not see GPIO names or virtual-key codes.
+
+| Context | Previous / Next | Select | Back |
+| --- | --- | --- | --- |
+| Menu | Move one entry, wrap within that menu | Open or invoke selected entry | Parent menu; no-op at Home |
+| Volume editor | Decrease / increase draft, saturating at 0/100 | Commit and return | Cancel draft and return |
+| Info | No change | Return | Return |
+
+Initial Windows bindings: arrows, Enter and Escape, plus visible mouse controls
+for the two buttons and slider. Proposed board bindings: slider steps navigate or
+adjust, PB0 selects, PB1 goes back. Give the simulator the same four-pad input
+model, including touch/release and repeat timing, rather than mouse-only shortcuts
+that cannot exist on the board. Keep repeat disabled for Select and Back. Clear
+held input on host focus loss. Test noisy slider boundaries, debounce, simultaneous
+inputs and held-button startup. Physical slider tuning is a later hardware gate.
+
+Store committed values independently of the active page. Returning to a parent
+retains its selected entry. Use explicit finite states or fixed-capacity history;
+no recursive menu traversal or dynamically allocated page objects.
+
+### Bare-metal execution and resource discipline
+
+One owner runs the application, encoder and presentation service in the foreground:
+
+1. Sample or drain a bounded batch of platform input and notifications.
+2. Advance debounce/repeat using an injected monotonic timestamp.
+3. Dispatch logical events in a documented order and execute bounded typed effects.
+4. Encode a complete frame when presentation state changes; submit if changed.
+5. Service device completion/errors and sleep until an input or timer deadline.
+
+No delay loops, unbounded driver waits or per-control tasks. ISRs acknowledge and
+capture minimal state; they never call the FSM, encoder, callbacks or renderer.
+The platform adapter owns synchronization. `volatile` alone is not an ISR mailbox
+protocol. Choose a reviewed short critical section or proven lock-free primitive,
+and make the pending-work check/sleep sequence safe against lost wakeups.
+
+Bound event storage and report overflow. Coalesce replaceable samples, not ordered
+press/release transitions or application commands. Specify recovery so a lost
+release cannot leave a held input repeating indefinitely. Test timestamp wrap,
+queue saturation and delayed foreground service with a fake clock on the host.
+
+Build application and portable code as C++23 with no heap, exceptions or RTTI.
+Use the [house style](style_guide.md) and [coding philosophy](02-embedded-cpp-philosophy.md):
+strong types, const data, bounded storage, explicit error values, small functions,
+checked conversions, no recursion and narrow platform boundaries. Vendor C stays
+in the application dependency tree with its own notices.
+
+Provisional firmware acceptance ceilings: 24 KiB flash, 2 KiB static RAM and 1 KiB
+reserved stack, leaving 8 KiB flash and 1 KiB RAM headroom. These are design targets,
+not measured results. Account for initialized data's flash copy, library support,
+interrupt nesting and adapter buffers. Use linker assertions, map/symbol reports,
+`-fstack-usage`, call-path review and a hardware stack watermark; a single-function
+stack report or watermark alone is not a worst-case proof. Check for allocator
+and unexpected runtime symbols. Revise ceilings explicitly if evidence requires it.
+
+### Implementation sequence and acceptance
+
+| Stage | Deliverable | Acceptance before advancing |
+| --- | --- | --- |
+| G0: glass contract | A03 mapping, glyph subset, symbol inventory, semantic input model | Review matrix against page 26; reject duplicate/out-of-range mappings; choose independent golden patterns |
+| G1: application | Display-free FSM, draft/commit/cancel, typed LED/playback effects | Every state/event pair, boundaries, parent selection, invalid events and repeated input covered without graphics dependencies |
+| G2: portable segments | Small encoder and complete-frame API | Exact segment-bit oracles, atomic failure behavior, numeric/glyph rejection, synthetic second glass proving no A03 dependency in library |
+| G3: Windows simulator | Interactive glass, buttons and slider; same application sources | Hands-on menu/edit/cancel walkthrough, deterministic input replay, rendered segments trace to frame bits; errors and focus loss tested |
+| G4: target feasibility | Cortex-M3 cross-build and installed segmented consumer | Flash/RAM/stack reports, no heap/raster/RTOS dependencies, supported toolchain and vendor licenses/pins recorded |
+| G5: physical adapter | Bare-metal startup, input acquisition, LCD register submission | After separate board-use authorization: identity/backup, walking segments, glyphs, buttons, slider direction and complete menu walkthrough |
+| G6: tutorial | Blank-to-menu steps and measured validation record | Fresh checkout builds through VS Code/CMake; Windows and hardware results reported separately |
+
+A small compile-only Cortex-M3 check should start alongside G2 so unsuitable C++
+library facilities are caught early. It does not replace the full G4 budget gate.
+Windows remains useful if the hardware gate fails; display compatibility and
+target feasibility remain separate decisions.
+
+The first implementation increment is G0-G3: one usable Windows menu, independent
+FSM tests and verified frame encoding. Do not expand the designer or flash hardware
+as part of that increment. No changes to the existing STM32 starter pair are needed.
+
+### Application layout, tutorial and designer follow-up
+
+Proposed consuming application layout, independent of where its repository lives:
+
+```text
+efm32tg-stk3300-menu/
+  Application/                 # FSM, state, events and typed effects
+  UI/                          # presenter, glass bindings and glyph subset
+  Devices/                     # small application device contracts
+  Platform/Win32/              # Windows main, input and segment drawing
+  Platform/EFM32TG/            # embedded main, clock, GPIO, LCD and ISR handoff
+  Config/                     # fixed capacities and target budgets
+  Middlewares/Third_Party/LiTheView/
+  Drivers/                    # pinned CMSIS/vendor dependencies, target only
+  Tests/
+  docs/
+  CMakeLists.txt
+  CMakePresets.json
+  .vscode/
+```
+
+LiTheView is a dependency of the developer's application. Do not make its checkout
+the required project root. Choose the eventual example repository location during
+implementation; this plan does not create repositories or another recursive
+library snapshot. One Windows preset and one embedded preset evolve throughout
+the tutorial, with matching debug launchers and no feature-specific build presets.
+Use discovered/configurable tool paths, not personal installation paths.
+
+Tutorial progression: start the blank Windows application; define the glass and
+its fields; light one segment; encode a label/value; add logical input; build the
+menu FSM; add edit/commit/cancel and a device effect; inspect target budgets; then
+add the hardware adapter and record physical acceptance. Explain every authored
+file and the corresponding integration boundary. Preserve source and attribution
+for any reused vendor tables; link vendor PDFs rather than checking them in.
+
+After G3 proves the contract, separately design a segmented document kind for the
+designer. Its canvas would show fixed glass fields and symbols, supported text and
+value bindings, and logical screens. It would validate field capacity and conflicts
+and generate bounded descriptions plus typed hooks. The FSM stays handwritten and
+application-owned; Configure selects glass/input, while CMake and VS Code own build
+and execution. Do not silently reinterpret pixel XML or offer unsupported raster
+controls on a segmented canvas. Designer support is a later milestone, not a claim
+of this plan or a prerequisite for proving the Windows application.
+
+
+### G4 hardware increment, 2026-10-17
+
+The owner accepted G0-G3 in the Windows simulator and authorized G4 hardware work.
+The EFM32TG840F32 build now shares the exact FSM, presenter and glass encoder.
+A bare-metal foreground loop handles GPIO releases and normalized LESENSE input;
+SysTick only owns the millisecond counter. SDK dependencies stay in the consuming
+example. Cross-build, four host suites, SWD program/verify, startup, calibration
+and idle runtime evidence are recorded in the example VALIDATION.md. The owner
+confirmed "Display and controls work" on 2026-10-17, accepting the basic hardware
+menu as well as the Windows simulator. Existing STM32 starters are unchanged.
+
+After basic hardware acceptance, add a separate advanced lesson for named glass
+symbols: independently verify electrode mapping, expose named icon/ring bindings,
+project application state through the presenter and draw identical frame bits in
+Windows. Keep symbol coordinates and MCU registers out of the FSM. A board-photo
+Windows skin is another presentation-only follow-up, not a hardware prerequisite.
+
+### First advanced symbol: volume ring, 2026-10-17
+
+The eight-piece ring is implemented on Windows and Tiny Gecko, with one named
+field in the example glass definition and one presenter binding. All percentages,
+non-ring preservation and draft/save/cancel are tested; the owner accepted the
+physical ring and subsequently confirmed "The ring works in Windows too".
+Windows automated integration and render inspection also passed. The FSM is
+unchanged. The tutorial documents
+manual authoring and the future segmented designer boundary explicitly; no raster
+profile workaround or segmented designer support was introduced. Other symbols
+remain follow-up work. See the example docs/volume-ring.md and VALIDATION.md.
+
+The next stages are in [Segmented displays in the designer](SEGMENTED_DESIGNER_PLAN.md).
+Use individually addressable segments as the foundation, with typed icon, text,
+numeric and ordered-group bindings. Animation is optional application behavior,
+not the glass model. The plan covers a distinct segmented document kind, native
+bit-frame preview, Configure and multi-form generation, and a Tiny Gecko tutorial
+that keeps the FSM application-owned. Interactive designer support is still pending.
+
+First compiler increment: Core and CLI now load strict segmented glass/form
+sources and generate bounded typed C++ encoders. Tests compare generated Tiny
+Gecko frames with the accepted encoder and a separate ring oracle, and exercise
+a synthetic glass. This starts S0/S1; project integration and the segmented
+plug-in/preview workflow remain pending. The FSM and running example are unchanged.
+See tests/segmented_designer_consumer/README.md and the segmented designer plan.

@@ -1,0 +1,5 @@
+<segmented-form schemaVersion="1" id="presentation" glassId="tinyGeckoA03" glassSha256="b5451ebf501794e0fcac3010968cbeb73a3a451fb8ef9d9c0592abe453b3da8a">
+  <bind field="label" input="label" />
+  <bind field="value" input="value" />
+  <bind field="volumeRing" input="volumePercent" />
+</segmented-form>

@@ -1,0 +1,4 @@
+<segmented-form schemaVersion="1" id="piece" glassId="statusGlass" glassSha256="717927dc3e78cc8d93152b7dcec26dfc756be189d610c33d76fab8eec3726527">
+  <bind field="ready" input="ready" />
+  <bind field="piece" input="piece" />
+</segmented-form>

@@ -4,6 +4,7 @@
 #include "lithe/designer/generated_widget_metadata.hpp"
 #include "lithe/designer/preview_abi.h"
 #include "lithe/designer/preview_protocol.hpp"
+#include "segment_preview.hpp"
 
 #include <algorithm>
 #include <array>
@@ -145,6 +146,7 @@ private:
 
 // Fixed worker storage avoids heap and request-dependent stack growth at the protocol boundary.
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+lithe::designer::segments::Renderer gSegmentPreview{};
 std::array<std::byte, protocol::kMaximumRecordBytes> gRequestStorage{};
 std::array<std::byte, kMaximumResponseBytes> gResponseStorage{};
 std::array<LitheViewPreviewInput, LITHEVIEW_PREVIEW_MAX_INPUTS> gInputs{};
@@ -461,7 +463,7 @@ bool writeHello(Stream output, std::uint64_t requestId) noexcept
     writeU32(outputBytes,
              payload + protocol::hello_offset::kCapabilities,
              (kInlinePixels ? protocol::kCapabilityInlinePixels : 0U) |
-                 protocol::kCapabilityNativePackedSurfaces);
+                 protocol::kCapabilityNativePackedSurfaces | protocol::kCapabilitySegments);
     static_assert(lithe::designer::kWidgetCatalogSha256.size() ==
                   protocol::kCatalogSha256Characters);
     std::memcpy(outputBytes.data() + payload + protocol::hello_offset::kCatalogSha256,
@@ -710,6 +712,34 @@ int main() // NOLINT(readability-function-cognitive-complexity)
                 return kExitRenderWrite;
             }
             break;
+        case protocol::MessageType::segments:
+        {
+            const auto image = header.flags == 0 ? gSegmentPreview.render(payload) : std::nullopt;
+            if (!image)
+            {
+                if (!writeWorkerFailure(output, header.messageType, header.requestId,
+                    protocol::WorkerStatus::malformedRecord, "Invalid segmented preview request."))
+                {
+                    return kExitRenderWrite;
+                }
+                break;
+            }
+            const auto response = beginResponse(protocol::responseType(protocol::MessageType::segments), header.requestId,
+                protocol::segment_response_offset::kPayloadBytes + image->bits.size() + image->rgba.size());
+            std::span<std::byte> bytes{gResponseStorage};
+            writeU32(bytes, response + protocol::segment_response_offset::kStatus, 0);
+            writeU32(bytes, response + protocol::segment_response_offset::kWidth, image->width);
+            writeU32(bytes, response + protocol::segment_response_offset::kHeight, image->height);
+            // Counts are bounded by the segment renderer before this protocol narrowing.
+            writeU32(bytes, response + protocol::segment_response_offset::kSegmentBytes, static_cast<std::uint32_t>(image->bits.size()));
+            writeU32(bytes, response + protocol::segment_response_offset::kPixelBytes, static_cast<std::uint32_t>(image->rgba.size()));
+            if (!writeExact(output, bytes.first(response + protocol::segment_response_offset::kPayloadBytes)) || !writeExact(output, image->bits) ||
+                !writeExact(output, image->rgba))
+            {
+                return kExitRenderWrite;
+            }
+            break;
+        }
         case protocol::MessageType::shutdown:
             if (!payload.empty() ||
                 !writeWorkerFailure(

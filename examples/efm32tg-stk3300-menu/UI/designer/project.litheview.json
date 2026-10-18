@@ -1,0 +1,28 @@
+{
+  "$schema": "https://litheview.dev/schema/project-manifest.schema.json",
+  "schemaVersion": 4,
+  "displayKind": "segmented",
+  "id": "example.tiny-gecko.segmented",
+  "displayName": "Tiny Gecko segmented menu",
+  "schemaCompatibility": {
+    "projectManifest": 4,
+    "segmentGlass": 1,
+    "logicalInput": 1,
+    "form": 1,
+    "resourceManifest": 1,
+    "extensionManifest": 1
+  },
+  "segmentGlass": {
+    "id": "tinyGeckoA03",
+    "sha256": "b5451ebf501794e0fcac3010968cbeb73a3a451fb8ef9d9c0592abe453b3da8a"
+  },
+  "logicalInput": {
+    "id": "application.input.buttons-slider",
+    "sha256": "a46d8284f452ebe267563d56dea356003e09e2a0890031703a079162e2de8834"
+  },
+  "forms": [
+    "forms/home.litheview.xml"
+  ],
+  "resourceManifests": [],
+  "extensions": []
+}

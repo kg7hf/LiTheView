@@ -50,6 +50,7 @@ internal sealed record RequestParameters
 internal sealed record ProjectSetupRequest
 {
     public required string Snapshot { get; init; }
+    public JsonElement? SegmentGlass { get; init; }
     public JsonElement? CustomSurface { get; init; }
     public NativeDisplayCreationRequest? CustomNativeDisplay { get; init; }
     public LogicalInputSetupRequest? Input { get; init; }

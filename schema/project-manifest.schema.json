@@ -20,7 +20,12 @@
       "minLength": 1
     },
     "schemaVersion": {
-      "enum": [1, 2, 3]
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     "id": {
       "$ref": "#/$defs/identifier"
@@ -44,7 +49,12 @@
           "const": 1
         },
         "projectManifest": {
-          "enum": [1, 2, 3]
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
         },
         "displayDefinition": {
           "const": 2
@@ -59,6 +69,9 @@
           "const": 1
         },
         "extensionManifest": {
+          "const": 1
+        },
+        "segmentGlass": {
           "const": 1
         }
       }
@@ -84,7 +97,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "version", "packagePath", "sha256", "required"],
+        "required": [
+          "id",
+          "version",
+          "packagePath",
+          "sha256",
+          "required"
+        ],
         "properties": {
           "id": {
             "$ref": "#/$defs/identifier"
@@ -105,20 +124,52 @@
           }
         }
       }
+    },
+    "displayKind": {
+      "const": "segmented"
+    },
+    "segmentGlass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]{0,63}$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
     }
   },
   "allOf": [
     {
-      "if": { "properties": { "schemaVersion": { "const": 1 } } },
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 1
+          }
+        }
+      },
       "then": {
-        "required": ["surfaceProfile"],
+        "required": [
+          "surfaceProfile"
+        ],
         "properties": {
           "displayDefinition": false,
           "logicalInput": false,
           "schemaCompatibility": {
-            "required": ["displaySurface"],
+            "required": [
+              "displaySurface"
+            ],
             "properties": {
-              "projectManifest": { "const": 1 },
+              "projectManifest": {
+                "const": 1
+              },
               "displayDefinition": false,
               "logicalInput": false
             }
@@ -127,28 +178,113 @@
       }
     },
     {
-      "if": { "properties": { "schemaVersion": { "const": 2 } } },
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 2
+          }
+        }
+      },
       "then": {
-        "required": ["surfaceProfile", "displayDefinition", "logicalInput"],
+        "required": [
+          "surfaceProfile",
+          "displayDefinition",
+          "logicalInput"
+        ],
         "properties": {
           "schemaCompatibility": {
-            "required": ["displaySurface", "displayDefinition", "logicalInput"],
-            "properties": { "projectManifest": { "const": 2 } }
+            "required": [
+              "displaySurface",
+              "displayDefinition",
+              "logicalInput"
+            ],
+            "properties": {
+              "projectManifest": {
+                "const": 2
+              }
+            }
           }
         }
       }
     },
     {
-      "if": { "properties": { "schemaVersion": { "const": 3 } } },
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 3
+          }
+        }
+      },
       "then": {
-        "required": ["displayDefinition", "logicalInput"],
+        "required": [
+          "displayDefinition",
+          "logicalInput"
+        ],
         "properties": {
           "surfaceProfile": false,
           "schemaCompatibility": {
-            "required": ["displayDefinition", "logicalInput"],
+            "required": [
+              "displayDefinition",
+              "logicalInput"
+            ],
             "properties": {
-              "projectManifest": { "const": 3 },
+              "projectManifest": {
+                "const": 3
+              },
               "displaySurface": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 4
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "displayKind",
+          "segmentGlass",
+          "logicalInput"
+        ],
+        "properties": {
+          "surfaceProfile": false,
+          "displayDefinition": false,
+          "resourceManifests": {
+            "maxItems": 0
+          },
+          "extensions": {
+            "maxItems": 0
+          },
+          "forms": {
+            "minItems": 1
+          },
+          "schemaCompatibility": {
+            "required": [
+              "segmentGlass",
+              "logicalInput"
+            ],
+            "properties": {
+              "projectManifest": {
+                "const": 4
+              },
+              "displaySurface": false,
+              "displayDefinition": false
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "displayKind": false,
+          "segmentGlass": false,
+          "schemaCompatibility": {
+            "properties": {
+              "segmentGlass": false
             }
           }
         }
@@ -169,7 +305,10 @@
     "profileLock": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "sha256"],
+      "required": [
+        "id",
+        "sha256"
+      ],
       "properties": {
         "id": {
           "$ref": "#/$defs/identifier"

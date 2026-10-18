@@ -19,6 +19,7 @@ internal static class DesignerProjectPathTests
             string library = Library(Path.Combine(temporary, "Library with spaces"));
             DefaultsAndPersistence(temporary, source, library);
             InLibraryDefaults(source, library);
+            ContributorApplication(source, library);
             Relocation(temporary, source);
             OutputBoundaries(temporary, source, library);
             InputRoots(repositoryRoot, temporary, source, library);
@@ -97,6 +98,27 @@ internal static class DesignerProjectPathTests
         ResolvedDesignerProjectPaths tutorialDefaults = DesignerProjectPathService.Load(tutorial, library);
         Assert(tutorialDefaults.ComponentDirectory == Path.Combine(Path.GetDirectoryName(tutorial)!, "simulation"),
             "A project already inside the build workspace keeps the legacy defaults.");
+    }
+
+    private static void ContributorApplication(DesignerProjectManifest source, string library)
+    {
+        string application = Path.Combine(library, "examples", "Tiny application");
+        string manifest = Project(application, "UI/designer", source);
+        File.WriteAllText(Path.Combine(application, "CMakeLists.txt"), "# application");
+        DesignerProjectPaths settings = new()
+        {
+            ApplicationRoot = "../..", LibraryRoot = "../..",
+            ComponentDirectory = "UI/Generated", BuildDirectory = "build/ui"
+        };
+        Assert(DesignerProjectPathService.Resolve(manifest, settings).ComponentDirectory ==
+            Path.Combine(application, "UI", "Generated"), "Contributor application outputs were rejected.");
+        foreach (string forbidden in new[] { "../Other/Generated", "../../include/generated", "../../src/generated", ".", "UI/designer/profiles" })
+            Reject(() => DesignerProjectPathService.Resolve(manifest, settings with { ComponentDirectory = forbidden }),
+                "Contributor output escaped its application or overwrote inputs: " + forbidden);
+        Reject(() => DesignerProjectPathService.Resolve(manifest, settings with { ApplicationRoot = "../../.." }),
+            "The whole examples directory cannot be an application output root.");
+        File.Delete(Path.Combine(application, "CMakeLists.txt"));
+        Reject(() => DesignerProjectPathService.Resolve(manifest, settings), "The contributor exception needs an application build root.");
     }
 
     private static void Relocation(string root, DesignerProjectManifest source)

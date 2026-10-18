@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Tiny Gecko: configure",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "win32-debug"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Tiny Gecko: build",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "win32-debug"
+      ],
+      "dependsOn": "Tiny Gecko: configure",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Tiny Gecko: test",
+      "type": "process",
+      "command": "ctest",
+      "args": [
+        "--preset",
+        "win32-debug"
+      ],
+      "dependsOn": "Tiny Gecko: build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Tiny Gecko: configure hardware",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "efm32-debug"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Tiny Gecko: build hardware",
+      "type": "process",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "--preset",
+        "efm32-debug"
+      ],
+      "dependsOn": "Tiny Gecko: configure hardware",
+      "problemMatcher": [
+        "$gcc"
+      ]
+    }
+  ]
+}

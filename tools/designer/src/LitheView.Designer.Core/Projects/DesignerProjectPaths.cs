@@ -160,7 +160,7 @@ public static class DesignerProjectPathService
             {
                 throw new ArgumentException("Output directories must not replace the project manifest directory or its ancestors.");
             }
-            ValidateLibrarySeparation(output, library);
+            ValidateLibrarySeparation(output, library, application, project);
             if (protectedInputs.Any(input => Overlaps(output, input)))
             {
                 throw new ArgumentException("Output directories must not overlap project form, profile, resource or extension inputs.");
@@ -318,7 +318,7 @@ public static class DesignerProjectPathService
         }
     }
 
-    private static void ValidateLibrarySeparation(string output, string library)
+    private static void ValidateLibrarySeparation(string output, string library, string application, string project)
     {
         if (IsSameOrInside(library, output))
         {
@@ -326,6 +326,15 @@ public static class DesignerProjectPathService
         }
         if (IsSameOrInside(output, library))
         {
+            // A contributor example is an application, despite living in this checkout.
+            // Scope this exception to its own subtree; never another example or library sources.
+            string examples = Path.Combine(library, "examples");
+            if (PathsEqual(Path.GetDirectoryName(application) ?? "", examples) &&
+                IsSameOrInside(project, application) && IsSameOrInside(output, application) &&
+                !PathsEqual(output, application) && File.Exists(Path.Combine(application, "CMakeLists.txt")))
+            {
+                return;
+            }
             // Existing tutorials and retained checks use this explicit local
             // build workspace. No other library source subtree is writable.
             string workspace = Path.Combine(library, "build");

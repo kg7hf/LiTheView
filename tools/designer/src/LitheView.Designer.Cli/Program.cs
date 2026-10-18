@@ -23,6 +23,10 @@ internal static class Program
 
     public static int Main(string[] arguments)
     {
+        if (arguments.Length >= 2 && arguments[0] == "segment")
+        {
+            return SegmentCommands.Run(arguments);
+        }
         if (arguments.Length >= 2 && arguments[0] == "component")
         {
             return ComponentCommands.Run(arguments);
@@ -1385,6 +1389,11 @@ internal static class Program
 
     private static void WriteUsage()
     {
+        Console.Error.WriteLine("  segment create-project <glass.json> <input.json> <new-directory>");
+        Console.Error.WriteLine("  segment export-project <manifest.json> <library-root>");
+        Console.Error.WriteLine("  segment glass-hash <glass.json>");
+        Console.Error.WriteLine("  segment check <glass.json> <form.xml>");
+        Console.Error.WriteLine("  segment export-cpp <glass.json> <form.xml> <output.hpp>");
         Console.Error.WriteLine("LitheView Designer profile tools");
         Console.Error.WriteLine("  display check <form.xml> <widgets.json> <display.json> <input.json> [resource-manifest ...]");
         Console.Error.WriteLine("  display export-cpp <form.xml> <widgets.json> <display.json> <input.json> <output-directory> [resource-manifest ...]");

@@ -37,7 +37,8 @@ internal static class PreviewProtocol
     {
         Hello = 1,
         Render = 2,
-        Shutdown = 3
+        Shutdown = 3,
+        Segments = 4
     }
 
     internal enum WorkerStatus : uint
@@ -244,6 +245,7 @@ internal static class PreviewProtocol
             DecodeCatalogHash(payload[32..96]))
         {
             InlinePixels = (BinaryPrimitives.ReadUInt32LittleEndian(payload[28..]) & CapabilityInlinePixels) != 0,
+            SegmentedDisplays = (BinaryPrimitives.ReadUInt32LittleEndian(payload[28..]) & 4) != 0,
             NativePackedSurfaces =
                 (BinaryPrimitives.ReadUInt32LittleEndian(payload[28..]) & CapabilityNativePackedSurfaces) != 0
         };

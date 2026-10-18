@@ -377,10 +377,50 @@
 
     function rootComponent() { return components().find(component => !component.parentId) || null; }
 
+    let segmentSelection = null;
+    function renderSegmentInspector() {
+        let box = byId('segment-properties');
+        if (!box) { box = document.createElement('div'); box.id = 'segment-properties'; byId('inspector-content').parentNode.append(box); }
+        box.replaceChildren();
+        const segmented = state?.displayKind === 'segmented';
+        box.hidden = !segmented;
+        if (!segmented) return false;
+        byId('inspector-empty').hidden = true;
+        byId('inspector-content').hidden = true;
+        const field = state.segmentFields.find(f => f.id === segmentSelection) || state.segmentFields[0];
+        if (!field) return true;
+        segmentSelection = field.id;
+        const heading = document.createElement('h3'); heading.textContent = field.id; box.append(heading);
+        const hint = document.createElement('p'); hint.textContent = `${field.kind} · ${field.kind === 'text' ? 'cells' : 'maximum'}: ${field.maximum}. Bind a named application value; geometry is fixed by the glass.`; box.append(hint);
+        const inputLabel = document.createElement('label'); inputLabel.textContent = 'Application input name (empty = unused)';
+        const input = document.createElement('input'); input.value = field.input || ''; input.maxLength = 64; inputLabel.append(input); box.append(inputLabel);
+        const previewLabel = document.createElement('label'); previewLabel.textContent = 'Preview value';
+        const preview = document.createElement(field.kind === 'icon' ? 'select' : 'input');
+        if (field.kind === 'icon') for (const value of ['false', 'true']) { const option = document.createElement('option'); option.value = value; option.textContent = value; preview.append(option); }
+        else { preview.type = field.kind === 'text' ? 'text' : 'number'; if (field.kind === 'text') preview.maxLength = field.maximum; else { preview.min = '0'; preview.max = String(field.maximum); preview.step = '1'; } }
+        preview.value = field.preview; previewLabel.append(preview); box.append(previewLabel);
+        const apply = document.createElement('button'); apply.type = 'button'; apply.textContent = 'Apply field'; apply.disabled = !editable();
+        apply.addEventListener('click', () => commit({ kind: 'segmentBinding', componentId: field.id, name: input.value.trim(), text: preview.value })); box.append(apply);
+        const note = document.createElement('p'); note.textContent = 'Preview values are editor samples. Generated code takes values from your presenter; it creates no menu state, timers or device handlers.'; box.append(note);
+        return true;
+    }
+
     function renderPalette() {
         const palette = byId('palette');
         const filter = byId('widget-filter').value.trim().toLocaleLowerCase();
         palette.replaceChildren();
+        const segmented = state?.displayKind === 'segmented';
+        document.querySelector('.palette-section h2').textContent = segmented ? 'Glass fields' : 'Widgets';
+        document.querySelector('.palette-section .hint').textContent = segmented ? 'Select a fixed field to bind its value.' : 'Choose a widget to add it to the form.';
+        if (segmented) {
+            for (const field of state.segmentFields || []) {
+                if (!field.id.toLowerCase().includes(filter)) continue;
+                const button = document.createElement('button'); button.type = 'button'; button.className = 'secondary';
+                button.textContent = `${field.id}${field.input ? ' •' : ''}`;
+                button.addEventListener('click', () => { segmentSelection = field.id; renderInspector(); }); palette.append(button);
+            }
+            return;
+        }
         for (const widget of Array.isArray(state?.widgets) ? state.widgets : []) {
             const name = String(widget.name || widget.id);
             if (!name.toLocaleLowerCase().includes(filter)) continue;
@@ -411,7 +451,7 @@
             button.append(document.createTextNode(String(component.name || component.id)));
             const kind = document.createElement('span');
             kind.className = 'widget-kind';
-            kind.textContent = String(component.widgetId || 'Form') + (component.previewHidden ? ' · hidden page' : '');
+            kind.textContent = String(component.widgetId || 'Form') + (component.previewHidden ? ' Â· hidden page' : '');
             button.append(kind);
             button.classList.toggle('preview-hidden', Boolean(component.previewHidden));
             button.classList.toggle('multi-selected', selectedIds.includes(component.id));
@@ -474,13 +514,14 @@
         selection.style.width = `${frame.width * zoom}px`;
         selection.style.height = `${frame.height * zoom}px`;
         byId('selection-label').textContent = String(component.name || component.id);
-        byId('selection-status').textContent = (selectedIds.length > 1 ? `${selectedIds.length} selected · ` : '') +
-            `${component.name || component.id} · ${frame.width} × ${frame.height} px` +
-            (component.previewHidden ? ' · on a hidden page; change the tab view\'s Selected Index to show it' : '');
-        byId('resize-handle').disabled = !canvasEditable();
+        byId('selection-status').textContent = (selectedIds.length > 1 ? `${selectedIds.length} selected Â· ` : '') +
+            `${component.name || component.id} Â· ${frame.width} Ã— ${frame.height} px` +
+            (component.previewHidden ? ' Â· on a hidden page; change the tab view\'s Selected Index to show it' : '');
+        byId('resize-handle').disabled = !canvasEditable() || state?.displayKind === 'segmented';
     }
 
     function renderInspector() {
+        if (renderSegmentInspector()) return;
         const component = selected();
         byId('inspector-empty').hidden = Boolean(component);
         byId('inspector-content').hidden = !component;
@@ -602,7 +643,7 @@
             label.textContent = String(widgetAction.name || widgetAction.id);
             const select = document.createElement('select');
             select.id = controlId;
-            const options = [['', '(unassigned)'], ...declared.map(choice => [choice.id, choice.name]), ['__new__', 'New action…']];
+            const options = [['', '(unassigned)'], ...declared.map(choice => [choice.id, choice.name]), ['__new__', 'New actionâ€¦']];
             for (const [value, text] of options) {
                 const option = document.createElement('option');
                 option.value = value;
@@ -689,7 +730,7 @@
             const remove = document.createElement('button');
             remove.type = 'button';
             remove.className = 'secondary';
-            remove.textContent = '×';
+            remove.textContent = 'Ã—';
             remove.title = `Delete ${token.id} (only when unused)`;
             remove.setAttribute('aria-label', `Delete ${token.id}`);
             remove.addEventListener('click', () => commit({ kind: 'deleteThemeColor', tokenId: token.id }));
@@ -785,7 +826,7 @@
             select.id = controlId;
             const options = descriptor.kind === 'enum'
                 ? descriptor.enumValues.map(value => [value, value])
-                : [['', descriptor.required ? 'Choose…' : '(none)'], ...choicesFor(state, descriptor).map(choice => [choice.id, choice.name])];
+                : [['', descriptor.required ? 'Chooseâ€¦' : '(none)'], ...choicesFor(state, descriptor).map(choice => [choice.id, choice.name])];
             for (const [value, text] of options) {
                 const option = document.createElement('option');
                 option.value = value;
@@ -848,8 +889,9 @@
         for (const group of byId('action-groups').querySelectorAll('fieldset')) group.disabled = !canEdit;
         byId('theme-add-fields').disabled = !canEdit;
         for (const control of byId('theme-colors').querySelectorAll('input, button')) control.disabled = !canEdit;
-        for (const button of byId('palette').querySelectorAll('button')) button.disabled = !canEdit || !rootComponent();
-        byId('resize-handle').disabled = !canvasEditable();
+        for (const button of byId('palette').querySelectorAll('button')) button.disabled = !canEdit || (state?.displayKind !== 'segmented' && !rootComponent());
+        byId('resize-handle').disabled = !canvasEditable() || state?.displayKind === 'segmented';
+        for (const control of byId('segment-properties')?.querySelectorAll('input, select, button') || []) control.disabled = !canEdit;
         stage.classList.toggle('stale', Boolean(state) && frameVersion !== state.documentVersion);
         stage.setAttribute('aria-busy', String(Boolean(busy || pendingEdit || (state && frameVersion !== state.documentVersion))));
     }
@@ -895,7 +937,7 @@
         pendingEdit = true;
         localError = null;
         refreshControls();
-        setStatus('Applying edit…');
+        setStatus('Applying editâ€¦');
         vscode.postMessage(message);
     }
 
@@ -917,6 +959,7 @@
     }
 
     stage.addEventListener('pointerdown', event => {
+        if (state?.displayKind === 'segmented') return;
         if (event.button !== 0 || !canvasEditable()) return;
         const position = pointerPosition(event);
         const resize = event.target === byId('resize-handle');
@@ -1127,12 +1170,14 @@
         if (surface && Number.isInteger(surface.width) && Number.isInteger(surface.height) && surface.width > 0 && surface.height > 0) {
             stage.hidden = false;
             byId('canvas-empty').hidden = true;
-            byId('surface-description').textContent = `${surface.width} × ${surface.height} · ${surface.format || ''}${typeof surface.shape === 'string' ? ` · ${surface.shape}` : ''}`;
+            byId('surface-description').textContent = `${surface.width} Ã— ${surface.height} Â· ${surface.format || ''}${typeof surface.shape === 'string' ? ` Â· ${surface.shape}` : ''}`;
             resizeStage();
         }
         renderPalette(); renderHierarchy(); renderThemeColors(); renderInspector(); renderSelection(); renderDiagnostics(); refreshControls();
+        byId('theme-colors').closest('section').hidden = state?.displayKind === 'segmented';
+        byId('hierarchy').closest('section').hidden = state?.displayKind === 'segmented';
         const invalid = Array.isArray(state.diagnostics) && state.diagnostics.some(diagnostic => String(diagnostic.severity).toLowerCase() === 'error');
-        setStatus(invalid ? 'Fix validation errors' : frameVersion === state.documentVersion ? 'Preview ready' : 'Rendering…', invalid);
+        setStatus(invalid ? 'Fix validation errors' : frameVersion === state.documentVersion ? 'Preview ready' : 'Renderingâ€¦', invalid);
     }
 
     function acceptFrame(message) {

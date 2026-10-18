@@ -23,6 +23,8 @@ public sealed record ProjectSchemaCompatibility
 
     public int? LogicalInput { get; init; }
 
+    public int? SegmentGlass { get; init; }
+
     public required int Form { get; init; }
 
     public required int ResourceManifest { get; init; }
@@ -49,6 +51,10 @@ public sealed record DesignerProjectManifest
     public required string Schema { get; init; }
 
     public required int SchemaVersion { get; init; }
+
+    public string? DisplayKind { get; init; }
+
+    public LockedProfileReference? SegmentGlass { get; init; }
 
     public required string Id { get; init; }
 

@@ -75,7 +75,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
                 return new(id, true, new
                 {
                     protocolVersion = Protocol.Version,
-                    serviceVersion = "0.2.14",
+                    serviceVersion = "0.2.15",
                     widgetCatalogSha256 = _catalogHash,
                     capabilities = Capabilities
                 });
@@ -93,6 +93,9 @@ internal sealed partial class DesignerService : IAsyncDisposable
             {
                 throw new ServiceException("UnknownMethod", "Unknown designer method: " + request.Method);
             }
+            if (request.Params.ManifestPath is { } manifestPath &&
+                DesignerProjectLoader.LoadFile(manifestPath).Manifest?.SchemaVersion == 4)
+                return new(id, true, await HandleSegmentedAsync(request.Method, request.Params).ConfigureAwait(false));
             Context context = LoadContext(request.Params);
             object result = request.Method switch
             {
@@ -118,7 +121,7 @@ internal sealed partial class DesignerService : IAsyncDisposable
         }
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or
             ArgumentException or InvalidOperationException or NotSupportedException or OverflowException or
-            System.ComponentModel.Win32Exception)
+            System.ComponentModel.Win32Exception or System.Xml.XmlException)
         {
             return new(id, false, Error: new("OperationFailed", exception.Message));
         }

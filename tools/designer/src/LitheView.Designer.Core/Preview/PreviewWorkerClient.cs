@@ -6,7 +6,7 @@ using System.IO.MemoryMappedFiles;
 
 namespace LitheView.Designer.Core.Preview;
 
-public sealed class PreviewWorkerClient : IAsyncDisposable
+public sealed partial class PreviewWorkerClient : IAsyncDisposable
 {
     private static readonly TimeSpan StartupTimeout = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan ShutdownTimeout = TimeSpan.FromSeconds(2);

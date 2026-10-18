@@ -156,13 +156,23 @@ public static class DesignerProjectLoader
         if (root.ValueKind != JsonValueKind.Object ||
             !root.TryGetProperty("schemaVersion", out JsonElement version) ||
             version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out int number) ||
-            number is not (1 or 3))
+            number is not (1 or 2 or 3 or 4))
         {
             return;
         }
         JsonElement compatibility = root.TryGetProperty("schemaCompatibility", out JsonElement value)
             ? value
             : default;
+        if (number == 4)
+        {
+            if (HasProperty(root, "surfaceProfile") || HasProperty(root, "displayDefinition") ||
+                HasProperty(compatibility, "displaySurface") || HasProperty(compatibility, "displayDefinition"))
+                diagnostics.Add(new("LVPM1404", ProfileDiagnosticSeverity.Error, "$", "Segmented projects cannot contain raster fields, even null placeholders."));
+            return;
+        }
+        if (HasProperty(root, "displayKind") || HasProperty(root, "segmentGlass") || HasProperty(compatibility, "segmentGlass"))
+            diagnostics.Add(new("LVPM1403", ProfileDiagnosticSeverity.Error, "$", "Segmented fields require version 4."));
+        if (number == 2) return;
         if (number == 3)
         {
             if (HasProperty(root, "surfaceProfile") || HasProperty(compatibility, "displaySurface"))

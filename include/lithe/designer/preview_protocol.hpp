@@ -26,10 +26,11 @@ inline constexpr std::uint32_t kMaximumRecordBytes{kRecordHeaderBytes +
 inline constexpr std::string_view kMappingNamePrefix{"Local\\LitheView.Preview."};
 // Hello capability: a render request with an empty mapping name receives its pixels inline,
 // after the diagnostic, instead of through a designer-owned shared mapping. Workers on hosts
-// without named shared memory set it; a Windows worker reports no capabilities.
+// without named shared memory set it. Windows raster requests use shared memory.
 inline constexpr std::uint32_t kCapabilityInlinePixels{0x00000001U};
 // Hello capability: render requests may name the native packed pixel formats. The designer
 // never sends them to a worker that does not report this bit.
+inline constexpr std::uint32_t kCapabilitySegments{0x00000004U};
 inline constexpr std::uint32_t kCapabilityNativePackedSurfaces{0x00000002U};
 // The largest inline frame: the maximum surface at four bytes per pixel.
 inline constexpr std::uint64_t kMaximumInlineFrameBytes{std::uint64_t{4096U} * 4096U * 4U};
@@ -91,6 +92,16 @@ inline constexpr std::size_t kDiagnosticBytes{40U};
 inline constexpr std::size_t kDiagnosticCode{44U};
 } // namespace response_offset
 
+namespace segment_response_offset
+{
+inline constexpr std::size_t kStatus{0U};
+inline constexpr std::size_t kWidth{4U};
+inline constexpr std::size_t kHeight{8U};
+inline constexpr std::size_t kSegmentBytes{12U};
+inline constexpr std::size_t kPixelBytes{16U};
+inline constexpr std::size_t kPayloadBytes{20U};
+} // namespace segment_response_offset
+
 namespace hello_offset
 {
 inline constexpr std::size_t kWorkerStatus{0U};
@@ -118,7 +129,8 @@ enum class MessageType : std::uint32_t // NOLINT(performance-enum-size)
 {
     hello = 1U,
     render = 2U,
-    shutdown = 3U
+    shutdown = 3U,
+    segments = 4U
 };
 
 constexpr std::uint32_t responseType(MessageType type) noexcept

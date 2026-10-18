@@ -235,7 +235,7 @@ internal static class NativeDisplayProjectTests
             ("null surface compatibility", "LVPM1203", node => node["schemaCompatibility"]!["displaySurface"] = null),
             ("missing input lock", "LVPM1202", node => node.AsObject().Remove("logicalInput")),
             ("version-2 compatibility", "LVPM1201", node => node["schemaCompatibility"]!["projectManifest"] = 2),
-            ("unknown version", "LVPM1001", node => node["schemaVersion"] = 4)
+            ("unknown version", "LVPM1001", node => node["schemaVersion"] = 99)
         ];
         foreach ((string name, string code, Action<JsonNode> change) in cases)
         {

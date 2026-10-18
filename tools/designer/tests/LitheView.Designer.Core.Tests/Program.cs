@@ -74,6 +74,7 @@ internal static class Program
 
         TestCase[] tests =
         [
+            new("segmented glass and form compilation are bounded and preserve ownership", () => SegmentDesignerTests.Run(repositoryRoot)),
             new("multi-form output and screen creation preserve ownership", () => MultiFormTests.Run(repositoryRoot)),
             new("component generation owns no application and migrates safely", () => ComponentExportTests.Run(repositoryRoot)),
             new("display definitions remain independent of targets", () => DisplayDefinitionTests.Run(repositoryRoot)),

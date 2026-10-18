@@ -26,6 +26,8 @@ set(starter_boundary_cast_line_count 0)
 set(completed_starter_boundary_cast_line_count 0)
 set(h750_menu_boundary_cast_line_count 0)
 set(l4r9_menu_boundary_cast_line_count 0)
+set(tiny_gecko_boundary_cast_line_count 0)
+set(tiny_gecko_sensor_cast_line_count 0)
 foreach(source IN LISTS litheview_sources)
     file(RELATIVE_PATH relative_source "${LITHEVIEW_ROOT}" "${source}")
     # The consuming starter applications contain real vendor/library submodules and local builds.
@@ -58,7 +60,11 @@ foreach(source IN LISTS litheview_sources)
                 math(EXPR preview_boundary_cast_line_count
                     "${preview_boundary_cast_line_count} + 1")
             else()
-                if(relative_source MATCHES "^examples/stm32h750b-dk-menu-1-complete/")
+                if(relative_source STREQUAL "examples/efm32tg-stk3300-menu/Devices/capacitive_position.hpp")
+                    math(EXPR tiny_gecko_sensor_cast_line_count "${tiny_gecko_sensor_cast_line_count} + 1")
+                elseif(relative_source MATCHES "^examples/efm32tg-stk3300-menu/Platform/Win32/")
+                    math(EXPR tiny_gecko_boundary_cast_line_count "${tiny_gecko_boundary_cast_line_count} + 1")
+                elseif(relative_source MATCHES "^examples/stm32h750b-dk-menu-1-complete/")
                     math(EXPR h750_menu_boundary_cast_line_count "${h750_menu_boundary_cast_line_count} + 1")
                 elseif(relative_source MATCHES "^examples/stm32l4r9i-disco-menu-1/")
                     math(EXPR l4r9_menu_boundary_cast_line_count "${l4r9_menu_boundary_cast_line_count} + 1")
@@ -85,6 +91,13 @@ foreach(source IN LISTS litheview_sources)
 endforeach()
 
 # The completed lesson repeats the same platform boundaries and one generated Win32 template.
+if(tiny_gecko_boundary_cast_line_count GREATER 10)
+    message(FATAL_ERROR "Tiny Gecko Win32 cast footprint grew beyond its 10 reviewed boundary lines")
+endif()
+if(tiny_gecko_sensor_cast_line_count GREATER 1)
+    message(FATAL_ERROR "Tiny Gecko sensor normalization exceeds its one bounded narrowing conversion")
+endif()
+message(STATUS "Tiny Gecko Win32 cast boundary: ${tiny_gecko_boundary_cast_line_count}/10")
 if(completed_starter_boundary_cast_line_count GREATER 10)
     message(FATAL_ERROR "Completed H750 starter cast footprint grew to ${completed_starter_boundary_cast_line_count}; reviewed ceiling is 10")
 endif()
@@ -106,10 +119,10 @@ endif()
 
 # This is deliberately exact rather than a maximum. Adding or removing a conversion site requires
 # reviewing the complete ABI/wire translation boundary and updating this ratchet in the same change.
-# Native packed preview frames replaced five pointer-offset and size conversions (74 to 69).
-if(NOT preview_boundary_cast_line_count EQUAL 69)
+# Native packed preview removed five conversions; segmented replies add two bounded wire-size conversions.
+if(NOT preview_boundary_cast_line_count EQUAL 71)
     message(FATAL_ERROR
-        "Designer preview translation-boundary cast footprint changed from 69 to "
+        "Designer preview translation-boundary cast footprint changed from 71 to "
         "${preview_boundary_cast_line_count}; review the complete boundary")
 endif()
 

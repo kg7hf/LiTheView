@@ -47,6 +47,11 @@ public static class DesignerProjectResolver
             // A native display project never consults the editing-surface catalog.
             return ResolveNativeDisplay(project.Manifest, project.Sha256, resources, projectRoot, diagnostics);
         }
+        if (project.Manifest.SchemaVersion == 4)
+        {
+            AddError(diagnostics, "LVSG1400", "$", "This is a segmented project. Use the segmented workspace in the VS Code designer or segment CLI; the raster/desktop editor cannot edit it.");
+            return Failed(diagnostics);
+        }
 
         Dictionary<string, DisplaySurfaceLoadResult> surfaceCatalog =
             BuildSurfaceCatalog(surfaces, diagnostics);

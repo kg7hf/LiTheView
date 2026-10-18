@@ -2,7 +2,7 @@
   "name": "litheview-designer",
   "displayName": "LiTheView Designer",
   "description": "Edit LiTheView forms inside your embedded application workspace.",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "publisher": "litheview",
   "license": "GPL-3.0-only",
   "engines": {

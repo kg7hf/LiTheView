@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Paul R. Decker -->
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="identifier">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-z][a-zA-Z0-9]{0,63}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="sha256">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-f0-9]{64}" />
+      <xs:length value="64" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="segmented-form">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="bind" minOccurs="0" maxOccurs="128">
+          <xs:complexType>
+            <xs:attribute name="field" type="identifier" use="required" />
+            <xs:attribute name="preview" type="xs:string" use="optional"/>
+        <xs:attribute name="input" type="identifier" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="schemaVersion" type="xs:string" use="required" fixed="1" />
+      <xs:attribute name="id" type="identifier" use="required" />
+      <xs:attribute name="glassId" type="identifier" use="required" />
+      <xs:attribute name="glassSha256" type="sha256" use="required" />
+    </xs:complexType>
+    <xs:unique name="uniqueField">
+      <xs:selector xpath="bind" /><xs:field xpath="@field" />
+    </xs:unique>
+    <xs:unique name="uniqueInput">
+      <xs:selector xpath="bind" /><xs:field xpath="@input" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

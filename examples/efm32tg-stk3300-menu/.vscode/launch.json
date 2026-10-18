@@ -1,0 +1,72 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Tiny Gecko: Windows",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/win32-debug/tiny_gecko.exe",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "${input:gdbPath}",
+      "externalConsole": false,
+      "preLaunchTask": "Tiny Gecko: build"
+    },
+    {
+      "name": "Tiny Gecko: EFM32 (J-Link)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/efm32-debug/tiny_gecko.elf",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "${input:armGdbPath}",
+      "miDebuggerServerAddress": "localhost:2331",
+      "debugServerPath": "${input:jlinkServerPath}",
+      "debugServerArgs": "-select USB=${input:probeSerial} -device EFM32TG840F32 -if SWD -speed 1000 -port 2331 -singlerun -nogui",
+      "serverStarted": "Waiting for GDB connection",
+      "filterStdout": true,
+      "filterStderr": true,
+      "preLaunchTask": "Tiny Gecko: build hardware",
+      "setupCommands": [
+        {
+          "text": "monitor reset"
+        },
+        {
+          "text": "load"
+        },
+        {
+          "text": "monitor reset"
+        },
+        {
+          "text": "tbreak main"
+        }
+      ],
+      "launchCompleteCommand": "exec-continue"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "gdbPath",
+      "type": "promptString",
+      "description": "gdb executable from the same MinGW as g++ (configure writes build/debugger.path)",
+      "default": "gdb.exe"
+    },
+    {
+      "id": "armGdbPath",
+      "type": "promptString",
+      "description": "Full path to arm-none-eabi-gdb.exe from your Arm compiler",
+      "default": "arm-none-eabi-gdb.exe"
+    },
+    {
+      "id": "jlinkServerPath",
+      "type": "promptString",
+      "description": "Full path to SEGGER JLinkGDBServerCL.exe",
+      "default": "JLinkGDBServerCL.exe"
+    },
+    {
+      "id": "probeSerial",
+      "type": "promptString",
+      "description": "USB serial of the Tiny Gecko J-Link; inspect with J-Link ShowEmuList"
+    }
+  ]
+}

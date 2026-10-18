@@ -12,6 +12,30 @@ public static class DesignerProjectValidator
         ArgumentNullException.ThrowIfNull(manifest);
 
         List<ProfileDiagnostic> diagnostics = [];
+        if (manifest.SchemaCompatibility is null || manifest.Forms is null || manifest.ResourceManifests is null || manifest.Extensions is null)
+        {
+            AddError(diagnostics, "LVPM1405", "$", "Project collections and schema compatibility cannot be null.");
+            return diagnostics;
+        }
+        if (manifest.SchemaVersion == 4)
+        {
+            ValidateIdentity(manifest, diagnostics);
+            ValidatePaths(manifest.Forms, "$.forms", diagnostics);
+            if (string.IsNullOrWhiteSpace(manifest.Schema) || manifest.DisplayKind != "segmented" ||
+                manifest.SurfaceProfile is not null || manifest.DisplayDefinition is not null ||
+                manifest.SegmentGlass is null || !Segments.SegmentDocuments.Name(manifest.SegmentGlass.Id) ||
+                !ProfileRules.IsLowercaseSha256(manifest.SegmentGlass.Sha256) || manifest.LogicalInput is null ||
+                manifest.ResourceManifests.Length != 0 || manifest.Extensions.Length != 0 || manifest.Forms.Length == 0)
+                AddError(diagnostics, "LVPM1401", "$", "Version 4 requires a segmented glass, logical input and forms, without raster resources or extensions.");
+            if (manifest.LogicalInput is not null) ValidateProfileReference(manifest.LogicalInput, "$.logicalInput", diagnostics);
+            ProjectSchemaCompatibility c = manifest.SchemaCompatibility;
+            if (c.ProjectManifest != 4 || c.SegmentGlass != 1 || c.LogicalInput != 1 || c.Form != 1 ||
+                c.DisplaySurface is not null || c.DisplayDefinition is not null || c.ResourceManifest != 1 || c.ExtensionManifest != 1)
+                AddError(diagnostics, "LVPM1402", "$.schemaCompatibility", "Unsupported segmented project contracts.");
+            return diagnostics;
+        }
+        if (manifest.DisplayKind is not null || manifest.SegmentGlass is not null || manifest.SchemaCompatibility.SegmentGlass is not null)
+            AddError(diagnostics, "LVPM1403", "$", "Segmented fields require a version-4 project.");
         ValidateSchema(manifest, diagnostics);
         ValidateIdentity(manifest, diagnostics);
         ValidateSchemaCompatibility(manifest, diagnostics);

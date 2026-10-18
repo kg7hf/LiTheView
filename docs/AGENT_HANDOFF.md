@@ -8,6 +8,96 @@ Use the current `.gitmodules`, build presets and
 [publication validation record](PUBLICATION_VALIDATION.md). The owner's
 retained local exercise work is outside this public snapshot.
 
+## Generated Tiny Gecko runtime integration (2026-10-18 UTC)
+
+The presenter now calls UI/Generated/segmented/home.hpp on both Windows and EFM32.
+Application/menu.hpp is unchanged. The handwritten encoder is test-only in
+Tests/reference_encoder.hpp; production glass.hpp retains mapping/geometry IDs.
+CMake checks LF-normalized manifest/glass/input/form hashes embedded by project
+export; stale input requires Generate UI. No .NET is needed for an ordinary build.
+
+Actual contributor generation exposed a pre-existing path restriction hidden by
+copied application fixtures. DesignerProjectPathService now permits explicit
+outputs within a direct application child of library/examples containing its own
+CMakeLists.txt and manifest. It still rejects library src/include, sibling examples
+and protected inputs. Regression tests cover the boundaries. Updated service is
+prepared; no extension API change or normal-profile extension reinstall was needed.
+
+Windows 4/4, consumer 2/2, Core 101/101, Service 939, cast audit and zero-warning
+solution build pass. Four stale-source fault injections and CRLF conversion pass.
+Cross-build is 7,740 flash (+700), 64 static RAM, 1 KiB reserved stack. The image was
+programmed/verified on the identified USB123456 Tiny Gecko, startup ready/frame/
+calibration counters are 1, faults=0, LCD register rows match the independent
+reference. Readback matches SHA2088888B94743788FFE41E790BEB45ABC9B854C1A7AFCEE33D77DC1A2FD32E62.
+Startup stack touched400/1024. Hardware resumed; no retained debug connection.
+Evidence: build/tiny-gecko-generated-20261018, including initial failed tests/logs.
+Owner confirmed "Everything works on the hardware" against the generated-image
+PLAY/zero/half-ring, PB0 play/pause, slider navigation, VOLUME adjustment and
+cancel/save checklist. Generated hardware now has fresh physical acceptance.
+The owner subsequently confirmed "The Windows simulator works too" for the same
+generated presenter. Both Windows and hardware now have owner acceptance in
+addition to the automated checks. Publication includes the segmented designer and
+Tiny Gecko example; existing STM32 starters and private hardware documents are excluded.
+See the updated example README, docs/segmented-designer.md and VALIDATION.md.
+
+## Segmented project, native preview and Configure (2026-10-17)
+
+This supersedes the earlier compiler-increment pending list. Implemented v4
+segmented manifests with locked glass/input snapshots, multi-screen resolution
+and export, field editing with editor-only preview values, Add screen, native
+worker electrode encoding and final host expansion, and the VS Code Configure
+workflow. Configure edits/imports glass JSON and input capabilities and relocks
+all compatible screens together. It rejects stale or dirty sources. Export
+preflights ownership and restores already-replaced headers if a later write fails;
+it explicitly reports an incomplete rollback instead of claiming atomic success.
+
+VS Code/service version 0.2.15. Prepared service/worker are under
+build/vscode-designer/service and build/windows-mingw-debug. Source-only package:
+build/segmented-designer/litheview-segmented-source.vsix. It was installed only
+in an isolated test profile, not the owner's normal VS Code profile. Tutorial:
+examples/efm32tg-stk3300-menu/docs/segmented-designer.md; project: UI/designer.
+Initial creation remains CLI (`segment create-project`); New Project and the
+standalone desktop do not yet author new segmented projects. Polygon editing
+is JSON-based; native preview is bounded to 1024 by 1024 and a work limit.
+
+Verified: zero-warning solution build, Core 101/101, desktop App 18/18,
+Service 939 checks, Node 91/91, C++ consumer/parser 2/2, cast audit, targeted preview-worker
+Clang-Tidy and Cppcheck. Real installed-package VS Code exercise starts blank,
+binds fields, previews, adds a screen, changes glass/input and generates both
+headers while preserving application tasks. Evidence:
+build/vscode-designer/integration-20261017T235412594/application with spaces/vscode-validation.json.
+Service evidence: build/designer-service-tests/e7e7a859a0984fdea687ac5a90dee91e.
+Logs: build/segmented-designer/final-* and preview-*.log. Native preview pixels
+were inspected separately; no claim of a manual webview mouse walkthrough.
+
+S4 remains pending: accepted Tiny Gecko runtime still uses handwritten encoding.
+Do not claim generated firmware acceptance or new memory measurements. FSM,
+original STM32 starters, public checkout and hardware untouched. No commit/push.
+Private hardware PDFs and root photographs remain outside publication scope.
+
+## Tiny Gecko Windows increment (2026-10-17, private checkout)
+
+The owner requested the Windows-first segmented-menu implementation with PB0,
+PB1 and the touch slider, preserving existing starters. New application:
+`examples/efm32tg-stk3300-menu`. It has a display-independent FSM, typed effects,
+bounded slider translator, A03 character/digit mapping and Win32 segment drawing.
+The new header-only `LitheView::Segments` target has no raster dependency.
+
+GCC 14.2 warning-clean build, all three CTest suites, repository cast audit and a
+separate installed-package consumer pass. The simulator's own render artifact was
+visually inspected. The window was launched for the owner; a human walkthrough is
+still pending. See the example VALIDATION.md for scope. No MCU was accessed, no
+firmware fit claimed, and no segmented designer support was added. Decorative
+LCD symbols, GPIO debounce and physical slider sampling remain open.
+
+The original A03 manual was found at RS, with A03 schematics embedded on pages
+21-30. At the owner's request, both the complete PDF and extracted schematics are
+in `docs/private-hardware/efm32tg-stk3300-a03`, **private repository only**. Do not
+copy that directory to LiTheView-public or a package. Its README records hashes.
+The initial plan's SEG pin transcription was corrected against the actual sheet;
+glass and MCU common numbering are reversed. Existing starters and the public
+checkout were not modified. These changes have not been committed or pushed.
+
 ## Publication scope (2026-10-17)
 
 The owner authorized publication of the validated designer, menu examples and tutorial
@@ -585,3 +675,96 @@ checkout. No private checkout source, original starter source or hardware was ch
 ## Hardware follow-up after review fixes (2026-10-17)
 
 User requested flashing both boards. Both programmed/verified; H750 touch I2C timeout asserted at app_main.cpp:25 after 3792 heartbeats. Reset recovered execution, not root cause. Round L4R9 runs but BSP errors accumulate (4749 in final sample). The owner subsequently authorized publication with these example limitations documented and investigation deferred. Exact ELFs, backups, hashes and debugger trace: build/menu-validation/review-flash-20261017-165615. See MENU_REVIEW_VALIDATION.md. Original starters untouched.
+
+## Tiny Gecko hardware increment (2026-10-17)
+
+The owner accepted the Windows simulator, then authorized the basic hardware menu.
+The existing FSM/presenter/glass encoder are unchanged. New Platform/EFM32 contains
+bare-metal startup, 32 KiB/4 KiB linker budgets, GPIO/LCD/LESENSE adapters and a
+foreground event loop. SDK v4.4.6 is a real example-owned submodule; no SDK enters
+LiTheView core. Four host suites pass; Cortex-M3 firmware builds at 6,936 bytes
+flash and 64 bytes static RAM plus 1 KiB reserved stack. Startup/idle watermark
+observed 384 bytes. See the example VALIDATION.md for limits and exact binary hash.
+
+J-Link USB selection 123456 (onboard firmware prints 440001204) identified the
+EFM32TG840F32. Original flash saved privately, final image programmed/verified,
+ready=1, frame=1, calibrated=1, zero scan faults. Board resumed and probe released.
+The owner subsequently confirmed "Display and controls work" against the basic
+menu checklist. Windows and physical-board acceptance are both recorded.
+SEGGER tools came from the installed STM32CubeIDE bundle; no standalone install
+was needed. Keep this distinction in the setup documentation.
+Evidence: build/tiny-gecko-hardware-20261017. No STM32 touched; original starter
+pair unchanged. No commit/push. Git submodule add staged only its gitlink and
+.gitmodules automatically. Vendor PDFs and original flash remain private.
+
+Next: the fixed-symbol advanced lesson. The
+supplied EFM32-tiny-gecko.png remains untouched at root for a later Windows skin.
+The Win32 rendering was deliberately left unchanged during this hardware port.
+
+## Tiny Gecko volume-ring lesson (2026-10-17)
+
+Added named eight-electrode volume ring, nearest-eighth scale, presenter binding
+(saved volume normally, draft in editor), shared atomic presentation encoding,
+and matching Windows polygons. FSM and device/LCD adapters unchanged. Tutorial:
+examples/efm32tg-stk3300-menu/docs/volume-ring.md. It explicitly explains that the
+current raster designer cannot yet author segmented forms and identifies the
+future field/binding/generation responsibilities without claiming that work done.
+
+Four host suites and cast audit passed. Cortex-M3: 7,040 bytes flash, 64 bytes
+static RAM, 1 KiB reserved stack; startup/idle watermark 400 bytes. Same Tiny Gecko
+programmed/verified; no scan faults. Owner says ring worked on hardware, then
+confirmed "The ring works in Windows too" after reopening the simulator. Both
+platforms now have user acceptance for the ring.
+Evidence and exact hash: build/tiny-gecko-ring-20261017 and example VALIDATION.md.
+No commit/push. Original STM32 starters and user root photographs untouched.
+
+## Segmented designer plan (2026-10-17)
+
+See SEGMENTED_DESIGNER_PLAN.md for the next implementation stages. The foundation
+is individually addressable on/off segments, with named icons, character fields
+and ordered groups layered over them. The ring is a value binding over eight
+pieces, not an animation. Animation remains a possible later application-timed
+behavior. Glass definition, form bindings and hardware mapping are separate.
+
+Plan: typed segmented display/document contract, bounded generation, native
+preview capability, Configure and multi-form plug-in workflow, then a blank-project
+Tiny Gecko tutorial and generated-code hardware acceptance. The FSM stays
+application-owned and unchanged. No segmented designer implementation was added
+in this documentation pass. Original STM32 starters remain untouched.
+
+## Segmented designer compiler increment (2026-10-17)
+
+Started S0/S1 in the private checkout. Core/Segments now loads strict version-1
+glass JSON and segmented-form XML, validates hash-locked bindings and emits typed
+C++ presentation encoders. CLI: `segment glass-hash`, `segment check`,
+`segment export-cpp`. Definitions support individual/multi-electrode Boolean
+icons, ordered scaled groups, ASCII character cells and unsigned decimal fields.
+No raster profile, SDK, MCU selection, task or FSM is generated.
+
+Tiny Gecko's definitions are in examples/efm32tg-stk3300-menu/UI/design; the
+accepted runtime still uses UI/glass.hpp and its handwritten presenter/FSM.
+Synthetic glass and individual-piece fixtures are in tests/designer-fixtures/
+segmented-icons. Reproduction and contract details: tests/segmented_designer_consumer/
+README.md. Generated output stays in ignored build/segmented-designer/generated.
+
+Validation: complete designer solution builds with zero warnings/errors; Core
+101/101 passes. Sandbox initially blocked six existing PowerShell/temp-directory
+tests; rerunning with appropriate access passed all of them. Generated MinGW
+consumer passes the independent ring oracle, all numeric values, supported glyphs,
+65,536 FSM histories and the synthetic Boolean/group/piece cases. Tiny Gecko
+rebuilt in a separate Windows output directory and all four suites passed. Final
+generated consumer also compiles warning-clean for Cortex-M3 with -Os.
+
+The mixed 160-bit/17-bit consumer exposed GCC identical-code-folding array-bounds
+diagnostics in SegmentFrame::set. A bounded std::span byte view avoids attaching
+another instantiation's array type to the inlined access. No warning or optimizer
+setting was weakened. A private old-access reproduction passes with -fno-ipa-icf;
+production passes with folding enabled. Rebuilt handwritten hardware binary is
+byte-identical to the accepted ring firmware (7,040 flash, 64 static RAM, same
+957E90...0295 SHA-256). No board access or flash in this increment.
+
+Pending: shared display-kind/project-manifest integration, preview-worker support,
+Configure and segmented editing in VS Code, multi-form project export and switching
+the example to generated code. Do not claim segmented plug-in support yet or install
+this as a finished authoring workflow. No commit/push; original STM32 starters and
+user root photographs untouched. Evidence: build/segmented-designer/.
