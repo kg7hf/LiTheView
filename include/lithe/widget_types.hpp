@@ -4,6 +4,7 @@
 #pragma once
 
 #include "lithe/widgets.hpp"
+#include "lithe/telemetry_views.hpp"
 
 #include <cstdint>
 
@@ -30,7 +31,13 @@ enum class ViewKind : std::uint8_t
     tabBar,
     tabView,
     wheelPicker,
-    dropDown
+    dropDown,
+    list,
+    plot,
+    waterfall,
+    axis,
+    markerRange,
+    meter
 };
 
 template <ViewKind Kind> struct WidgetType;
@@ -43,6 +50,31 @@ template <> struct WidgetType<ViewKind::panel>
 template <> struct WidgetType<ViewKind::label>
 {
     using Type = LabelView;
+};
+
+template <> struct WidgetType<ViewKind::plot>
+{
+    using Type = PlotView;
+};
+
+template <> struct WidgetType<ViewKind::waterfall>
+{
+    using Type = WaterfallView;
+};
+
+template <> struct WidgetType<ViewKind::axis>
+{
+    using Type = AxisView;
+};
+
+template <> struct WidgetType<ViewKind::markerRange>
+{
+    using Type = MarkerRangeView;
+};
+
+template <> struct WidgetType<ViewKind::meter>
+{
+    using Type = MeterView;
 };
 
 template <> struct WidgetType<ViewKind::button>
@@ -123,6 +155,11 @@ template <> struct WidgetType<ViewKind::tabView>
 template <> struct WidgetType<ViewKind::wheelPicker>
 {
     using Type = WheelPickerView;
+};
+
+template <> struct WidgetType<ViewKind::list>
+{
+    using Type = ListView;
 };
 
 template <> struct WidgetType<ViewKind::dropDown>

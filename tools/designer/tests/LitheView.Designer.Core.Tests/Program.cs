@@ -30,7 +30,7 @@ internal static class Program
     private const string ResolvedProjectSha256 =
         "c0f365abc1497c37d555b4f98aaa7a1854955e6ef9809d12250a95f026e6b84d";
     private const string WidgetCatalogSha256 =
-        "7bba9e94b158a2e9795e3c3da7e353d512fd7458ce86f1c22c9e31d757b6cc5f";
+        "0a62fd6a3f77b871d0c3a1e40c1cd6a5210ac4f1c3647b542fc3487d8ea03016";
 
     private sealed record TestCase(string Name, Action Body);
 
@@ -222,6 +222,33 @@ internal static class Program
                 Assert(string.Join(",", ControlEventCatalog.For("textField").Select(item => item.ParameterType)) ==
                     "lithe::TextChange,lithe::TextEdit,lithe::TextEdit",
                     "Text payloads must not reuse index-based selection events.");
+            }),
+            new("selectable-list palette and typed handlers", () =>
+            {
+                string root = Path.Combine(repositoryRoot, "tests", "designer-fixtures", "selectable-list");
+                WidgetCatalog catalog = LoadWidgetCatalog(widgetCatalogPath);
+                FormDocumentLoadResult form = FormXmlImporter.LoadFile(Path.Combine(root, "form.xml"), catalog, FormImportMode.Strict);
+                AssertValid(form);
+                FormCppCompilationResult compiled = FormCppCompiler.Compile(form.Document!, catalog);
+                AssertValid(compiled);
+                AssertGeneratedFile(Path.Combine(root, "form.hpp"), compiled.HeaderUtf8!);
+                string header = Encoding.UTF8.GetString(compiled.HeaderUtf8!);
+                Assert(header.Contains("kControlEventContractVersion >= 4U", StringComparison.Ordinal), "List needs Core contract 4.");
+                Assert(header.Contains("onEntryListSelectionChanged([[maybe_unused]] lithe::SelectionChange", StringComparison.Ordinal) &&
+                    header.Contains("onEntryListItemActivated([[maybe_unused]] lithe::ItemActivation", StringComparison.Ordinal),
+                    "Generated list handlers must separate selection from activation.");
+                Assert(ControlEventCatalog.For("list").Select(item => item.Id).SequenceEqual(
+                    ["selectionChanged", "itemActivated"]), "List handler catalog differs.");
+                DesignerDocumentSession session = new(form.Document!, catalog);
+                Assert(session.AddWidget("lithe.widget.list", "root").IsValid, "Palette inserts an empty list awaiting application data.");
+                session.Undo();
+                Assert(!session.SetProperty("entryList", new FormTextValue("items", new string('|', 64))).IsValid,
+                    "More than 64 preview items rejected.");
+                Assert(!session.SetProperty("entryList", new FormUnsignedIntegerValue("selected-index", 6U)).IsValid,
+                    "Selected index must identify an item.");
+                FormXmlWriteResult saved = FormXmlWriter.Write(session.Document, catalog);
+                AssertValid(saved);
+                AssertValid(FormXmlImporter.Load(saved.Utf8!, catalog, FormImportMode.Strict));
             }),
             new("drop-down palette, properties, round trip and generated events", () =>
             {
@@ -984,6 +1011,7 @@ internal static class Program
         string[] expectedKinds =
         [
             "animatedImage",
+            "axis",
             "button",
             "checkbox",
             "dropDown",
@@ -991,8 +1019,12 @@ internal static class Program
             "image",
             "label",
             "line",
+            "list",
+            "markerRange",
+            "meter",
             "panel",
             "picker",
+            "plot",
             "progress",
             "radio",
             "scroll",
@@ -1001,6 +1033,7 @@ internal static class Program
             "tabView",
             "table",
             "textField",
+            "waterfall",
             "wheelPicker"
         ];
         string[] actualKinds = [.. result.Catalog!.Widgets
@@ -1608,14 +1641,21 @@ internal static class Program
         List<FormComponent> components = [];
         WidgetDefinition panel = catalog.Widgets.Single(item => item.Id == "lithe.widget.panel");
         components.Add(CreateExhaustiveComponent(panel, 0, null, catalog));
-        int siblingOrder = 0;
+        // The exhaustive catalog exceeds one parent's 16-child runtime limit.
+        // Use a second panel without changing which widget properties are covered.
+        components.Add(CreateExhaustiveComponent(
+            panel, 1, "component.exhaustive.0", catalog));
+        int widgetIndex = 0;
         foreach (WidgetDefinition widget in catalog.Widgets.Where(item => item.Id != panel.Id))
         {
-            components.Add(CreateExhaustiveComponent(widget, siblingOrder + 1, panel.Id, catalog) with
+            bool underRoot = widgetIndex < 15;
+            components.Add(CreateExhaustiveComponent(
+                widget, widgetIndex + 2,
+                underRoot ? "component.exhaustive.0" : "component.exhaustive.1", catalog) with
             {
-                SiblingOrder = siblingOrder
+                SiblingOrder = underRoot ? widgetIndex + 1 : widgetIndex - 15
             });
-            ++siblingOrder;
+            ++widgetIndex;
         }
         return new FormDocument
         {
@@ -1647,11 +1687,10 @@ internal static class Program
     private static FormComponent CreateExhaustiveComponent(
         WidgetDefinition widget,
         int componentIndex,
-        string? parentWidgetId,
+        string? parentComponentId,
         WidgetCatalog catalog)
     {
         string suffix = componentIndex.ToString(CultureInfo.InvariantCulture);
-        string? parentComponentId = parentWidgetId is null ? null : "component.exhaustive.0";
         FormPropertyValue[] properties = [.. widget.PropertyIds.Select(propertyId =>
             CreateSampleProperty(
                 catalog.Properties.Single(item => item.Id == propertyId),

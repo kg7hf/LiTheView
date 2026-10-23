@@ -1,5 +1,22 @@
 # Validation: completed H750 menu
 
+## Reusable list integration (2026-10-23, local checkout)
+
+The Load form now generates a native `ListView` and two typed handlers instead of
+overriding a panel with the example's `SelectionList`. The completed menu Load
+check was compiled against the current library and passed on Windows, including
+selection without loading, hidden-row activation and retained state. The core
+list test passed keyboard, pointer, callback-order, reentrancy, XML round trip
+and generated-form checks. Four focused CTest targets passed, including the
+existing layout footprint ceiling. Designer Core passed 101/102 cases: the only
+failure was the restricted shell's AuthorizationManager blocking its PowerShell
+image converter test. The service passed 959 checks with the native preview
+worker, including rendering the list and discovering its two typed handlers.
+The completed example's pinned LiTheView submodule and platform dependencies
+were not initialized in this checkout, so its preset build, STM32 cross-build
+and board execution remain pending for this change. Earlier physical acceptance
+below applies to the previous handwritten list implementation.
+
 ## Review-fix validation (2026-10-17)
 
 See [the complete review validation record](../../docs/MENU_REVIEW_VALIDATION.md).

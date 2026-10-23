@@ -45,7 +45,7 @@ internal static partial class Program
             await CheckProtocolAsync(service, workspace, original).ConfigureAwait(false);
             await CheckNativeDisplayWorkflowAsync(service, workspace, library, Path.Combine(directory, "native-display"),
                 worker is not null).ConfigureAwait(false);
-            await CheckControlEventsAsync(service, workspace, library).ConfigureAwait(false);
+            await CheckControlEventsAsync(service, workspace, library, worker is not null).ConfigureAwait(false);
             await CheckEditsAsync(service, workspace, original).ConfigureAwait(false);
             await CheckPropertiesAsync(service, workspace, original).ConfigureAwait(false);
             await CheckTabsAsync(service, workspace, original).ConfigureAwait(false);
@@ -64,6 +64,9 @@ internal static partial class Program
             if (worker is not null)
             {
                 await CheckNativeAsync(service, workspace, original).ConfigureAwait(false);
+                await CheckTelemetryPalettePreviewAsync(service, workspace, original).ConfigureAwait(false);
+                await CheckDirectChildLimitAsync(service, workspace, original).ConfigureAwait(false);
+                await CheckSdrPalettePreviewAsync(service, workspace, library).ConfigureAwait(false);
                 foreach (SurfacePixelFormat format in new[] { SurfacePixelFormat.Rgb888, SurfacePixelFormat.Xrgb8888 })
                 {
                     DesignerWorkspace native = CreateWorkspace(library, Path.Combine(directory, format.ToString()), format);
@@ -752,6 +755,111 @@ internal static partial class Program
         byte[] pixels = Convert.FromBase64String(result.GetProperty("rgbaBase64").GetString()!);
         Require(pixels.Length == 480 * 272 * 4 && pixels.Where((_, index) => index % 4 != 3).Any(value => value != 0),
             "Preview must return a complete nonempty RGBA frame at the selected native size.");
+    }
+
+    private static async Task CheckTelemetryPalettePreviewAsync(
+        DesignerService service, DesignerWorkspace workspace, string original)
+    {
+        string root = workspace.Form.Components.Single(item => item.ParentComponentId is null).ComponentId;
+        string xml = original;
+        foreach (var widget in new[]
+        {
+            (Id: "lithe.widget.plot", Frame: new FormRectangle(16, 16, 240, 64)),
+            (Id: "lithe.widget.waterfall", Frame: new FormRectangle(16, 88, 240, 100))
+        })
+        {
+            ServiceResponse added = await RequestAsync(service, workspace, xml, "edit", new()
+            {
+                Kind = "add", WidgetId = widget.Id, ParentId = root, Frame = widget.Frame
+            }).ConfigureAwait(false);
+            Require(added.Ok, $"Palette insertion must accept {widget.Id}: " + added.Error?.Message);
+            xml = Result(added).GetProperty("xml").GetString()!;
+            ServiceResponse rendered = await RequestAsync(service, workspace, xml, "render").ConfigureAwait(false);
+            JsonElement frame = rendered.Ok ? Result(rendered) : default;
+            string? status = rendered.Ok ? frame.GetProperty("status").GetString() : null;
+            Require(rendered.Ok && status == "Ok",
+                $"Native preview must render {widget.Id} immediately after palette insertion: " +
+                (rendered.Error?.Message ?? (rendered.Ok ? frame.GetProperty("diagnostics").ToString() : "")));
+        }
+    }
+
+    private static async Task CheckDirectChildLimitAsync(
+        DesignerService service, DesignerWorkspace workspace, string original)
+    {
+        string root = workspace.Form.Components.Single(item => item.ParentComponentId is null).ComponentId;
+        string xml = original;
+        int existing = workspace.Form.Components.Count(item => item.ParentComponentId == root);
+        for (int count = existing; count < 16; ++count)
+        {
+            ServiceResponse added = await RequestAsync(service, workspace, xml, "edit", new()
+            {
+                Kind = "add", WidgetId = "lithe.widget.label", ParentId = root
+            }).ConfigureAwait(false);
+            Require(added.Ok, "Filling a panel up to 16 direct children is valid.");
+            xml = Result(added).GetProperty("xml").GetString()!;
+        }
+        foreach (string widgetId in new[] { "lithe.widget.plot", "lithe.widget.waterfall" })
+        {
+            ServiceResponse refused = await RequestAsync(service, workspace, xml, "edit", new()
+            {
+                Kind = "add", WidgetId = widgetId, ParentId = root
+            }).ConfigureAwait(false);
+            Require(!refused.Ok && refused.Error?.Code == "InvalidEdit" &&
+                refused.Error.Message.Contains("maximum of 16 direct children", StringComparison.Ordinal),
+                "A full panel must reject " + widgetId + " before invalidating the preview.");
+        }
+        string firstChild = workspace.Form.Components.First(item => item.ParentComponentId == root).ComponentId;
+        ServiceResponse duplicated = await RequestAsync(service, workspace, xml, "edit", new()
+        {
+            Kind = "duplicate", ComponentId = firstChild
+        }).ConfigureAwait(false);
+        Require(!duplicated.Ok && duplicated.Error?.Code == "InvalidEdit" &&
+            duplicated.Error.Message.Contains("maximum of 16 direct children", StringComparison.Ordinal),
+            "Duplicating into a full panel obeys the same child limit.");
+        int closingPanel = xml.LastIndexOf("</panel>", StringComparison.Ordinal);
+        string invalidXml = xml.Insert(closingPanel,
+            "<!--litheview-component id=\"component.extra.plot\" name=\"extraPlot\"-->" +
+            "<plot frame=\"0,0,32,16\"/>");
+        FormDocumentLoadResult imported = FormXmlImporter.Load(
+            Encoding.UTF8.GetBytes(invalidXml), workspace.Catalog, FormImportMode.Strict);
+        Require(imported.IsValid && imported.Document is not null,
+            "A hand-edited overfull form remains parseable so the editor can repair it: " +
+            string.Join("; ", imported.Diagnostics.Select(item => item.Message)));
+        FormCppCompilationResult invalidGenerated = FormCppCompiler.Compile(imported.Document!, workspace.Catalog);
+        Require(!invalidGenerated.IsValid && invalidGenerated.Diagnostics.Any(item => item.Code == "LVFG1002"),
+            "Generation must reject a hand-edited form that exceeds the portable child limit.");
+        ServiceResponse repaired = await RequestAsync(service, workspace, invalidXml, "edit", new()
+        {
+            Kind = "delete", ComponentId = "component.extra.plot"
+        }).ConfigureAwait(false);
+        Require(repaired.Ok, "The editor can delete the extra component from a hand-edited overfull form.");
+        ServiceResponse stillRendered = await RequestAsync(service, workspace, xml, "render").ConfigureAwait(false);
+        Require(stillRendered.Ok && Result(stillRendered).GetProperty("status").GetString() == "Ok",
+            "A refused palette insertion leaves the last valid form previewable.");
+    }
+
+    private static async Task CheckSdrPalettePreviewAsync(
+        DesignerService service, DesignerWorkspace template, string library)
+    {
+        string project = Path.Combine(library, "examples", "stm32h750b-dk-sdr", "Tasks", "UI");
+        DesignerWorkspace workspace = template with
+        {
+            ManifestPath = Path.Combine(project, "project.litheview.json"),
+            FormPath = Path.Combine(project, "forms", "Sdr.litheview.xml")
+        };
+        string xml = File.ReadAllText(workspace.FormPath);
+        foreach (string widgetId in new[] { "lithe.widget.plot", "lithe.widget.waterfall" })
+        {
+            ServiceResponse added = await RequestAsync(service, workspace, xml, "edit", new()
+            {
+                Kind = "add", WidgetId = widgetId, ParentId = "component.sdr.root"
+            }).ConfigureAwait(false);
+            Require(added.Ok, "SDR example has room to add " + widgetId + ": " + added.Error?.Message);
+            xml = Result(added).GetProperty("xml").GetString()!;
+            ServiceResponse rendered = await RequestAsync(service, workspace, xml, "render").ConfigureAwait(false);
+            Require(rendered.Ok && Result(rendered).GetProperty("status").GetString() == "Ok",
+                "SDR preview remains valid after adding " + widgetId + ": " + rendered.Error?.Message);
+        }
     }
 
     private static async Task CheckUnavailablePreviewAsync(string library, DesignerWorkspace workspace, string xml)

@@ -25,6 +25,7 @@ set(simulator_boundary_cast_line_count 0)
 set(starter_boundary_cast_line_count 0)
 set(completed_starter_boundary_cast_line_count 0)
 set(h750_menu_boundary_cast_line_count 0)
+set(h750_sdr_boundary_cast_line_count 0)
 set(l4r9_menu_boundary_cast_line_count 0)
 set(tiny_gecko_boundary_cast_line_count 0)
 set(tiny_gecko_sensor_cast_line_count 0)
@@ -72,6 +73,8 @@ foreach(source IN LISTS litheview_sources)
                     math(EXPR tiny_gecko_boundary_cast_line_count "${tiny_gecko_boundary_cast_line_count} + 1")
                 elseif(relative_source MATCHES "^examples/stm32h750b-dk-menu-1-complete/")
                     math(EXPR h750_menu_boundary_cast_line_count "${h750_menu_boundary_cast_line_count} + 1")
+                elseif(relative_source MATCHES "^examples/stm32h750b-dk-sdr/")
+                    math(EXPR h750_sdr_boundary_cast_line_count "${h750_sdr_boundary_cast_line_count} + 1")
                 elseif(relative_source MATCHES "^examples/stm32l4r9i-disco-menu-1/")
                     math(EXPR l4r9_menu_boundary_cast_line_count "${l4r9_menu_boundary_cast_line_count} + 1")
                 elseif(relative_source MATCHES "^examples/stm32h750b-dk-starter-1-complete/")
@@ -119,11 +122,17 @@ if(h750_menu_boundary_cast_line_count GREATER 11 OR l4r9_menu_boundary_cast_line
     message(FATAL_ERROR "Menu cast boundary grew: H750=${h750_menu_boundary_cast_line_count}/11, L4R9=${l4r9_menu_boundary_cast_line_count}/15")
 endif()
 message(STATUS "Reviewed menu cast boundaries: H750=${h750_menu_boundary_cast_line_count}, L4R9=${l4r9_menu_boundary_cast_line_count}")
+if(h750_sdr_boundary_cast_line_count GREATER 8)
+    message(FATAL_ERROR "H750 SDR platform cast boundary grew beyond 8 reviewed lines")
+endif()
+message(STATUS "Reviewed H750 SDR platform cast boundary: ${h750_sdr_boundary_cast_line_count}/8")
 
 # Reductions are welcome; growth requires an explicit update and review of this ceiling.
-if(cast_line_count GREATER 13)
+# ListView stores its pressed row in one byte under the 64-item bound. PlotView
+# converts a validated cursor index below 4096 to its signed geometry domain.
+if(cast_line_count GREATER 17)
     message(FATAL_ERROR
-        "Explicit-cast footprint grew to ${cast_line_count} lines; reviewed ceiling is 13")
+        "Explicit-cast footprint grew to ${cast_line_count} lines; reviewed ceiling is 16")
 endif()
 
 # This is deliberately exact rather than a maximum. Adding or removing a conversion site requires

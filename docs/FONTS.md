@@ -26,6 +26,27 @@ in `LitheView::GeneratedFonts`; applications that select them must link that tar
 target_link_libraries(my_application PRIVATE LitheView::GeneratedFonts)
 ```
 
+The bundled Sans family also has optional 20 and 28 px regular/bold pairs. They are generated
+from the same reviewed DejaVu source files as the 14 px pair, with the same 99-code-point repertoire.
+Choose the size at build time and link only the archive used by the application:
+
+```cmake
+set(LITHEVIEW_BUILD_GENERATED_SANS20 ON CACHE BOOL "Use the 20 px Sans faces")
+add_subdirectory(Middlewares/Third_Party/LiTheView)
+target_link_libraries(my_application PRIVATE LitheView::GeneratedSans20)
+```
+
+```cpp
+const lithe::Font& body = lithe::builtInFont<lithe::BuiltInFontBackend::generatedSans20>();
+const lithe::Font& emphasis =
+    lithe::builtInBoldFont<lithe::BuiltInFontBackend::generatedSans20>();
+```
+
+Use `LITHEVIEW_BUILD_GENERATED_SANS28` / `LitheView::GeneratedSans28` and
+`BuiltInFontBackend::generatedSans28` for the larger pair. These are separate ROM resources,
+not nearest-neighbor enlargements of 14 px glyphs. They do not change the default font used by
+existing forms or the designer preview; an application must select them explicitly.
+
 Because `GeneratedFonts` is a separate static archive, a compact application that links
 `LitheView::CompactFont` does not acquire the generated glyph payload. The shared demo uses the same template
 selection through the `LITHEVIEW_DEMO_FONT_BACKEND` CMake cache value. Its default, `AUTO`, selects
@@ -143,6 +164,12 @@ font import is declared compatible with all four supported painter formats. It d
 flash, QSPI, linker section, or memory budget. The consuming application makes those deployment
 choices after export.
 
+The import dialog previews the selected source face. The native form preview still uses the compact
+5 by 7 font for unassigned controls and does not load project font resources; a form with an assigned
+font cannot yet be visually checked against that face in the canvas. The consuming application's
+`ResourceProvider` must return the selected `Font` when running the generated form. The optional
+20 and 28 px built-ins above are currently C++ resources, not automatic designer palette choices.
+
 The converter fails on malformed ranges, surrogate code points, missing fallback coverage, an
 unavailable requested face, or metrics that exceed the compact record fields. The manifest records
 the exact source SHA-256, repertoire, glyph count, coverage format, coverage-byte count, FNV-1a data
@@ -157,6 +184,10 @@ The current checked manifests report:
 | --- | ---: | ---: | ---: | ---: |
 | DejaVu Sans Regular, 14 px | 99 | 7,617 | 1,584 | 9,201 bytes |
 | DejaVu Sans Bold, 14 px | 99 | 8,734 | 1,584 | 10,318 bytes |
+| DejaVu Sans Regular, 20 px | 99 | 14,856 | 1,584 | 16,440 bytes |
+| DejaVu Sans Bold, 20 px | 99 | 17,061 | 1,584 | 18,645 bytes |
+| DejaVu Sans Regular, 28 px | 99 | 27,395 | 1,584 | 28,979 bytes |
+| DejaVu Sans Bold, 28 px | 99 | 31,495 | 1,584 | 33,079 bytes |
 
 Those values describe immutable table payload, not final linked firmware size. Linker alignment,
 manifest strings, renderer code, dead stripping, and application usage affect the final image and must

@@ -30,6 +30,10 @@ void ControlView::onSelectionChanged([[maybe_unused]] SelectionChange event) noe
 {
 }
 
+void ControlView::onItemActivated([[maybe_unused]] ItemActivation event) noexcept
+{
+}
+
 void ControlView::onRadioSelectionChanged([[maybe_unused]] RadioSelectionChange event) noexcept
 {
 }
@@ -65,6 +69,15 @@ void ControlView::notifySelectionChanged(SelectionChange event) noexcept
     if (mEventSink != nullptr)
     {
         mEventSink->selectionChanged(*this, event);
+    }
+}
+
+void ControlView::notifyItemActivated(ItemActivation event) noexcept
+{
+    onItemActivated(event);
+    if (mEventSink != nullptr)
+    {
+        mEventSink->itemActivated(*this, event);
     }
 }
 

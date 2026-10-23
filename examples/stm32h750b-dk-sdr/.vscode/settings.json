@@ -1,0 +1,5 @@
+{
+  "litheview.libraryRoot": "../..",
+  "cmake.configureOnOpen": false,
+  "cmake.useCMakePresets": "always"
+}

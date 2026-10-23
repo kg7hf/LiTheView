@@ -211,6 +211,6 @@ internal static class CompiledFormCapacity
             return policy == "true";
         }
         return component.Widget.RuntimeKind is "button" or "checkbox" or "radio" or "textField" or "picker" or "softkey" or
-            "tabBar" or "tabView" or "wheelPicker" or "dropDown";
+            "tabBar" or "tabView" or "wheelPicker" or "dropDown" or "list";
     }
 }

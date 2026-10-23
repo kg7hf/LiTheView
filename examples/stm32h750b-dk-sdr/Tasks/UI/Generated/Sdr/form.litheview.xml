@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.sdr" displayName="SDR Spectrum" surfaceProfileId="litheview.menu.h750.surface"-->
+<!--litheview-component id="component.sdr.root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x0008131f" borderWidth="0">
+  <!--litheview-component id="component.sdr.header" name="headerPanel"-->
+  <panel frame="0,0,480,272">
+    <!--litheview-component id="component.sdr.title" name="titleLabel"-->
+    <label frame="12,6,104,25" textColor="0x00ffffff" text="VFO A" />
+    <!--litheview-component id="component.sdr.frequency" name="frequencyLabel"-->
+    <label frame="120,2,246,34" textColor="0x00ffffff" textScale="2" text="14.031.800" />
+    <!--litheview-component id="component.sdr.rx" name="rxLabel"-->
+    <label frame="398,8,68,23" backgroundColor="0x00067746" textColor="0x00ffffff" text="RX" />
+    <!--litheview-component id="component.sdr.second" name="secondFrequencyLabel"-->
+    <label frame="12,38,145,17" textColor="0x008ab5cf" text="B 14.034.200" />
+    <!--litheview-component id="component.sdr.source" name="sourceLabel"-->
+    <label frame="164,38,168,17" textColor="0x008ab5cf" text="SYNTHETIC INPUT" />
+    <!--litheview-component id="component.sdr.signal" name="signalMeter"-->
+    <meter frame="338,36,130,22" backgroundColor="0x001b2937" textColor="0x008ab5cf" accentColor="0x0052f083" borderColor="0x005d9cc6" />
+  </panel>
+  <!--litheview-component id="component.sdr.spectrum" name="spectrumPanel"-->
+  <panel frame="0,0,480,272">
+    <!--litheview-component id="component.sdr.plot" name="spectrumPlot"-->
+    <plot frame="12,63,456,49" backgroundColor="0x00071016" textColor="0x0055ff8a" borderColor="0x00337b9c" borderWidth="1" />
+    <!--litheview-component id="component.sdr.overlay" name="spectrumOverlay"-->
+    <marker-range frame="12,63,456,49" />
+    <!--litheview-component id="component.sdr.axis" name="frequencyAxis"-->
+    <axis frame="12,112,456,17" backgroundColor="0x0008131f" textColor="0x008ab5cf" />
+    <!--litheview-component id="component.sdr.waterfall" name="spectrumWaterfall"-->
+    <waterfall frame="12,129,456,90" backgroundColor="0x00020a20" borderColor="0x00337b9c" borderWidth="1" />
+  </panel>
+  <!--litheview-component id="component.sdr.controls" name="controlsPanel"-->
+  <panel frame="0,0,480,272">
+    <!--litheview-component id="component.sdr.down" name="tuneDownButton"-->
+    <button frame="12,226,68,37" backgroundColor="0x00164a78" textColor="0x00ffffff" borderColor="0x005d9cc6" borderWidth="1" text="-1K" />
+    <!--litheview-component id="component.sdr.up" name="tuneUpButton"-->
+    <button frame="84,226,68,37" backgroundColor="0x00164a78" textColor="0x00ffffff" borderColor="0x005d9cc6" borderWidth="1" text="+1K" />
+    <!--litheview-component id="component.sdr.mode" name="modeButton"-->
+    <button frame="156,226,70,37" backgroundColor="0x00164a78" textColor="0x00ffffff" borderColor="0x005d9cc6" borderWidth="1" text="USB" />
+    <!--litheview-component id="component.sdr.hold" name="holdButton"-->
+    <button frame="230,226,70,37" backgroundColor="0x00164a78" textColor="0x00ffffff" borderColor="0x005d9cc6" borderWidth="1" text="HOLD" />
+    <!--litheview-component id="component.sdr.span" name="spanButton"-->
+    <button frame="304,226,76,37" backgroundColor="0x00164a78" textColor="0x00ffffff" borderColor="0x005d9cc6" borderWidth="1" text="WIDE" />
+    <!--litheview-component id="component.sdr.palette" name="paletteButton"-->
+    <button frame="384,226,84,37" backgroundColor="0x00164a78" textColor="0x00ffffff" borderColor="0x005d9cc6" borderWidth="1" text="PALETTE" />
+  </panel>
+</panel>

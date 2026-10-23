@@ -1512,6 +1512,180 @@
           "required": false
         }
       ]
+    },
+    {
+      "id": "lithe.widget.list",
+      "displayName": "Selectable List",
+      "runtimeKind": "list",
+      "cppType": "lithe::ListView",
+      "paletteGroup": "Input",
+      "help": "Bounded scrolling list with caller-owned items. Up/down or touch selects a row; Select activates it. Selection and activation have separate typed handlers.",
+      "defaultGeometry": {
+        "width": 260,
+        "height": 108
+      },
+      "xml": {
+        "element": "list",
+        "elementAliases": [],
+        "legacyClass": "LCDLISTVIEW",
+        "legacyClassAliases": []
+      },
+      "parentRule": {
+        "rootAllowed": false,
+        "allowedParentIds": [
+          "lithe.widget.panel",
+          "lithe.widget.scroll",
+          "lithe.widget.table"
+        ]
+      },
+      "childPolicy": "none",
+      "propertyIds": [
+        "frame",
+        "runtime-id",
+        "background-color",
+        "foreground-color",
+        "accent-color",
+        "border-color",
+        "focused-background-color",
+        "focused-foreground-color",
+        "pressed-background-color",
+        "pressed-foreground-color",
+        "disabled-background-color",
+        "disabled-foreground-color",
+        "text-scale",
+        "border-width",
+        "visible",
+        "enabled",
+        "focus-policy",
+        "items",
+        "selected-index",
+        "row-height",
+        "font"
+      ],
+      "actions": [
+        {
+          "id": "selection-changed",
+          "displayName": "Selection Changed",
+          "event": "selection-changed",
+          "runtimeActionSource": "runtime-id"
+        },
+        {
+          "id": "item-activated",
+          "displayName": "Item Activated",
+          "event": "item-activated",
+          "runtimeActionSource": "runtime-id"
+        }
+      ],
+      "bindings": [],
+      "states": [
+        {
+          "id": "visible",
+          "displayName": "Visible"
+        },
+        {
+          "id": "disabled",
+          "displayName": "Disabled"
+        },
+        {
+          "id": "focused",
+          "displayName": "Focused"
+        },
+        {
+          "id": "pressed",
+          "displayName": "Pressed"
+        }
+      ],
+      "inputCapabilities": [
+        "keys",
+        "pointerInput"
+      ],
+      "resources": [
+        {
+          "kind": "font",
+          "propertyId": "font",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "lithe.widget.axis",
+      "displayName": "Axis",
+      "runtimeKind": "axis",
+      "cppType": "lithe::AxisView",
+      "paletteGroup": "Data",
+      "help": "Bounded tick and label scale. The application supplies calibrated positions and caller-owned labels on the UI thread.",
+      "defaultGeometry": { "width": 240, "height": 16 },
+      "xml": { "element": "axis", "elementAliases": [], "legacyClass": "LCDAXISVIEW", "legacyClassAliases": [] },
+      "parentRule": { "rootAllowed": false, "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"] },
+      "childPolicy": "none",
+      "propertyIds": ["frame", "runtime-id", "background-color", "foreground-color", "text-scale", "font", "visible", "enabled"],
+      "actions": [], "bindings": [],
+      "states": [{ "id": "visible", "displayName": "Visible" }, { "id": "disabled", "displayName": "Disabled" }],
+      "inputCapabilities": [], "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.marker-range",
+      "displayName": "Marker and Range",
+      "runtimeKind": "markerRange",
+      "cppType": "lithe::MarkerRangeView",
+      "paletteGroup": "Data",
+      "help": "Transparent overlay for bounded caller-owned ranges and labelled markers. Place it over another view with matching bounds.",
+      "defaultGeometry": { "width": 240, "height": 64 },
+      "xml": { "element": "marker-range", "elementAliases": [], "legacyClass": "LCDMARKERRANGEVIEW", "legacyClassAliases": [] },
+      "parentRule": { "rootAllowed": false, "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"] },
+      "childPolicy": "none",
+      "propertyIds": ["frame", "runtime-id", "foreground-color", "text-scale", "font", "visible", "enabled"],
+      "actions": [], "bindings": [],
+      "states": [{ "id": "visible", "displayName": "Visible" }, { "id": "disabled", "displayName": "Disabled" }],
+      "inputCapabilities": [], "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.meter",
+      "displayName": "Calibrated Meter",
+      "runtimeKind": "meter",
+      "cppType": "lithe::MeterView",
+      "paletteGroup": "Data",
+      "help": "Integer-calibrated bar with caller-owned ticks and optional color zones. Readings remain in application units.",
+      "defaultGeometry": { "width": 160, "height": 24 },
+      "xml": { "element": "meter", "elementAliases": [], "legacyClass": "LCDMETERVIEW", "legacyClassAliases": [] },
+      "parentRule": { "rootAllowed": false, "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"] },
+      "childPolicy": "none",
+      "propertyIds": ["frame", "runtime-id", "background-color", "foreground-color", "accent-color", "border-color", "border-width", "text-scale", "font", "visible", "enabled"],
+      "actions": [], "bindings": [],
+      "states": [{ "id": "visible", "displayName": "Visible" }, { "id": "disabled", "displayName": "Disabled" }],
+      "inputCapabilities": [], "resources": [{ "kind": "font", "propertyId": "font", "required": false }]
+    },
+    {
+      "id": "lithe.widget.plot",
+      "displayName": "Plot",
+      "runtimeKind": "plot",
+      "cppType": "lithe::PlotView",
+      "paletteGroup": "Data",
+      "help": "Bounded trace view. The application supplies a completed sample snapshot on the UI thread.",
+      "defaultGeometry": { "width": 240, "height": 64 },
+      "xml": { "element": "plot", "elementAliases": [], "legacyClass": "LCDPLOTVIEW", "legacyClassAliases": [] },
+      "parentRule": { "rootAllowed": false, "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"] },
+      "childPolicy": "none",
+      "propertyIds": ["frame", "runtime-id", "background-color", "foreground-color", "accent-color", "border-color", "border-width", "visible", "enabled"],
+      "actions": [], "bindings": [],
+      "states": [{ "id": "visible", "displayName": "Visible" }, { "id": "disabled", "displayName": "Disabled" }],
+      "inputCapabilities": [], "resources": []
+    },
+    {
+      "id": "lithe.widget.waterfall",
+      "displayName": "Waterfall",
+      "runtimeKind": "waterfall",
+      "cppType": "lithe::WaterfallView",
+      "paletteGroup": "Data",
+      "help": "Bounded color history. The application binds caller-owned packed storage and a 16-color palette, then publishes rows on the UI thread.",
+      "defaultGeometry": { "width": 240, "height": 100 },
+      "xml": { "element": "waterfall", "elementAliases": [], "legacyClass": "LCDWATERFALLVIEW", "legacyClassAliases": [] },
+      "parentRule": { "rootAllowed": false, "allowedParentIds": ["lithe.widget.panel", "lithe.widget.scroll", "lithe.widget.table"] },
+      "childPolicy": "none",
+      "propertyIds": ["frame", "runtime-id", "background-color", "border-color", "border-width", "visible", "enabled"],
+      "actions": [], "bindings": [],
+      "states": [{ "id": "visible", "displayName": "Visible" }, { "id": "disabled", "displayName": "Disabled" }],
+      "inputCapabilities": [], "resources": []
     }
   ],
   "migrations": []

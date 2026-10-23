@@ -342,7 +342,7 @@ void View::invalidate() noexcept
 {
     mDirty = true;
     mDirtyRegion = {};
-    if (resolvedStyle().background.alpha < 255U && mParent != nullptr)
+    if (mParent != nullptr)
     {
         mParent->invalidateRegion(frameInRoot());
     }
@@ -364,7 +364,7 @@ void View::invalidateRegion(Rect rootRegion) noexcept
     {
         setDirtyRegion(unite(mDirtyRegion, rootRegion));
     }
-    if (mStyle.background.alpha < 255U && mParent != nullptr)
+    if (mParent != nullptr)
     {
         mParent->invalidateRegion(rootRegion);
     }

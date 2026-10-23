@@ -7,7 +7,7 @@
   <!--litheview-component id="component.main.loaded" name="loadedLabel"-->
   <label frame="80,54,320,18" text="LOADED: NONE" backgroundColor="0x00303030" textColor="0x00ffffff" textScale="1" />
   <!--litheview-component id="component.main.entries" name="entryList"-->
-  <panel frame="110,80,260,108" backgroundColor="0x00181818" textColor="0x00ffffff" accentColor="0x00805020" textScale="2" borderColor="0x00606060" borderWidth="1" />
+  <list frame="110,80,260,108" items="SESSION A|SESSION B|DEMO LOOP|RECORDING 1|RECORDING 2|REHEARSAL|BACKUP|FACTORY" selectedIndex="0" rowHeight="36" backgroundColor="0x00181818" textColor="0x00ffffff" accentColor="0x00805020" textScale="2" borderColor="0x00606060" borderWidth="1" />
   <!--litheview-component id="component.main.load" name="loadButton"-->
   <button frame="110,210,120,40" text="LOAD" textScale="2" textColor="0x00ffffff" backgroundColor="0x00805020" />
   <!--litheview-component id="component.main.back" name="backButton"-->

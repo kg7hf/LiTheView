@@ -88,7 +88,7 @@ public static partial class FormSurfaceValidator
             .OfType<FormTextValue>().Any(item => item.PropertyId == "focus-policy" && item.Value == "true");
         return explicitFocus || component.Widget.RuntimeKind is
             "button" or "checkbox" or "radio" or "textField" or "picker" or "softkey" or "tabBar" or "tabView" or
-            "wheelPicker" or "dropDown" or "scroll" or "table"
+            "wheelPicker" or "dropDown" or "list" or "scroll" or "table"
             ? SurfacePlacementPolicy.SafeArea : SurfacePlacementPolicy.ClipToViewport;
     }
 }

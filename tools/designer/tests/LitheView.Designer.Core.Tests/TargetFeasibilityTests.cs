@@ -291,9 +291,11 @@ internal static class TargetFeasibilityTests
         TargetFeasibilityResult counts = Evaluate(counted, target, Bound(counted));
         Require(Constraint(counts, "children-per-view").Used == 3 && Constraint(counts, "focusable-views").Used == 1,
             "Focus capacity must follow runtime ViewKind defaults and explicit policy, not all widget input handlers.");
-        Product tooManyChildren = CompilePlain(repositoryRoot, catalog, definition, PlainForm(definition, 17));
-        Require(Constraint(Evaluate(tooManyChildren, target, Bound(tooManyChildren)), "children-per-view").Status ==
-            ValidationStageStatus.Failed, "A valid surface can exceed the target's child capacity.");
+        FormCppCompilationResult tooManyChildren =
+            FormCppCompiler.Compile(PlainForm(definition, 17), catalog);
+        Require(!tooManyChildren.IsValid &&
+            tooManyChildren.Diagnostics.Any(item => item.Code == "LVFG1002"),
+            "A form exceeding the portable child limit must fail before target evaluation.");
         FormComponent[] deep = new FormComponent[11];
         deep[0] = Component(0, "panel", null, new(0, 0, definition.Geometry.Width, definition.Geometry.Height));
         for (int index = 1; index < deep.Length; ++index)

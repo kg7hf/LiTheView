@@ -22,3 +22,15 @@ if(LITHEVIEW_BUILD_GENERATED_FONTS)
     install(FILES generated_sans_bold.json generated_sans_regular.json
         DESTINATION ${CMAKE_INSTALL_DATADIR}/LitheView/fonts)
 endif()
+if(LITHEVIEW_BUILD_GENERATED_SANS20)
+    litheview_add_font_resource(litheview_generated_sans20 GeneratedSans20
+        generated_sans_20_regular.cpp generated_sans_20_bold.cpp)
+    install(FILES generated_sans_20_regular.json generated_sans_20_bold.json
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/LitheView/fonts)
+endif()
+if(LITHEVIEW_BUILD_GENERATED_SANS28)
+    litheview_add_font_resource(litheview_generated_sans28 GeneratedSans28
+        generated_sans_28_regular.cpp generated_sans_28_bold.cpp)
+    install(FILES generated_sans_28_regular.json generated_sans_28_bold.json
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/LitheView/fonts)
+endif()

@@ -6,7 +6,8 @@ as recorded in [NOTICE.md](NOTICE.md) and [LICENSE](LICENSE); the separate terms
 
 ## Optional generated fonts
 
-`resources/fonts/generated_sans_regular.cpp` and `generated_sans_bold.cpp` contain coverage and metrics
+`resources/fonts/generated_sans_regular.cpp`, `generated_sans_bold.cpp`, and the
+`generated_sans_20_*` and `generated_sans_28_*` files contain coverage and metrics
 generated from DejaVu Sans and DejaVu Sans Bold. Copyright (c) 2003 Bitstream, Inc.; DejaVu changes
 are in the public domain; imported Arev glyphs carry Copyright (c) 2006 Tavmjong Bah. The complete
 upstream notice, including its additional font notices, is in [DejaVu-LICENSE.txt](licenses/DejaVu-LICENSE.txt).

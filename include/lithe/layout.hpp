@@ -149,7 +149,13 @@ using AllWidgets = WidgetSet<ViewKind::panel,
                              ViewKind::tabBar,
                              ViewKind::tabView,
                              ViewKind::wheelPicker,
-                             ViewKind::dropDown>;
+                             ViewKind::dropDown,
+                             ViewKind::list,
+                             ViewKind::plot,
+                             ViewKind::waterfall,
+                             ViewKind::axis,
+                             ViewKind::markerRange,
+                             ViewKind::meter>;
 
 template <std::size_t Capacity,
           typename Widgets = AllWidgets,
@@ -435,6 +441,43 @@ public:
                                        spec.style);
                 }
                 break;
+            case ViewKind::list:
+                if constexpr (builds(ViewKind::list))
+                {
+                    construct<ListView>(index, spec.frame, *nodeFont, spec.text,
+                                        spec.selectedIndex, spec.rowHeight, spec.style);
+                }
+                break;
+            case ViewKind::plot:
+                if constexpr (builds(ViewKind::plot))
+                {
+                    construct<PlotView>(index, spec.frame, spec.style);
+                }
+                break;
+            case ViewKind::waterfall:
+                if constexpr (builds(ViewKind::waterfall))
+                {
+                    construct<WaterfallView>(index, spec.frame, spec.style);
+                }
+                break;
+            case ViewKind::axis:
+                if constexpr (builds(ViewKind::axis))
+                {
+                    construct<AxisView>(index, spec.frame, *nodeFont, spec.style);
+                }
+                break;
+            case ViewKind::markerRange:
+                if constexpr (builds(ViewKind::markerRange))
+                {
+                    construct<MarkerRangeView>(index, spec.frame, *nodeFont, spec.style);
+                }
+                break;
+            case ViewKind::meter:
+                if constexpr (builds(ViewKind::meter))
+                {
+                    construct<MeterView>(index, spec.frame, *nodeFont, spec.style);
+                }
+                break;
             case ViewKind::dropDown:
                 if constexpr (builds(ViewKind::dropDown))
                 {
@@ -520,6 +563,14 @@ public:
     const View* root() const noexcept
     {
         return mRoot;
+    }
+    // Checked typed index access is useful to tools that inspect a parsed form
+    // before it has application-assigned runtime IDs.
+    template <typename ViewType> ViewType* at(std::size_t index) noexcept
+    {
+        if (index >= mCount || mKinds[index] != kindFor<ViewType>())
+            return nullptr;
+        return storedAs<ViewType>(index);
     }
     View* find(ViewId id) noexcept
     {
@@ -644,6 +695,12 @@ private:
         TabView tabView;
         WheelPickerView wheelPicker;
         DropDownView dropDown;
+        ListView list;
+        PlotView plot;
+        WaterfallView waterfall;
+        AxisView axis;
+        MarkerRangeView markerRange;
+        MeterView meter;
     };
 
     template <typename ViewType> static constexpr ViewKind kindFor() noexcept
@@ -715,6 +772,30 @@ private:
         else if constexpr (std::is_same_v<ViewType, TabView>)
         {
             return ViewKind::tabView;
+        }
+        else if constexpr (std::is_same_v<ViewType, ListView>)
+        {
+            return ViewKind::list;
+        }
+        else if constexpr (std::is_same_v<ViewType, PlotView>)
+        {
+            return ViewKind::plot;
+        }
+        else if constexpr (std::is_same_v<ViewType, WaterfallView>)
+        {
+            return ViewKind::waterfall;
+        }
+        else if constexpr (std::is_same_v<ViewType, AxisView>)
+        {
+            return ViewKind::axis;
+        }
+        else if constexpr (std::is_same_v<ViewType, MarkerRangeView>)
+        {
+            return ViewKind::markerRange;
+        }
+        else if constexpr (std::is_same_v<ViewType, MeterView>)
+        {
+            return ViewKind::meter;
         }
         else if constexpr (std::is_same_v<ViewType, DropDownView>)
         {
@@ -796,6 +877,30 @@ private:
         else if constexpr (std::is_same_v<ViewType, TabView>)
         {
             return &storage.tabView;
+        }
+        else if constexpr (std::is_same_v<ViewType, ListView>)
+        {
+            return &storage.list;
+        }
+        else if constexpr (std::is_same_v<ViewType, PlotView>)
+        {
+            return &storage.plot;
+        }
+        else if constexpr (std::is_same_v<ViewType, WaterfallView>)
+        {
+            return &storage.waterfall;
+        }
+        else if constexpr (std::is_same_v<ViewType, AxisView>)
+        {
+            return &storage.axis;
+        }
+        else if constexpr (std::is_same_v<ViewType, MarkerRangeView>)
+        {
+            return &storage.markerRange;
+        }
+        else if constexpr (std::is_same_v<ViewType, MeterView>)
+        {
+            return &storage.meter;
         }
         else if constexpr (std::is_same_v<ViewType, DropDownView>)
         {
@@ -879,6 +984,30 @@ private:
         {
             return &storage.tabView;
         }
+        else if constexpr (std::is_same_v<ViewType, ListView>)
+        {
+            return &storage.list;
+        }
+        else if constexpr (std::is_same_v<ViewType, PlotView>)
+        {
+            return &storage.plot;
+        }
+        else if constexpr (std::is_same_v<ViewType, WaterfallView>)
+        {
+            return &storage.waterfall;
+        }
+        else if constexpr (std::is_same_v<ViewType, AxisView>)
+        {
+            return &storage.axis;
+        }
+        else if constexpr (std::is_same_v<ViewType, MarkerRangeView>)
+        {
+            return &storage.markerRange;
+        }
+        else if constexpr (std::is_same_v<ViewType, MeterView>)
+        {
+            return &storage.meter;
+        }
         else if constexpr (std::is_same_v<ViewType, DropDownView>)
         {
             return &storage.dropDown;
@@ -913,7 +1042,13 @@ private:
                       TabBarView,
                       TabView,
                       WheelPickerView,
-                      DropDownView>(storage, kind, action);
+                      DropDownView,
+                      ListView,
+                      PlotView,
+                      WaterfallView,
+                      AxisView,
+                      MarkerRangeView,
+                      MeterView>(storage, kind, action);
     }
 
     template <typename... ViewTypes, typename Storage, typename Action>

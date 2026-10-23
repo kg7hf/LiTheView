@@ -37,8 +37,9 @@ records the library and output locations; your application CMake build integrate
 them. See [project layouts and path configuration](docs/APPLICATION_INTEGRATION.md).
 
 The examples in this repository are hosted here for distribution. When following
-a starter, open that **example's folder** as the application workspace; its own
-LiTheView submodule demonstrates the dependency relationship. You do not need to
+a starter, open that **example's folder** as the application workspace; the
+guided starters use LiTheView submodules to demonstrate the dependency
+relationship. You do not need to
 put your product inside this repository or adopt its library-development layout.
 
 ## Getting started
@@ -54,6 +55,7 @@ window, VS Code designer setup and the additional H750 application requirements.
 | Follow the Windows/STM32 lesson | [H750 starter](examples/stm32h750b-dk-starter-1/README.md), after its application prerequisites |
 | Build a menu with volume, playback and a selectable Load list | [Completed H750 menu](examples/stm32h750b-dk-menu-1-complete/README.md) and [blank-to-menu round L4R9 tutorial](examples/stm32l4r9i-disco-menu-1/README.md); both use FreeRTOS on Windows and STM32 |
 | Build a segmented menu on Tiny Gecko | [Blank guided starter](examples/efm32tg-stk3300-menu-1/README.md) and [completed reference](examples/efm32tg-stk3300-menu-1-complete/README.md); Windows and bare-metal EFM32 share the FSM |
+| Explore plots and waterfall displays | [H750 SDR display demo](examples/stm32h750b-dk-sdr/README.md), with a shared Windows/STM32 UI and synthetic samples; [portable view contract](docs/TELEMETRY_VIEWS.md) |
 
 The starter pair includes the physical-button bonus, native RGB565 rendering and
 portable application tool discovery. The guided starter remains blank; the completed
@@ -107,15 +109,19 @@ by the build.
 - Opaque RGB565/RGB888/XRGB8888 assets plus ARGB8888, 4-bit indexed, one-bit-alpha, and
   anti-aliased-alpha assets, with allocation-free integer bitmap scaling.
 - Caller-owned `Display`, `Font`, and `ResourceProvider` interfaces.
-- Compile-time-selectable compact 5 by 7 and generated ROM font backends, with regular/bold faces,
+- Compile-time-selectable compact 5 by 7 and generated ROM font backends, including optional
+  14, 20, and 28 px Sans regular/bold faces,
   bounded UTF-8 repertoires, anti-aliased coverage, measurement, wrapping, ellipsis, multiline layout,
   underline, line spacing, and per-run color.
 - Fixed-capacity retained view trees with labels, text/icon and momentary/toggle buttons,
   checkboxes, radio buttons, caller-buffer text fields, progress, images/icons, lines, scrolling,
-  scrolling table containers, delimiter-backed pickers and drop-downs, and two-sided softkeys.
+  scrolling table containers, selectable lists, delimiter-backed pickers and drop-downs, and two-sided softkeys.
+- Caller-owned plot traces, a tick-and-label axis, marker/range overlays,
+  integer-calibrated meters, and four-bit indexed waterfall history with a
+  16-color palette, rendered directly into the selected destination.
 - Typed control/form handlers for button clicks, toggles, checkbox/radio selections, picker values,
   drop-down selection/commit/cancel and bounded text editing. Generated hooks preserve application
-  code; selectable table data/selection behavior remains planned.
+  code; a reusable selectable list reports selection changes and activation.
 - A lightweight MVC layer: focus navigation, captured press/move/release/cancel touch, draggable
   scrollbar thumbs, delegate actions, automatic scroll reveal, and a bounded controller stack.
 - Configurable rectangular or circular logical viewports, implemented with integer clipping and no
@@ -292,6 +298,7 @@ For the XML dialect and lifetime contract, see [docs/XML_LAYOUT.md](docs/XML_LAY
 [font and text pipeline](docs/FONTS.md),
 [theme colors and widget states](docs/THEMES_AND_WIDGET_STATES.md),
 [button variants](docs/BUTTONS.md),
+[plot and waterfall views](docs/TELEMETRY_VIEWS.md),
 [tab bar and tab view](docs/TABS.md),
 [wheel picker](docs/WHEEL_PICKER.md),
 [designer architecture](docs/DESIGNER.md),

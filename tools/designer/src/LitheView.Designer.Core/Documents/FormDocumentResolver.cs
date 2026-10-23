@@ -457,12 +457,22 @@ public static class FormDocumentResolver
         string componentPath,
         List<ProfileDiagnostic> diagnostics)
     {
-        if (!FormWheelRules.IsWheelPicker(widget) && widget.RuntimeKind != "dropDown")
+        if (!FormWheelRules.IsWheelPicker(widget) && widget.RuntimeKind is not ("dropDown" or "list"))
         {
             return;
         }
         FormPropertyValue[] values = [.. properties.Select(item => item.Value)];
         int count = FormWheelRules.CountItems(values);
+        if (widget.RuntimeKind == "list")
+        {
+            if (count > 64 || count == 0 && FormTabRules.SelectedIndex(values) != 0 ||
+                count != 0 && FormTabRules.SelectedIndex(values) >= (ulong)count)
+            {
+                AddError(diagnostics, "LVFD1136", componentPath,
+                    "A list accepts zero through 64 preview items, and its selected index must name an item.");
+            }
+            return;
+        }
         if (count is 0 or > FormWheelRules.MaximumItems || FormTabRules.SelectedIndex(values) >= (ulong)count)
         {
             AddError(

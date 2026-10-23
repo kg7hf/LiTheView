@@ -1,0 +1,5 @@
+/build/
+/CMakeUserPresets.json
+/Core/Inc/Backup/
+/Core/Src/Backup/
+/cmake/stm32cubemx/

@@ -3,17 +3,14 @@
 
 // LiTheView handwritten form: form.load
 #pragma once
+#include "../Generated/Load/form.hpp"
 #include "Application/load_selection.hpp"
 #include "Application/navigation.hpp"
-#include "Controls/selection_list.hpp"
-#include "../Generated/Load/form.hpp"
 
 #include <array>
 namespace menu
 {
-using LoadFormBase = lithe::generated::LoadMenu::Instance<
-    lithe::WidgetOverrides<lithe::generated::LoadMenu::EntryListType<controls::SelectionList>>>;
-class LoadMenuForm final : public LoadFormBase, private controls::ListEvents
+class LoadMenuForm final : public lithe::generated::LoadMenu::Instance<>
 {
 public:
     explicit LoadMenuForm(Requests& requests) noexcept : mRequests{requests}
@@ -22,8 +19,7 @@ public:
     [[nodiscard]] bool connect() noexcept
     {
         auto* list = getEntryList();
-        if (list == nullptr || getLoadedLabel() == nullptr ||
-            !list->configure(kEntries, lithe::font5x7(), *this))
+        if (list == nullptr || getLoadedLabel() == nullptr || !list->setItems(kEntries))
             return false;
         refresh();
         return true;
@@ -39,6 +35,21 @@ public:
 
 protected:
     // <litheview-handlers>
+    // litheview-handler component.main.entries onEntryListSelectionChanged
+    void onEntryListSelectionChanged(lithe::SelectionChange event) noexcept override
+    {
+        if (event.index < kIds.size())
+            mSelection.select(kIds[event.index]);
+    }
+    // litheview-handler component.main.entries onEntryListItemActivated
+    void onEntryListItemActivated(lithe::ItemActivation event) noexcept override
+    {
+        if (event.index < kIds.size())
+        {
+            mSelection.select(kIds[event.index]);
+            loadSelected();
+        }
+    }
     // litheview-handler component.main.load onLoadButtonClicked
     void onLoadButtonClicked() noexcept override
     {
@@ -56,19 +67,6 @@ protected:
     }
 
 private:
-    void onListSelectionChanged(lithe::SelectionChange event) noexcept override
-    {
-        if (event.index < kIds.size())
-            mSelection.select(kIds[event.index]);
-    }
-    void onListActivated(std::size_t index) noexcept override
-    {
-        if (index < kIds.size())
-        {
-            mSelection.select(kIds[index]);
-            loadSelected();
-        }
-    }
     void loadSelected() noexcept
     {
         mSelection.load();

@@ -8,7 +8,7 @@
 
 namespace lithe
 {
-inline constexpr unsigned kControlEventContractVersion{3U};
+inline constexpr unsigned kControlEventContractVersion{4U};
 
 class View;
 class RadioButtonView;
@@ -22,6 +22,13 @@ struct CheckedChange
 struct SelectionChange
 {
     std::size_t previousIndex;
+    std::size_t index;
+};
+
+// The index identifies an item in the caller-owned list snapshot. The application
+// maps it to a stable domain ID before changing or replacing that snapshot.
+struct ItemActivation
+{
     std::size_t index;
 };
 
@@ -64,6 +71,7 @@ public:
     ControlEventSink& operator=(ControlEventSink&&) = delete;
     virtual void checkedChanged(View& source, CheckedChange event) noexcept = 0;
     virtual void selectionChanged(View& source, SelectionChange event) noexcept = 0;
+    virtual void itemActivated(View& source, ItemActivation event) noexcept = 0;
     virtual void radioSelectionChanged(View& source, RadioSelectionChange event) noexcept = 0;
     virtual void editCommitted(View& source, SelectionEdit event) noexcept = 0;
     virtual void editCancelled(View& source, SelectionEdit event) noexcept = 0;

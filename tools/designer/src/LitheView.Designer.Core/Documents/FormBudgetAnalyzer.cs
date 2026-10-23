@@ -190,7 +190,7 @@ public static class FormBudgetAnalyzer
         // pointer handlers alone do not make a widget keyboard-focusable.
         return component.Widget.RuntimeKind is
             "button" or "checkbox" or "radio" or "textField" or "picker" or "softkey" or "tabBar" or
-            "tabView" or "wheelPicker" or "dropDown";
+            "tabView" or "wheelPicker" or "dropDown" or "list";
     }
 
     private static long CheckedAdd(

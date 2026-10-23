@@ -87,6 +87,21 @@ public static class FormCppCompiler
         {
             return new FormCppCompilationResult { Diagnostics = resolution.Diagnostics };
         }
+        var overfull = resolution.Document.Components
+            .Where(component => component.ParentIndex.HasValue)
+            .GroupBy(component => component.ParentIndex!.Value)
+            .FirstOrDefault(group => group.Count() > FormRuntimeLimits.MaximumDirectChildren);
+        if (overfull is not null)
+        {
+            string parentName = resolution.Document.Components[overfull.Key].Source.Name;
+            return new FormCppCompilationResult
+            {
+                Diagnostics = [.. resolution.Diagnostics, new ProfileDiagnostic(
+                    "LVFG1002", ProfileDiagnosticSeverity.Error, "$.components",
+                    $"'{parentName}' has {overfull.Count()} direct children; the portable limit is " +
+                    $"{FormRuntimeLimits.MaximumDirectChildren}. Group controls inside Panels.")]
+            };
+        }
         FormXmlWriteResult xml = FormXmlWriter.Write(resolution.Document);
         if (!xml.IsValid || xml.Sha256 is null)
         {
@@ -149,7 +164,7 @@ public static class FormCppCompiler
             output.AppendLine("#error \"This form requires LiTheView typed control events. Update the application LiTheView dependency.\"");
             output.AppendLine("#else");
             output.AppendLine("#include \"lithe/control_events.hpp\"");
-            output.AppendLine($"static_assert(lithe::kControlEventContractVersion >= {(runtimeKinds.Contains("dropDown") ? 3 : runtimeKinds.Contains("textField") ? 2 : 1)}U);");
+            output.AppendLine($"static_assert(lithe::kControlEventContractVersion >= {(runtimeKinds.Contains("list") ? 4 : runtimeKinds.Contains("dropDown") ? 3 : runtimeKinds.Contains("textField") ? 2 : 1)}U);");
             output.AppendLine("#endif");
             output.AppendLine();
         }

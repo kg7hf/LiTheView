@@ -5,7 +5,7 @@ This file is generated from `schema/widgets.json`; do not edit it by hand.
 - Catalog: `litheview.widgets.builtin`
 - Schema version: `1`
 - Compatibility version: `1`
-- Canonical SHA-256: `7bba9e94b158a2e9795e3c3da7e353d512fd7458ce86f1c22c9e31d757b6cc5f`
+- Canonical SHA-256: `0a62fd6a3f77b871d0c3a1e40c1cd6a5210ac4f1c3647b542fc3487d8ea03016`
 
 ## Animated Image
 
@@ -76,6 +76,59 @@ None.
 ### Resources
 
 - `animationFrames` through `animation-frames` (required)
+
+## Axis
+
+Bounded tick and label scale. The application supplies calibrated positions and caller-owned labels on the UI thread.
+
+- ID: `lithe.widget.axis`
+- Runtime kind/type: `axis` / `lithe::AxisView`
+- XML: `<axis>` / `LCDAXISVIEW`
+- Default geometry: `240 by 16` pixels
+- Child policy: `none`
+
+| Property | Kind | XML | Default | Range | Required | C++ member |
+| --- | --- | --- | --- | --- | --- | --- |
+| `background-color` | `color` | `backgroundColor` | `"#00000000"` | - | no | `spec.style.background` |
+| `enabled` | `boolean` | `enabled` | `true` | - | no | `spec.enabled` |
+| `font` | `font` | `font` | `""` | - | no | `spec.font` |
+| `foreground-color` | `color` | `textColor` | `"#FFFFFFFF"` | - | no | `spec.style.foreground` |
+| `frame` | `rectangle` | `frame` | `[0, 0, 1, 1]` | - | yes | `spec.frame` |
+| `runtime-id` | `unsignedInteger` | `runtimeID` | `0` | 0 to 65535 | no | `spec.id` |
+| `text-scale` | `unsignedInteger` | `textScale` | `1` | 1 to 8 | no | `spec.style.textScale` |
+| `visible` | `boolean` | `hide` | `true` | - | no | `spec.visible` |
+
+### Property details
+
+- `background-color`: RGBA background color; a transparent value leaves the existing surface visible.
+- `enabled`: Initial interaction state; disabled views remain renderable but cannot receive focus.
+- `font`: Optional font resource name; an empty value selects the caller-provided default font.
+- `foreground-color`: RGBA foreground color used for text and primary strokes.
+- `frame`: Integer x, y, width, and height relative to the parent; width and height are positive.
+- `runtime-id`: Optional 16-bit runtime view and default action identifier; zero means unassigned.
+- `text-scale`: Integer nearest-neighbor scale applied by the selected font backend.
+- `visible`: Initial visibility. XML stores the inverse historical hide flag.
+
+### Actions
+
+None.
+
+### Bindings
+
+None.
+
+### States
+
+- `disabled` - Disabled
+- `visible` - Visible
+
+### Inputs
+
+None.
+
+### Resources
+
+- `font` through `font` (optional)
 
 ## Button
 
@@ -169,6 +222,65 @@ None.
 ### Resources
 
 - `bitmap` through `icon` (optional)
+- `font` through `font` (optional)
+
+## Calibrated Meter
+
+Integer-calibrated bar with caller-owned ticks and optional color zones. Readings remain in application units.
+
+- ID: `lithe.widget.meter`
+- Runtime kind/type: `meter` / `lithe::MeterView`
+- XML: `<meter>` / `LCDMETERVIEW`
+- Default geometry: `160 by 24` pixels
+- Child policy: `none`
+
+| Property | Kind | XML | Default | Range | Required | C++ member |
+| --- | --- | --- | --- | --- | --- | --- |
+| `accent-color` | `color` | `accentColor` | `"#2D6CDFFF"` | - | no | `spec.style.accent` |
+| `background-color` | `color` | `backgroundColor` | `"#00000000"` | - | no | `spec.style.background` |
+| `border-color` | `color` | `borderColor` | `"#00000000"` | - | no | `spec.style.border` |
+| `border-width` | `unsignedInteger` | `borderWidth` | `0` | 0 to 16 | no | `spec.style.borderWidth` |
+| `enabled` | `boolean` | `enabled` | `true` | - | no | `spec.enabled` |
+| `font` | `font` | `font` | `""` | - | no | `spec.font` |
+| `foreground-color` | `color` | `textColor` | `"#FFFFFFFF"` | - | no | `spec.style.foreground` |
+| `frame` | `rectangle` | `frame` | `[0, 0, 1, 1]` | - | yes | `spec.frame` |
+| `runtime-id` | `unsignedInteger` | `runtimeID` | `0` | 0 to 65535 | no | `spec.id` |
+| `text-scale` | `unsignedInteger` | `textScale` | `1` | 1 to 8 | no | `spec.style.textScale` |
+| `visible` | `boolean` | `hide` | `true` | - | no | `spec.visible` |
+
+### Property details
+
+- `accent-color`: RGBA accent color used for selection, progress, focus, and active state.
+- `background-color`: RGBA background color; a transparent value leaves the existing surface visible.
+- `border-color`: RGBA border color; transparent disables a visible border even when width is nonzero.
+- `border-width`: Border width in target pixels; zero disables border drawing.
+- `enabled`: Initial interaction state; disabled views remain renderable but cannot receive focus.
+- `font`: Optional font resource name; an empty value selects the caller-provided default font.
+- `foreground-color`: RGBA foreground color used for text and primary strokes.
+- `frame`: Integer x, y, width, and height relative to the parent; width and height are positive.
+- `runtime-id`: Optional 16-bit runtime view and default action identifier; zero means unassigned.
+- `text-scale`: Integer nearest-neighbor scale applied by the selected font backend.
+- `visible`: Initial visibility. XML stores the inverse historical hide flag.
+
+### Actions
+
+None.
+
+### Bindings
+
+None.
+
+### States
+
+- `disabled` - Disabled
+- `visible` - Visible
+
+### Inputs
+
+None.
+
+### Resources
+
 - `font` through `font` (optional)
 
 ## Checkbox
@@ -598,6 +710,57 @@ None.
 
 None.
 
+## Marker and Range
+
+Transparent overlay for bounded caller-owned ranges and labelled markers. Place it over another view with matching bounds.
+
+- ID: `lithe.widget.marker-range`
+- Runtime kind/type: `markerRange` / `lithe::MarkerRangeView`
+- XML: `<marker-range>` / `LCDMARKERRANGEVIEW`
+- Default geometry: `240 by 64` pixels
+- Child policy: `none`
+
+| Property | Kind | XML | Default | Range | Required | C++ member |
+| --- | --- | --- | --- | --- | --- | --- |
+| `enabled` | `boolean` | `enabled` | `true` | - | no | `spec.enabled` |
+| `font` | `font` | `font` | `""` | - | no | `spec.font` |
+| `foreground-color` | `color` | `textColor` | `"#FFFFFFFF"` | - | no | `spec.style.foreground` |
+| `frame` | `rectangle` | `frame` | `[0, 0, 1, 1]` | - | yes | `spec.frame` |
+| `runtime-id` | `unsignedInteger` | `runtimeID` | `0` | 0 to 65535 | no | `spec.id` |
+| `text-scale` | `unsignedInteger` | `textScale` | `1` | 1 to 8 | no | `spec.style.textScale` |
+| `visible` | `boolean` | `hide` | `true` | - | no | `spec.visible` |
+
+### Property details
+
+- `enabled`: Initial interaction state; disabled views remain renderable but cannot receive focus.
+- `font`: Optional font resource name; an empty value selects the caller-provided default font.
+- `foreground-color`: RGBA foreground color used for text and primary strokes.
+- `frame`: Integer x, y, width, and height relative to the parent; width and height are positive.
+- `runtime-id`: Optional 16-bit runtime view and default action identifier; zero means unassigned.
+- `text-scale`: Integer nearest-neighbor scale applied by the selected font backend.
+- `visible`: Initial visibility. XML stores the inverse historical hide flag.
+
+### Actions
+
+None.
+
+### Bindings
+
+None.
+
+### States
+
+- `disabled` - Disabled
+- `visible` - Visible
+
+### Inputs
+
+None.
+
+### Resources
+
+- `font` through `font` (optional)
+
 ## Panel
 
 General fixed-capacity container and the canonical root of a designed form.
@@ -741,6 +904,61 @@ None.
 ### Resources
 
 - `font` through `font` (optional)
+
+## Plot
+
+Bounded trace view. The application supplies a completed sample snapshot on the UI thread.
+
+- ID: `lithe.widget.plot`
+- Runtime kind/type: `plot` / `lithe::PlotView`
+- XML: `<plot>` / `LCDPLOTVIEW`
+- Default geometry: `240 by 64` pixels
+- Child policy: `none`
+
+| Property | Kind | XML | Default | Range | Required | C++ member |
+| --- | --- | --- | --- | --- | --- | --- |
+| `accent-color` | `color` | `accentColor` | `"#2D6CDFFF"` | - | no | `spec.style.accent` |
+| `background-color` | `color` | `backgroundColor` | `"#00000000"` | - | no | `spec.style.background` |
+| `border-color` | `color` | `borderColor` | `"#00000000"` | - | no | `spec.style.border` |
+| `border-width` | `unsignedInteger` | `borderWidth` | `0` | 0 to 16 | no | `spec.style.borderWidth` |
+| `enabled` | `boolean` | `enabled` | `true` | - | no | `spec.enabled` |
+| `foreground-color` | `color` | `textColor` | `"#FFFFFFFF"` | - | no | `spec.style.foreground` |
+| `frame` | `rectangle` | `frame` | `[0, 0, 1, 1]` | - | yes | `spec.frame` |
+| `runtime-id` | `unsignedInteger` | `runtimeID` | `0` | 0 to 65535 | no | `spec.id` |
+| `visible` | `boolean` | `hide` | `true` | - | no | `spec.visible` |
+
+### Property details
+
+- `accent-color`: RGBA accent color used for selection, progress, focus, and active state.
+- `background-color`: RGBA background color; a transparent value leaves the existing surface visible.
+- `border-color`: RGBA border color; transparent disables a visible border even when width is nonzero.
+- `border-width`: Border width in target pixels; zero disables border drawing.
+- `enabled`: Initial interaction state; disabled views remain renderable but cannot receive focus.
+- `foreground-color`: RGBA foreground color used for text and primary strokes.
+- `frame`: Integer x, y, width, and height relative to the parent; width and height are positive.
+- `runtime-id`: Optional 16-bit runtime view and default action identifier; zero means unassigned.
+- `visible`: Initial visibility. XML stores the inverse historical hide flag.
+
+### Actions
+
+None.
+
+### Bindings
+
+None.
+
+### States
+
+- `disabled` - Disabled
+- `visible` - Visible
+
+### Inputs
+
+None.
+
+### Resources
+
+None.
 
 ## Progress
 
@@ -962,6 +1180,89 @@ None.
 ### Resources
 
 None.
+
+## Selectable List
+
+Bounded scrolling list with caller-owned items. Up/down or touch selects a row; Select activates it. Selection and activation have separate typed handlers.
+
+- ID: `lithe.widget.list`
+- Runtime kind/type: `list` / `lithe::ListView`
+- XML: `<list>` / `LCDLISTVIEW`
+- Default geometry: `260 by 108` pixels
+- Child policy: `none`
+
+| Property | Kind | XML | Default | Range | Required | C++ member |
+| --- | --- | --- | --- | --- | --- | --- |
+| `accent-color` | `color` | `accentColor` | `"#2D6CDFFF"` | - | no | `spec.style.accent` |
+| `background-color` | `color` | `backgroundColor` | `"#00000000"` | - | no | `spec.style.background` |
+| `border-color` | `color` | `borderColor` | `"#00000000"` | - | no | `spec.style.border` |
+| `border-width` | `unsignedInteger` | `borderWidth` | `0` | 0 to 16 | no | `spec.style.borderWidth` |
+| `disabled-background-color` | `color` | `disabledBackgroundColor` | `"#00DCD4D0"` | - | no | `state.disabledBackground` |
+| `disabled-foreground-color` | `color` | `disabledForegroundColor` | `"#00786F6A"` | - | no | `state.disabledForeground` |
+| `enabled` | `boolean` | `enabled` | `true` | - | no | `spec.enabled` |
+| `focus-policy` | `enum` | `canFocus` | `"auto"` | - | no | `spec.focusable` |
+| `focused-background-color` | `color` | `focusedBackgroundColor` | `"#00DF6C2D"` | - | no | `state.focusedBackground` |
+| `focused-foreground-color` | `color` | `focusedForegroundColor` | `"#00FFFFFF"` | - | no | `state.focusedForeground` |
+| `font` | `font` | `font` | `""` | - | no | `spec.font` |
+| `foreground-color` | `color` | `textColor` | `"#FFFFFFFF"` | - | no | `spec.style.foreground` |
+| `frame` | `rectangle` | `frame` | `[0, 0, 1, 1]` | - | yes | `spec.frame` |
+| `items` | `boundedText` | `items` | `""` | - | no | `spec.text` |
+| `pressed-background-color` | `color` | `pressedBackgroundColor` | `"#00B35724"` | - | no | `state.pressedBackground` |
+| `pressed-foreground-color` | `color` | `pressedForegroundColor` | `"#00FFFFFF"` | - | no | `state.pressedForeground` |
+| `row-height` | `unsignedInteger` | `rowHeight` | `28` | 12 to 255 | no | `spec.rowHeight` |
+| `runtime-id` | `unsignedInteger` | `runtimeID` | `0` | 0 to 65535 | no | `spec.id` |
+| `selected-index` | `unsignedInteger` | `selectedIndex` | `0` | 0 to 255 | no | `spec.selectedIndex` |
+| `text-scale` | `unsignedInteger` | `textScale` | `1` | 1 to 8 | no | `spec.style.textScale` |
+| `visible` | `boolean` | `hide` | `true` | - | no | `spec.visible` |
+
+### Property details
+
+- `accent-color`: RGBA accent color used for selection, progress, focus, and active state.
+- `background-color`: RGBA background color; a transparent value leaves the existing surface visible.
+- `border-color`: RGBA border color; transparent disables a visible border even when width is nonzero.
+- `border-width`: Border width in target pixels; zero disables border drawing.
+- `disabled-background-color`: Bounded disabled-state background token. Named theme colors may be selected instead of a literal.
+- `disabled-foreground-color`: Bounded disabled-state text and stroke token. Named theme colors may be selected instead of a literal.
+- `enabled`: Initial interaction state; disabled views remain renderable but cannot receive focus.
+- `focus-policy`: Auto uses the widget default; true or false emits an explicit canFocus override.
+- `focused-background-color`: Bounded focused-state background token. Named theme colors may be selected instead of a literal.
+- `focused-foreground-color`: Bounded focused-state text and stroke token. Named theme colors may be selected instead of a literal.
+- `font`: Optional font resource name; an empty value selects the caller-provided default font.
+- `foreground-color`: RGBA foreground color used for text and primary strokes.
+- `frame`: Integer x, y, width, and height relative to the parent; width and height are positive.
+- `items`: Pipe-delimited picker items or tab titles retained in caller-owned immutable storage.
+- `pressed-background-color`: Bounded pointer-pressed background token. Named theme colors may be selected instead of a literal.
+- `pressed-foreground-color`: Bounded pointer-pressed text and stroke token. Named theme colors may be selected instead of a literal.
+- `row-height`: Height of a wheel or drop-down list row in pixels.
+- `runtime-id`: Optional 16-bit runtime view and default action identifier; zero means unassigned.
+- `selected-index`: Initial picker item or tab; the runtime clamps a picker value, and tabs require an existing tab.
+- `text-scale`: Integer nearest-neighbor scale applied by the selected font backend.
+- `visible`: Initial visibility. XML stores the inverse historical hide flag.
+
+### Actions
+
+- `item-activated` (item-activated) - Item Activated; source `runtime-id`
+- `selection-changed` (selection-changed) - Selection Changed; source `runtime-id`
+
+### Bindings
+
+None.
+
+### States
+
+- `disabled` - Disabled
+- `focused` - Focused
+- `pressed` - Pressed
+- `visible` - Visible
+
+### Inputs
+
+- `keys`
+- `pointerInput`
+
+### Resources
+
+- `font` through `font` (optional)
 
 ## Softkey Bar
 
@@ -1384,6 +1685,57 @@ None.
 
 - `font` through `font` (optional)
 - `mutableTextBuffer` through `binding` (required)
+
+## Waterfall
+
+Bounded color history. The application binds caller-owned packed storage and a 16-color palette, then publishes rows on the UI thread.
+
+- ID: `lithe.widget.waterfall`
+- Runtime kind/type: `waterfall` / `lithe::WaterfallView`
+- XML: `<waterfall>` / `LCDWATERFALLVIEW`
+- Default geometry: `240 by 100` pixels
+- Child policy: `none`
+
+| Property | Kind | XML | Default | Range | Required | C++ member |
+| --- | --- | --- | --- | --- | --- | --- |
+| `background-color` | `color` | `backgroundColor` | `"#00000000"` | - | no | `spec.style.background` |
+| `border-color` | `color` | `borderColor` | `"#00000000"` | - | no | `spec.style.border` |
+| `border-width` | `unsignedInteger` | `borderWidth` | `0` | 0 to 16 | no | `spec.style.borderWidth` |
+| `enabled` | `boolean` | `enabled` | `true` | - | no | `spec.enabled` |
+| `frame` | `rectangle` | `frame` | `[0, 0, 1, 1]` | - | yes | `spec.frame` |
+| `runtime-id` | `unsignedInteger` | `runtimeID` | `0` | 0 to 65535 | no | `spec.id` |
+| `visible` | `boolean` | `hide` | `true` | - | no | `spec.visible` |
+
+### Property details
+
+- `background-color`: RGBA background color; a transparent value leaves the existing surface visible.
+- `border-color`: RGBA border color; transparent disables a visible border even when width is nonzero.
+- `border-width`: Border width in target pixels; zero disables border drawing.
+- `enabled`: Initial interaction state; disabled views remain renderable but cannot receive focus.
+- `frame`: Integer x, y, width, and height relative to the parent; width and height are positive.
+- `runtime-id`: Optional 16-bit runtime view and default action identifier; zero means unassigned.
+- `visible`: Initial visibility. XML stores the inverse historical hide flag.
+
+### Actions
+
+None.
+
+### Bindings
+
+None.
+
+### States
+
+- `disabled` - Disabled
+- `visible` - Visible
+
+### Inputs
+
+None.
+
+### Resources
+
+None.
 
 ## Wheel Picker
 

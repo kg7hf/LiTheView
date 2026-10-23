@@ -355,7 +355,8 @@ Shared event metadata drives generation, service discovery and the VS Code Event
 inspector. Component/event bindings preserve handwritten bodies and legacy click
 comments. [Control objects](CONTROL_OBJECTS.md) defines the implemented payloads,
 edit boundaries and ownership. The October 17 increment adds bounded text editing;
-selectable table contracts and named tab/softkey events remain open; the table below records the current boundaries.
+selectable list support is now implemented; selectable table contracts and named
+tab/softkey events remain open. The table below records the current boundaries.
 Validation and the separate hardware acceptance boundary are recorded in the handoff.
 Packaged Designer 0.2.9 acceptance passed on October 16 with 24 workflow checks,
 including multiple event handlers and preservation through save/reopen/regeneration.
@@ -375,6 +376,7 @@ or a completed physical H750 walkthrough.
 | Picker / wheel picker | Selection changed; edit committed/cancelled where the interaction supports editing | Implemented typed selection events and wheel commit/cancel lifecycle. Picker selection is immediate and has no separate edit session. |
 | Text field / edit box | Text changed, edit committed, edit cancelled where supported; bounded accepted text and edit context | Implemented typed change/commit/cancel, explicit caller-owned rollback storage, validation before commit and cancellation on focus loss. A separate starter is deferred. |
 | Drop-down list | Selection changed and committed/cancelled according to its interaction contract; item identity | Implemented in 0.2.11: borrowed immutable items, index identity, bounded native popup, tentative changes, explicit commit, cancellation on Back/outside press/focus loss, generated typed handlers. |
+| Selectable list | Selection changed and item activated, with a row index mapped to an application ID | Implemented: `ListView` has 0–64 borrowed entries, bounded scrolling and separate typed handlers. The designer previews authored entries and generates the real list. Application `setItems()` and `setSelectedIndex()` are silent; the H750 Load menu is the consumer. |
 | Table | Selection changed, row/item activated, and cell edit committed if editing is supported; item identity and column where relevant | `TableView` is currently a scrolling child container. Data, selection and optional editing are new contracts, not handler-only additions. |
 
 The shared catalogue records supported events or an explicit no-application-event policy for every

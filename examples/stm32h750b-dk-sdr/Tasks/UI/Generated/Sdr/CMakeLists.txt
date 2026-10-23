@@ -1,0 +1,12 @@
+# Generated UI component. The parent application owns executables and devices.
+if(NOT TARGET LitheView::Core)
+    find_package(LitheView CONFIG REQUIRED)
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/resources.cmake")
+add_library(litheview_generated_SDRSpectrum INTERFACE)
+add_library(LitheView::FormSDRSpectrum ALIAS litheview_generated_SDRSpectrum)
+target_link_libraries(litheview_generated_SDRSpectrum INTERFACE LitheView::Core)
+target_include_directories(litheview_generated_SDRSpectrum INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
+if(LITHEVIEW_SELECTED_RESOURCE_SOURCES)
+    target_sources(litheview_generated_SDRSpectrum INTERFACE ${LITHEVIEW_SELECTED_RESOURCE_SOURCES})
+endif()

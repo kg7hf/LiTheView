@@ -8,7 +8,7 @@ namespace LitheView.Designer.Service.Tests;
 
 internal static partial class Program
 {
-    private static async Task CheckControlEventsAsync(DesignerService service, DesignerWorkspace workspace, string library)
+    private static async Task CheckControlEventsAsync(DesignerService service, DesignerWorkspace workspace, string library, bool native)
     {
         string xml = File.ReadAllText(Path.Combine(library, "tests", "designer-fixtures", "control-events", "form.xml"));
         ServiceResponse inspect = await RequestAsync(service, workspace, xml, "inspect").ConfigureAwait(false);
@@ -50,6 +50,27 @@ internal static partial class Program
         }
         Require(!File.Exists(Result(described).GetProperty("handlerPath").GetString()),
             "Handler discovery leaves application-owned source alone.");
+        string listXml = File.ReadAllText(Path.Combine(library, "tests", "designer-fixtures", "selectable-list", "form.xml"));
+        ServiceResponse listInspected = await RequestAsync(service, workspace, listXml, "inspect").ConfigureAwait(false);
+        ServiceResponse listDescribed = await RequestAsync(service, workspace, listXml, "handlers").ConfigureAwait(false);
+        Require(listInspected.Ok && listDescribed.Ok, "Selectable list inspection and handler discovery succeed.");
+        JsonElement[] listHandlers = [.. Result(listDescribed).GetProperty("handlers").EnumerateArray()];
+        Require(listHandlers.Length == 2, "List selection and activation are distinct events.");
+        foreach (var expected in new[] { ("selectionChanged", "SelectionChange"), ("itemActivated", "ItemActivation") })
+        {
+            JsonElement handler = listHandlers.Single(item => item.GetProperty("eventId").GetString() == expected.Item1);
+            Require(handler.GetProperty("componentId").GetString() == "entries" &&
+                handler.GetProperty("parameterType").GetString() == "lithe::" + expected.Item2,
+                "List handler preserves typed source and payload.");
+        }
+        if (native)
+        {
+            ServiceResponse renderedList = await RequestAsync(service, workspace, listXml, "render").ConfigureAwait(false);
+            JsonElement frame = renderedList.Ok ? Result(renderedList) : default;
+            byte[] pixels = renderedList.Ok ? Convert.FromBase64String(frame.GetProperty("rgbaBase64").GetString()!) : [];
+            Require(renderedList.Ok && frame.GetProperty("status").GetString() == "Ok" &&
+                pixels.Length == 480 * 272 * 4, "Selectable list renders through native preview worker.");
+        }
         string dropDownXml = File.ReadAllText(Path.Combine(library, "tests", "designer-fixtures", "drop-down-events", "form.xml"));
         ServiceResponse dropDownInspected = await RequestAsync(service, workspace, dropDownXml, "inspect").ConfigureAwait(false);
         ServiceResponse dropDownDescribed = await RequestAsync(service, workspace, dropDownXml, "handlers").ConfigureAwait(false);

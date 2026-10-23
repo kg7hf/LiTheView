@@ -80,7 +80,8 @@ This increment preserves the local starter work and does not publish its adapter
 Complete and demonstrate the typed control-event workflow before extending image/font authoring
 workflows. The implemented controls have automated host and packaged Designer 0.2.9 coverage;
 bounded text and drop-down events have runtime and generated-handler regression coverage.
-Dedicated control starters, selectable table interaction and physical H750 acceptance remain open.
+Dedicated control starters, selectable table interaction and physical H750 acceptance
+for the new library list remain open.
 Progression and status:
 
 1. Exercise the existing button-to-label handler from discovery in VS Code through regeneration,
@@ -92,8 +93,11 @@ Progression and status:
    starter until requested; keep individual control lessons separate instead of expanding starter 1.
    Drop-down selection is also implemented in Designer 0.2.11: a bounded native popup, tentative
    changes, explicit commit/cancel, immutable index identity and generated handler discovery.
-   Next define the table selection/data contract. The current table is a scroll container,
-   not a selectable data table. Keep individual control examples deferred until requested.
+   The reusable selectable `ListView` is now implemented with 0–64 borrowed entries,
+   bounded scrolling and distinct selection/activation events. The H750 completed Load
+   menu exercises its generated typed handlers. Next define the table data and cell
+   identity contract; `TableView` is still a scroll container. Keep individual control
+   examples deferred until requested.
 4. Follow with source validation, native bitmap encoding and resource preview, then the font workflow.
 
 The [control-event milestone](VSCODE_DESIGNER_PLAN.md#control-event-milestone) specifies semantics,

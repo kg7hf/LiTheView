@@ -7,10 +7,14 @@ These are immutable resource payloads, separate from the portable library in `sr
 | --- | --- | --- |
 | `LitheView::CompactFont` | `LITHEVIEW_BUILD_COMPACT_FONT` | Compact 5 by 7 regular and synthetic bold font |
 | `LitheView::GeneratedFonts` | `LITHEVIEW_BUILD_GENERATED_FONTS` | Checked DejaVu Sans regular and bold coverage and metrics |
+| `LitheView::GeneratedSans20` | `LITHEVIEW_BUILD_GENERATED_SANS20` | Optional 20 px DejaVu Sans regular and bold faces |
+| `LitheView::GeneratedSans28` | `LITHEVIEW_BUILD_GENERATED_SANS28` | Optional 28 px DejaVu Sans regular and bold faces |
 
 Both resource targets depend on `LitheView::Core`. Core has no dependency on either resource.
 CompactFont is available by default. GeneratedFonts is enabled by default only when selected by a
 repository showcase or the full example conformance suite; a consuming application enables it explicitly.
+The 20 and 28 px targets are opt-in, independent of the existing 14 px target. Each face is
+pre-rasterized at its actual pixel size; selecting a larger face does not scale a smaller bitmap at runtime.
 
 ```cmake
 set(LITHEVIEW_BUILD_GENERATED_FONTS ON CACHE BOOL "Application uses the bundled Sans fonts")

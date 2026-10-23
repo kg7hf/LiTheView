@@ -168,26 +168,28 @@ One row is highlighted; this is a custom single-column list, not a set of radio 
 
 ![Eight-entry catalog scrolled to its final rows](docs/load-scrolled.png)
 
-`Controls/selection_list.hpp` is an application-owned `ControlView` with a borrowed
-immutable catalog and a typed `ListEvents` observer. `Tasks/UI/handlers/Load.hpp`
-uses the generator's named `EntryListType` override to replace the designer's
-`entryList` panel with this real control. Its callbacks update `Application/load_selection.hpp`.
-The model distinguishes selection from activation and uses typed entry IDs. No filesystem,
-audio service, erased context pointer or dynamic row allocation is involved.
+The designer's **Selectable List** is `lithe::ListView`. The Load form defines its
+position, colors, preview entries and two typed events. `Tasks/UI/handlers/Load.hpp`
+supplies the application-owned entry catalog through `setItems()` and implements
+`onEntryListSelectionChanged(SelectionChange)` and
+`onEntryListItemActivated(ItemActivation)`. Those handlers map the row index to a
+stable `EntryId` in `Application/load_selection.hpp`. Selection only highlights a
+row; activation loads it. No filesystem, audio service, erased context pointer or
+dynamic row allocation is involved.
 
 The example catalog contains eight demo entries, not files read from storage. Use the
 up/down arrow targets at the right of the list to move the selection and scroll it into
-view with touch or a mouse. Keyboard Up/Down does the same. The control accepts 1-64
+view with touch or a mouse. Keyboard Up/Down does the same. The control accepts 0-64
 rows, clamps at each end, keeps the selected row visible, and does not
 implement touch-drag scrolling, multiple columns, sorting or filesystem discovery. Those
-are later requirements for a general list/table component. The library's current
-`TableView` remains a scroll container; this lesson does not claim to implement a full
-library table or add it to the designer's widget catalog.
+are later requirements for a data table or explorer. `TableView` remains a scroll
+container, with no row or cell identity contract.
 
-The designer edits the named panel's position, dimensions and colors. Its rows are drawn
-by application C++ in the simulator and on hardware, just as the playback symbols are.
-Keep the list at `110,80,260,108` with text scale 2: three fixed 36-pixel rows.
-Generate UI preserves the handwritten type override and callbacks.
+The designer previews the list itself. Keep it at `110,80,260,108` with text scale 2:
+three fixed 36-pixel rows. Edit the `items` property to preview another catalog;
+the application remains authoritative at run time. Generate UI updates the typed
+form base while preserving the handwritten handlers. The borrowed item strings and
+array must outlive the form, and changes must occur on the UI owner task.
 
 ## How it works
 

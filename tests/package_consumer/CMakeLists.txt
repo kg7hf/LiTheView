@@ -7,7 +7,8 @@ project(LitheViewPackageConsumer LANGUAGES CXX)
 set(LITHEVIEW_SOURCE "" CACHE PATH "Optional source checkout for subdirectory integration")
 if(LITHEVIEW_SOURCE)
     foreach(option IN ITEMS BUILD_RENDERING_FIXTURES BUILD_RENDERING_TESTS BUILD_WIN32
-            BUILD_STM32U545_PROBE BUILD_TESTS BUILD_DESIGNER_PREVIEW BUILD_COMPACT_FONT BUILD_GENERATED_FONTS)
+            BUILD_STM32U545_PROBE BUILD_TESTS BUILD_DESIGNER_PREVIEW BUILD_COMPACT_FONT BUILD_GENERATED_FONTS
+            BUILD_GENERATED_SANS20 BUILD_GENERATED_SANS28)
         set(LITHEVIEW_${option} OFF CACHE BOOL "Core-only consumer" FORCE)
     endforeach()
     add_subdirectory("${LITHEVIEW_SOURCE}" litheview)
@@ -36,6 +37,13 @@ target_link_libraries(litheview_generated_fonts_consumer PRIVATE
     LitheView::GeneratedFonts)
 
 add_test(NAME litheview_generated_fonts_consumer COMMAND litheview_generated_fonts_consumer)
+endif()
+if(TARGET LitheView::GeneratedSans20 AND TARGET LitheView::GeneratedSans28)
+    add_executable(litheview_font_sizes_consumer ../font_sizes_test.cpp)
+    target_compile_features(litheview_font_sizes_consumer PRIVATE cxx_std_23)
+    target_link_libraries(litheview_font_sizes_consumer PRIVATE
+        LitheView::GeneratedSans20 LitheView::GeneratedSans28)
+    add_test(NAME litheview_font_sizes_consumer COMMAND litheview_font_sizes_consumer)
 endif()
 
 add_executable(litheview_owned_font_consumer owned_font_main.cpp)

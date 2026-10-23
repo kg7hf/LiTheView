@@ -15,6 +15,7 @@
 #include <bit>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <expected>
 #include <limits>
@@ -733,13 +734,92 @@ litheview_preview_render(const LitheViewPreviewRequest* request, LitheViewPrevie
     if (!built)
     {
         const bool missing = built.error == lithe::LayoutError::missingResource;
+        const std::string_view layoutMessage =
+            built.error == lithe::LayoutError::tooManyChildren
+                ? "LVPR1006: a view has more than 16 direct children; group widgets in panels"
+                : "LVPR1006: snapshot could not build a bounded static layout";
         return fail(*request,
                     *result,
                     missing ? LITHEVIEW_PREVIEW_STATUS_MISSING_RESOURCE
                             : LITHEVIEW_PREVIEW_STATUS_INVALID_SNAPSHOT,
                     missing ? kDiagnosticMissingResource : kDiagnosticInvalidSnapshot,
                     missing ? "LVPR1007: snapshot references an unavailable preview resource"
-                            : "LVPR1006: snapshot could not build a bounded static layout");
+                            : layoutMessage);
+    }
+
+    // Preview-only synthetic telemetry makes data widgets visible while editing.
+    // These bounded buffers are never part of a generated application; the
+    // application must publish its own snapshots and bind its own history.
+    constexpr std::int32_t kPreviewColumns{128};
+    constexpr std::int32_t kPreviewRows{48};
+    static thread_local std::array<std::array<std::uint8_t,
+        lithe::WaterfallView::requiredBytes(kPreviewColumns, kPreviewRows)>,
+        LITHEVIEW_PREVIEW_MAX_VIEWS> history{};
+    static thread_local std::array<std::uint16_t, kPreviewColumns> trace{};
+    std::array<std::uint8_t, kPreviewColumns> row{};
+    static constexpr std::array<lithe::Color, lithe::WaterfallView::kPaletteSize> palette{
+        lithe::Color::rgb(0x020a20U), lithe::Color::rgb(0x071d65U),
+        lithe::Color::rgb(0x0c41b7U), lithe::Color::rgb(0x006ff0U),
+        lithe::Color::rgb(0x00b1deU), lithe::Color::rgb(0x30dc71U),
+        lithe::Color::rgb(0x82e449U), lithe::Color::rgb(0xd5e545U),
+        lithe::Color::rgb(0xffc542U), lithe::Color::rgb(0xff8640U),
+        lithe::Color::rgb(0xffffffU), lithe::Color::rgb(0xffffffU),
+        lithe::Color::rgb(0xffffffU), lithe::Color::rgb(0xffffffU),
+        lithe::Color::rgb(0xffffffU), lithe::Color::rgb(0xffffffU)};
+    for (std::int32_t column = 0; column < kPreviewColumns; ++column)
+    {
+        const std::int32_t peak = std::max(0, 180 - 12 * std::abs(column - 76));
+        const std::int32_t level = std::min(255, 32 + (column * 17 % 24) + peak);
+        trace[std::size_t(column)] = std::uint16_t(level);
+    }
+    static constexpr std::array<lithe::AxisTick, 3U> kPreviewAxisTicks{{
+        {0U, "0"}, {32768U, "50"}, {65535U, "100"}}};
+    static constexpr std::array<lithe::OverlayRange, 1U> kPreviewRanges{{
+        {28000U, 37500U, lithe::Color::rgba(0x236dbb55U)}}};
+    static constexpr std::array<lithe::OverlayMarker, 1U> kPreviewMarkers{{
+        {32768U, lithe::Color::rgb(0xffc542U), "CENTER"}}};
+    static constexpr std::array<lithe::MeterZone, 3U> kPreviewMeterZones{{
+        {0U, 32768U, lithe::Color::rgb(0x30dc71U)},
+        {32768U, 49151U, lithe::Color::rgb(0xffc542U)},
+        {49151U, 65535U, lithe::Color::rgb(0xff6040U)}}};
+    for (std::size_t index = 0U; index < parsed.nodeCount; ++index)
+    {
+        if (auto* axis = layout.at<lithe::AxisView>(index); axis != nullptr)
+            (void)axis->setTicks(kPreviewAxisTicks);
+        if (auto* overlay = layout.at<lithe::MarkerRangeView>(index); overlay != nullptr)
+        {
+            (void)overlay->setRanges(kPreviewRanges);
+            (void)overlay->setMarkers(kPreviewMarkers);
+        }
+        if (auto* meter = layout.at<lithe::MeterView>(index); meter != nullptr)
+        {
+            (void)meter->setScale(0, 100, kPreviewAxisTicks);
+            (void)meter->setZones(kPreviewMeterZones);
+            meter->setReading(68);
+        }
+        if (auto* plot = layout.at<lithe::PlotView>(index); plot != nullptr)
+        {
+            (void)plot->setSamples(trace);
+            (void)plot->setGrid(8U, 4U, lithe::Color::rgb(0x203c50U));
+            (void)plot->setCursor(std::size_t(kPreviewColumns / 2),
+                                  lithe::Color::rgb(0xd69b3fU));
+        }
+        if (auto* waterfall = layout.at<lithe::WaterfallView>(index); waterfall != nullptr)
+        {
+            if (!waterfall->bindStorage(history[index], kPreviewColumns, kPreviewRows, palette))
+                continue;
+            for (std::int32_t age = 0; age < kPreviewRows; ++age)
+            {
+                for (std::int32_t column = 0; column < kPreviewColumns; ++column)
+                {
+                    const std::int32_t line = (column + age * 3) % kPreviewColumns;
+                    const std::int32_t streak = std::max(0, 190 - 14 * std::abs(line - 76));
+                    row[std::size_t(column)] =
+                        std::uint8_t(std::min(255, 24 + (column * 19 + age * 7) % 50 + streak));
+                }
+                (void)waterfall->pushRow(row);
+            }
+        }
     }
 
     std::span<std::byte> pixels =

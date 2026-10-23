@@ -322,15 +322,20 @@ bool strictTabStateValid(const ViewSpec& spec) noexcept
            (spec.kind == ViewKind::tabView || spec.tabHeight == detail::kDefaultTabHeightPixels);
 }
 
-// Strict wheel pickers name one through WheelPickerView::kMaximumItems items and select one of
-// them; only a wheel picker has a row height.
+// Wheel pickers and drop-downs require a selected item. A list may be empty until
+// its application supplies borrowed rows; all three expose a row height.
 bool strictWheelStateValid(const ViewSpec& spec) noexcept
 {
-    if (spec.kind != ViewKind::wheelPicker && spec.kind != ViewKind::dropDown)
+    if (spec.kind != ViewKind::wheelPicker && spec.kind != ViewKind::dropDown && spec.kind != ViewKind::list)
     {
         return spec.rowHeight == detail::kDefaultWheelRowHeightPixels;
     }
     const std::size_t count = countDelimitedItems(spec.text);
+    if (spec.kind == ViewKind::list)
+    {
+        return count <= ListView::kMaximumItems &&
+               (count == 0U ? spec.selectedIndex == 0U : spec.selectedIndex < count);
+    }
     return count != 0U && count <= WheelPickerView::kMaximumItems && spec.selectedIndex < count;
 }
 
@@ -343,6 +348,30 @@ bool setKind(std::string_view className, ViewSpec& spec) noexcept
     else if (className == "LCDSCROLLVIEW")
     {
         spec.kind = ViewKind::scroll;
+    }
+    else if (className == "LCDLISTVIEW")
+    {
+        spec.kind = ViewKind::list;
+    }
+    else if (className == "LCDPLOTVIEW")
+    {
+        spec.kind = ViewKind::plot;
+    }
+    else if (className == "LCDWATERFALLVIEW")
+    {
+        spec.kind = ViewKind::waterfall;
+    }
+    else if (className == "LCDAXISVIEW")
+    {
+        spec.kind = ViewKind::axis;
+    }
+    else if (className == "LCDMARKERRANGEVIEW")
+    {
+        spec.kind = ViewKind::markerRange;
+    }
+    else if (className == "LCDMETERVIEW")
+    {
+        spec.kind = ViewKind::meter;
     }
     else if (className == "LCDTABLEVIEW")
     {
@@ -448,6 +477,30 @@ bool setElementKind(std::string_view element, ViewSpec& spec) noexcept
     else if (element == "scroll")
     {
         spec.kind = ViewKind::scroll;
+    }
+    else if (element == "list")
+    {
+        spec.kind = ViewKind::list;
+    }
+    else if (element == "plot")
+    {
+        spec.kind = ViewKind::plot;
+    }
+    else if (element == "waterfall")
+    {
+        spec.kind = ViewKind::waterfall;
+    }
+    else if (element == "axis")
+    {
+        spec.kind = ViewKind::axis;
+    }
+    else if (element == "marker-range")
+    {
+        spec.kind = ViewKind::markerRange;
+    }
+    else if (element == "meter")
+    {
+        spec.kind = ViewKind::meter;
     }
     else if (element == "table")
     {

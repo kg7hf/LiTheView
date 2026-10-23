@@ -60,12 +60,14 @@ protected:
 
     virtual void onCheckedChanged([[maybe_unused]] CheckedChange event) noexcept;
     virtual void onSelectionChanged([[maybe_unused]] SelectionChange event) noexcept;
+    virtual void onItemActivated([[maybe_unused]] ItemActivation event) noexcept;
     virtual void onRadioSelectionChanged([[maybe_unused]] RadioSelectionChange event) noexcept;
     virtual void onEditCommitted([[maybe_unused]] SelectionEdit event) noexcept;
     virtual void onEditCancelled([[maybe_unused]] SelectionEdit event) noexcept;
 
     void notifyCheckedChanged(CheckedChange event) noexcept;
     void notifySelectionChanged(SelectionChange event) noexcept;
+    void notifyItemActivated(ItemActivation event) noexcept;
     void notifyRadioSelectionChanged(RadioSelectionChange event) noexcept;
     void notifyEditCommitted(SelectionEdit event) noexcept;
     void notifyEditCancelled(SelectionEdit event) noexcept;

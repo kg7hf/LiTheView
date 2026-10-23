@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <iostream>
 #include <span>
+#include <string>
 #include <string_view>
 
 namespace
@@ -616,6 +617,75 @@ void testWheelPicker(TestContext& context)
                    "tapping the row above selects the same item as one step back");
 }
 
+void testTelemetryPreview(TestContext& context)
+{
+    constexpr std::string_view snapshot =
+        "<panel frame=\"0,0,64,48\" backgroundColor=\"0x00000000\">"
+        "<plot frame=\"0,0,64,16\" backgroundColor=\"0x00000000\" "
+        "textColor=\"0x0000ff00\"/>"
+        "<marker-range frame=\"0,0,64,16\"/>"
+        "<axis frame=\"0,16,64,12\" backgroundColor=\"0x00000000\" "
+        "textColor=\"0x00ffffff\"/>"
+        "<waterfall frame=\"0,28,64,20\" backgroundColor=\"0x00000000\"/>"
+        "</panel>";
+    const auto status = render(LITHEVIEW_PREVIEW_PIXEL_RGB565,
+                               LITHEVIEW_PREVIEW_SHAPE_RECTANGLE,
+                               LITHEVIEW_PREVIEW_QUANTIZATION_NATIVE, {}, 0U, snapshot);
+    context.expect(status.status == LITHEVIEW_PREVIEW_STATUS_OK,
+                   "plot, marker overlay, axis and waterfall render through the real preview worker");
+    bool plotContent{false};
+    bool axisContent{false};
+    bool waterfallContent{false};
+    for (std::size_t y = 0U; y < std::size_t(kHeight); ++y)
+    {
+        for (std::size_t x = 0U; x < std::size_t(kWidth); ++x)
+        {
+            const std::size_t offset = (y * std::size_t(kWidth) + x) * 2U;
+            const bool lit = gPixels[offset] != 0U || gPixels[offset + 1U] != 0U;
+            plotContent = plotContent || (y < 16U && lit);
+            axisContent = axisContent || (y >= 16U && y < 28U && lit);
+            waterfallContent = waterfallContent || (y >= 28U && lit);
+        }
+    }
+    context.expect(plotContent, "plot preview contains a synthetic trace");
+    context.expect(axisContent, "axis preview contains synthetic tick labels");
+    context.expect(waterfallContent, "waterfall preview contains synthetic history");
+
+    constexpr std::string_view meterSnapshot =
+        "<panel frame=\"0,0,64,48\" backgroundColor=\"0x00000000\">"
+        "<meter frame=\"0,0,64,22\" backgroundColor=\"0x00000000\" "
+        "textColor=\"0x00ffffff\" accentColor=\"0x0000ff00\"/>"
+        "</panel>";
+    const auto meterStatus = render(LITHEVIEW_PREVIEW_PIXEL_RGB565,
+                                    LITHEVIEW_PREVIEW_SHAPE_RECTANGLE,
+                                    LITHEVIEW_PREVIEW_QUANTIZATION_NATIVE, {}, 0U,
+                                    meterSnapshot);
+    context.expect(meterStatus.status == LITHEVIEW_PREVIEW_STATUS_OK,
+                   "calibrated meter renders through the real preview worker");
+    const std::size_t filledOffset = (5U * std::size_t(kWidth) + 10U) * 2U;
+    const std::size_t emptyOffset = (5U * std::size_t(kWidth) + 60U) * 2U;
+    context.expect((gPixels[filledOffset] != 0U || gPixels[filledOffset + 1U] != 0U) &&
+                       gPixels[emptyOffset] == 0U && gPixels[emptyOffset + 1U] == 0U,
+                   "preview meter shows a bounded synthetic reading and unfilled track");
+}
+
+void testDirectChildLimit(TestContext& context)
+{
+    std::string snapshot{"<panel frame=\"0,0,64,48\">"};
+    for (std::size_t index = 0U; index < 17U; ++index)
+    {
+        snapshot += "<label frame=\"0,0,8,8\" text=\"X\"/>";
+    }
+    snapshot += "</panel>";
+    const auto status = render(LITHEVIEW_PREVIEW_PIXEL_RGB565,
+                               LITHEVIEW_PREVIEW_SHAPE_RECTANGLE,
+                               LITHEVIEW_PREVIEW_QUANTIZATION_NATIVE, {}, 0U, snapshot);
+    context.expect(status.status == LITHEVIEW_PREVIEW_STATUS_INVALID_SNAPSHOT &&
+                       std::string_view{gDiagnostic.data()}.find("16 direct children") !=
+                           std::string_view::npos,
+                   "overfull panels report the actionable native layout limit");
+}
+
 } // namespace
 
 int main()
@@ -630,6 +700,8 @@ int main()
     testButtonVariants(context);
     testTabs(context);
     testWheelPicker(context);
+    testTelemetryPreview(context);
+    testDirectChildLimit(context);
     std::cout << "RESULT " << (context.failures == 0U ? "PASS" : "FAIL") << '\n';
     return context.failures == 0U ? 0 : 1;
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--litheview-form schemaVersion="1" id="form.load" displayName="Load" surfaceProfileId="litheview.surface.stm32h750b-dk-rk043fn48h-rgb565"-->
+<!--litheview-component id="root" name="rootPanel"-->
+<panel frame="0,0,480,272" backgroundColor="0x00261b13">
+  <!--litheview-component id="entries" name="entryList"-->
+  <list frame="20,30,200,108" backgroundColor="0x00181818" textColor="0x00ffffff" accentColor="0x00805020" items="ONE|TWO|THREE|FOUR|FIVE|SIX" rowHeight="36" selectedIndex="0" />
+  <!--litheview-component id="loaded" name="loadedLabel"-->
+  <label frame="240,30,180,28" textColor="0x00ffffff" text="NONE" />
+</panel>

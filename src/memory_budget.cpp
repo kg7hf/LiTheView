@@ -23,8 +23,15 @@ constexpr std::size_t kTabViewMaximumBytes{112U};
 constexpr std::size_t kWheelPickerViewMaximumBytes{112U};
 constexpr std::size_t kTextFieldViewMaximumBytes{116U};
 constexpr std::size_t kDropDownViewMaximumBytes{112U};
+// Two borrowed plot traces must still fit the existing ListView-sized slot.
+constexpr std::size_t kPlotViewMaximumBytes{120U};
+constexpr std::size_t kAxisViewMaximumBytes{112U};
+constexpr std::size_t kMarkerRangeViewMaximumBytes{112U};
+constexpr std::size_t kMeterViewMaximumBytes{120U};
 constexpr std::size_t kBudgetedLayoutViewCapacity{16U};
-constexpr std::size_t kBudgetedLayoutMaximumBytes{1'900U};
+// ListView is 120 bytes on the 32-bit target. The measured StaticLayout<16>
+// footprint grows from its previous ceiling by 48 bytes.
+constexpr std::size_t kBudgetedLayoutMaximumBytes{1'948U};
 
 } // namespace
 
@@ -56,6 +63,18 @@ static_assert(sizeof(void*) != kCortexMAddressBytes ||
 static_assert(sizeof(void*) != kCortexMAddressBytes ||
                   sizeof(lithe::DropDownView) <= kDropDownViewMaximumBytes,
               "DropDownView exceeded the small-target per-widget RAM budget");
+static_assert(sizeof(void*) != kCortexMAddressBytes ||
+                  sizeof(lithe::PlotView) <= kPlotViewMaximumBytes,
+              "PlotView exceeded the small-target per-widget RAM budget");
+static_assert(sizeof(void*) != kCortexMAddressBytes ||
+                  sizeof(lithe::AxisView) <= kAxisViewMaximumBytes,
+              "AxisView exceeded the small-target per-widget RAM budget");
+static_assert(sizeof(void*) != kCortexMAddressBytes ||
+                  sizeof(lithe::MarkerRangeView) <= kMarkerRangeViewMaximumBytes,
+              "MarkerRangeView exceeded the small-target per-widget RAM budget");
+static_assert(sizeof(void*) != kCortexMAddressBytes ||
+                  sizeof(lithe::MeterView) <= kMeterViewMaximumBytes,
+              "MeterView exceeded the small-target per-widget RAM budget");
 static_assert(sizeof(void*) != kCortexMAddressBytes ||
                   sizeof(lithe::WidgetStateStyle) <= kWidgetStateStyleMaximumBytes,
               "WidgetStateStyle exceeded its per-overridden-view RAM budget");

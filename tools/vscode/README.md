@@ -188,6 +188,11 @@ application's Win32 CMake preset, build it, select its Windows debug configurati
 and press **F5**. Then select the embedded build and debug configuration. The
 designer provides editing, preview and generation. It has no build/run buttons,
 commands, task selection or debugger integration.
+
+Each panel can have up to 16 direct children, matching the portable C++ layout.
+When a panel is full, move existing controls into a child Panel before adding
+more. The designer rejects an edit that exceeds this limit; hand-edited XML
+with too many children cannot be generated.
 The wizard does not rewrite CMake, tasks or debug launchers. Creation prefers the
 extension's bundled service; explicit development overrides still apply.
 

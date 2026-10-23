@@ -1,0 +1,1 @@
+{"$schema":"https://litheview.dev/schema/logical-input-configuration.schema.json","schemaVersion":1,"id":"litheview.input.menu","pointer":true,"keys":true,"text":false,"encoder":false,"select":true}

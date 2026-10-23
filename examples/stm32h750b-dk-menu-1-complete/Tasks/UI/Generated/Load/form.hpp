@@ -9,7 +9,7 @@
 #error "This form requires LiTheView typed control events. Update the application LiTheView dependency."
 #else
 #include "lithe/control_events.hpp"
-static_assert(lithe::kControlEventContractVersion >= 1U);
+static_assert(lithe::kControlEventContractVersion >= 4U);
 #endif
 
 #include <array>
@@ -31,14 +31,14 @@ struct LoadMenu final
     static constexpr std::int32_t kFormSchemaVersion{1};
     static constexpr std::string_view kDocumentId{"form.load"};
     static constexpr std::string_view kSurfaceProfileId{"litheview.menu.h750.surface"};
-    static constexpr std::string_view kSourceXmlSha256{"2f8ccbb38207ce52fb20d35aa590afda2654b27440a9e79a9ef9edb4b76a001b"};
+    static constexpr std::string_view kSourceXmlSha256{"72b19bd7c5d95aa75fa9b98d490536dc8d20b98b76da767c6d488555f1c02443"};
 #if defined(LITHEVIEW_GENERATED_INCLUDE_SOURCE_XML)
-    static constexpr std::string_view kSourceXml{"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--litheview-form schemaVersion=\"1\" id=\"form.load\" displayName=\"Load Menu\" surfaceProfileId=\"litheview.menu.h750.surface\"-->\n<!--litheview-component id=\"component.main.root\" name=\"rootPanel\"-->\n<panel frame=\"0,0,480,272\" backgroundColor=\"0x00303030\" borderWidth=\"0\">\n  <!--litheview-component id=\"component.main.title\" name=\"titleLabel\"-->\n  <label frame=\"120,12,240,36\" textColor=\"0x00ffffff\" textScale=\"3\" text=\"LOAD\" />\n  <!--litheview-component id=\"component.main.loaded\" name=\"loadedLabel\"-->\n  <label frame=\"80,54,320,18\" backgroundColor=\"0x00303030\" textColor=\"0x00ffffff\" textScale=\"1\" text=\"LOADED: NONE\" />\n  <!--litheview-component id=\"component.main.entries\" name=\"entryList\"-->\n  <panel frame=\"110,80,260,108\" backgroundColor=\"0x00181818\" textColor=\"0x00ffffff\" accentColor=\"0x00805020\" borderColor=\"0x00606060\" textScale=\"2\" borderWidth=\"1\" />\n  <!--litheview-component id=\"component.main.load\" name=\"loadButton\"-->\n  <button frame=\"110,210,120,40\" backgroundColor=\"0x00805020\" textColor=\"0x00ffffff\" textScale=\"2\" text=\"LOAD\" />\n  <!--litheview-component id=\"component.main.back\" name=\"backButton\"-->\n  <button frame=\"250,210,120,40\" backgroundColor=\"0x00805020\" textColor=\"0x00ffffff\" textScale=\"2\" text=\"BACK\" />\n</panel>\n"};
+    static constexpr std::string_view kSourceXml{"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--litheview-form schemaVersion=\"1\" id=\"form.load\" displayName=\"Load Menu\" surfaceProfileId=\"litheview.menu.h750.surface\"-->\n<!--litheview-component id=\"component.main.root\" name=\"rootPanel\"-->\n<panel frame=\"0,0,480,272\" backgroundColor=\"0x00303030\" borderWidth=\"0\">\n  <!--litheview-component id=\"component.main.title\" name=\"titleLabel\"-->\n  <label frame=\"120,12,240,36\" textColor=\"0x00ffffff\" textScale=\"3\" text=\"LOAD\" />\n  <!--litheview-component id=\"component.main.loaded\" name=\"loadedLabel\"-->\n  <label frame=\"80,54,320,18\" backgroundColor=\"0x00303030\" textColor=\"0x00ffffff\" textScale=\"1\" text=\"LOADED: NONE\" />\n  <!--litheview-component id=\"component.main.entries\" name=\"entryList\"-->\n  <list frame=\"110,80,260,108\" backgroundColor=\"0x00181818\" textColor=\"0x00ffffff\" accentColor=\"0x00805020\" borderColor=\"0x00606060\" textScale=\"2\" borderWidth=\"1\" items=\"SESSION A|SESSION B|DEMO LOOP|RECORDING 1|RECORDING 2|REHEARSAL|BACKUP|FACTORY\" selectedIndex=\"0\" rowHeight=\"36\" />\n  <!--litheview-component id=\"component.main.load\" name=\"loadButton\"-->\n  <button frame=\"110,210,120,40\" backgroundColor=\"0x00805020\" textColor=\"0x00ffffff\" textScale=\"2\" text=\"LOAD\" />\n  <!--litheview-component id=\"component.main.back\" name=\"backButton\"-->\n  <button frame=\"250,210,120,40\" backgroundColor=\"0x00805020\" textColor=\"0x00ffffff\" textScale=\"2\" text=\"BACK\" />\n</panel>\n"};
 #endif
     static constexpr std::size_t kViewCount{6U};
     // The widget kinds this form uses. Layout builds only these, so a product links only
     // their widget code.
-    using Widgets = WidgetSet<ViewKind::panel, ViewKind::label, ViewKind::button>;
+    using Widgets = WidgetSet<ViewKind::panel, ViewKind::label, ViewKind::button, ViewKind::list>;
     using Layout = StaticLayout<kViewCount, Widgets>;
 
     struct BindingContract
@@ -96,7 +96,7 @@ struct LoadMenu final
         }
         {
             ViewSpec& spec = result[3U];
-            spec.kind = ViewKind::panel;
+            spec.kind = ViewKind::list;
             spec.parent = 0U;
             spec.style.accent = Color::fromLegacyValue(0x00805020U);
             spec.style.background = Color::fromLegacyValue(0x00181818U);
@@ -104,6 +104,9 @@ struct LoadMenu final
             spec.style.borderWidth = 1U;
             spec.style.foreground = Color::fromLegacyValue(0x00ffffffU);
             spec.frame = {110, 80, 260, 108};
+            spec.text = "SESSION A|SESSION B|DEMO LOOP|RECORDING 1|RECORDING 2|REHEARSAL|BACKUP|FACTORY";
+            spec.rowHeight = 36U;
+            spec.selectedIndex = 0U;
             spec.style.textScale = 2U;
         }
         {
@@ -152,7 +155,7 @@ struct LoadMenu final
     template <typename Custom> using LoadedLabelType =
         WidgetOverride<2U, ViewKind::label, Custom>;
     template <typename Custom> using EntryListType =
-        WidgetOverride<3U, ViewKind::panel, Custom>;
+        WidgetOverride<3U, ViewKind::list, Custom>;
     template <typename Custom> using LoadButtonType =
         WidgetOverride<4U, ViewKind::button, Custom>;
     template <typename Custom> using BackButtonType =
@@ -177,7 +180,7 @@ struct LoadMenu final
         }
         auto* getEntryList() noexcept
         {
-            return this->template component<3U, typename WidgetType<ViewKind::panel>::Type>();
+            return this->template component<3U, typename WidgetType<ViewKind::list>::Type>();
         }
         auto* getLoadButton() noexcept
         {
@@ -188,6 +191,12 @@ struct LoadMenu final
             return this->template component<5U, typename WidgetType<ViewKind::button>::Type>();
         }
     protected:
+        virtual void onEntryListSelectionChanged([[maybe_unused]] lithe::SelectionChange event) noexcept
+        {
+        }
+        virtual void onEntryListItemActivated([[maybe_unused]] lithe::ItemActivation event) noexcept
+        {
+        }
         virtual void onLoadButtonClicked() noexcept
         {
         }
@@ -211,6 +220,22 @@ struct LoadMenu final
             if (&control == getBackButton())
             {
                 onBackButtonClicked();
+                return;
+            }
+        }
+        void onControlSelectionChanged([[maybe_unused]] ViewController& controller, View& control, lithe::SelectionChange event) noexcept final
+        {
+            if (&control == getEntryList())
+            {
+                onEntryListSelectionChanged(event);
+                return;
+            }
+        }
+        void onControlItemActivated([[maybe_unused]] ViewController& controller, View& control, lithe::ItemActivation event) noexcept final
+        {
+            if (&control == getEntryList())
+            {
+                onEntryListItemActivated(event);
                 return;
             }
         }

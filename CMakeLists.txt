@@ -154,6 +154,7 @@ add_library(litheview_core STATIC
     src/memory_budget.cpp
     src/painter.cpp
     src/tiled_renderer.cpp
+    src/telemetry_views.cpp
     src/view.cpp
     src/widgets.cpp
     src/drop_down.cpp
@@ -195,6 +196,8 @@ if((LITHEVIEW_BUILD_RENDERING_FIXTURES AND litheview_resolved_demo_font_backend 
 endif()
 option(LITHEVIEW_BUILD_GENERATED_FONTS "Provide the optional LitheView::GeneratedFonts resources"
     ${litheview_generated_fonts_default})
+option(LITHEVIEW_BUILD_GENERATED_SANS20 "Provide the optional LitheView::GeneratedSans20 resources" OFF)
+option(LITHEVIEW_BUILD_GENERATED_SANS28 "Provide the optional LitheView::GeneratedSans28 resources" OFF)
 add_subdirectory(resources/fonts)
 
 if((LITHEVIEW_BUILD_RENDERING_FIXTURES OR LITHEVIEW_BUILD_TESTS OR LITHEVIEW_BUILD_DESIGNER_PREVIEW)

@@ -5,6 +5,7 @@
 
 #include "lithe/control_view.hpp"
 #include "lithe/detail/constants.hpp"
+#include "lithe/list_view.hpp"
 
 #include <array>
 #include <cstdint>

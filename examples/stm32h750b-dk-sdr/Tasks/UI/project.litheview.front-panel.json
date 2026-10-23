@@ -1,0 +1,28 @@
+{
+  "display": {
+    "width": 1386,
+    "x": 232,
+    "y": 166,
+    "height": 812
+  },
+  "image": {
+    "width": 1810,
+    "height": 1326,
+    "sha256": "d081ad5ea74aace504a83fdc800552600bd70438ee3d33087b0975cb55fe338c",
+    "path": "board-front.png"
+  },
+  "buttons": [
+    {
+      "bounds": {
+        "width": 84,
+        "x": 344,
+        "y": 1140,
+        "height": 80
+      },
+      "id": "userButton"
+    }
+  ],
+  "windowWidth": 905,
+  "schemaVersion": 1,
+  "enabled": true
+}

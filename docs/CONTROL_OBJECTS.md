@@ -350,6 +350,35 @@ Generated text handlers require control event contract version 2. Update the
 application's LiTheView dependency and prepare/package the designer service when
 adopting them. The designer does not build or launch the application.
 
+## Selectable list
+
+`ListView` is a reusable single-column control for a bounded, application-owned
+catalog. A form can author preview rows in its `items` property; the application
+can replace them with `setItems(std::span<const std::string_view>)`. The span and
+each string's storage are borrowed for the lifetime of that snapshot. Up to 64
+entries are accepted without per-row allocation. The caller maps a row index to
+a stable domain ID before changing the catalog.
+
+Up/Down moves selection and scrolls the selected row into view. A row tap selects
+it but does not activate it; Select or an equivalent hardware center input sends
+`ItemActivation{index}`. The right-edge touch targets reach rows outside the
+viewport. A change sends `SelectionChange{previousIndex, index}` first, only if
+the index actually changes. `setItems()` and `setSelectedIndex()` are silent;
+both reject reentrant calls from the list's own event callback. The list can be
+empty while the application is obtaining data, in which case it has no valid
+selection or activation. It does not implement drag scrolling, multi-selection,
+sorting, filesystem discovery or columns.
+
+The designer exposes **Selectable List** and generates named
+`on<Name>SelectionChanged(SelectionChange)` and
+`on<Name>ItemActivated(ItemActivation)` hooks. These use control-event contract 4.
+The [H750 Load form](../examples/stm32h750b-dk-menu-1-complete/Tasks/UI/forms/Load.litheview.xml)
+and its [handwritten handlers](../examples/stm32h750b-dk-menu-1-complete/Tasks/UI/handlers/Load.hpp)
+show the form workflow. The [compiled control test](../tests/list_view_test.cpp)
+checks the same events through a generated form, keyboard and pointer input.
+`TableView` remains a scrolling container; it does not inherit row semantics
+from this list.
+
 ## Without the designer
 
 Construct the same `ButtonView` and `LabelView` objects directly with their public

@@ -189,11 +189,17 @@ const Font& font5x7() noexcept;
 const Font& font5x7Bold() noexcept;
 const GeneratedFont& generatedSans() noexcept;
 const GeneratedFont& generatedSansBold() noexcept;
+const GeneratedFont& generatedSans20() noexcept;
+const GeneratedFont& generatedSans20Bold() noexcept;
+const GeneratedFont& generatedSans28() noexcept;
+const GeneratedFont& generatedSans28Bold() noexcept;
 
 enum class BuiltInFontBackend : std::uint8_t
 {
     compact5x7,
-    generatedSans
+    generatedSans,
+    generatedSans20,
+    generatedSans28
 };
 
 template <BuiltInFontBackend Backend> const Font& builtInFont() noexcept
@@ -202,9 +208,17 @@ template <BuiltInFontBackend Backend> const Font& builtInFont() noexcept
     {
         return font5x7();
     }
-    else
+    else if constexpr (Backend == BuiltInFontBackend::generatedSans)
     {
         return generatedSans();
+    }
+    else if constexpr (Backend == BuiltInFontBackend::generatedSans20)
+    {
+        return generatedSans20();
+    }
+    else
+    {
+        return generatedSans28();
     }
 }
 
@@ -214,9 +228,17 @@ template <BuiltInFontBackend Backend> const Font& builtInBoldFont() noexcept
     {
         return font5x7Bold();
     }
-    else
+    else if constexpr (Backend == BuiltInFontBackend::generatedSans)
     {
         return generatedSansBold();
+    }
+    else if constexpr (Backend == BuiltInFontBackend::generatedSans20)
+    {
+        return generatedSans20Bold();
+    }
+    else
+    {
+        return generatedSans28Bold();
     }
 }
 

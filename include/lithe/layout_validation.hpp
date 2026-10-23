@@ -39,6 +39,7 @@ namespace lithe
     case ViewKind::tabView:
     case ViewKind::wheelPicker:
     case ViewKind::dropDown:
+    case ViewKind::list:
     case ViewKind::scroll:
     case ViewKind::table:
         return SurfacePlacementPolicy::safeArea;

@@ -779,6 +779,24 @@ public sealed class DesignerDocumentSession
 
     private FormEditResult Commit(FormDocument candidate, string description)
     {
+        var previousCounts = Document.Components
+            .Where(item => item.ParentComponentId is not null)
+            .GroupBy(item => item.ParentComponentId!, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+        foreach (var group in candidate.Components
+            .Where(item => item.ParentComponentId is not null)
+            .GroupBy(item => item.ParentComponentId!, StringComparer.Ordinal))
+        {
+            previousCounts.TryGetValue(group.Key, out int previous);
+            if (group.Count() > FormRuntimeLimits.MaximumDirectChildren && group.Count() > previous)
+            {
+                string parentName = candidate.Components.FirstOrDefault(item => item.ComponentId == group.Key)?.Name
+                    ?? group.Key;
+                return Failed("LVED1701", "$.components",
+                    $"'{parentName}' already has the maximum of {FormRuntimeLimits.MaximumDirectChildren} direct children. " +
+                    "Group existing controls inside a Panel before adding more.");
+            }
+        }
         FormResolutionResult resolution = FormDocumentResolver.Resolve(candidate, _catalog);
         if (!resolution.IsValid)
         {

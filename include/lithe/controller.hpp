@@ -46,6 +46,11 @@ public:
                                            [[maybe_unused]] SelectionChange event) noexcept
     {
     }
+    virtual void onControlItemActivated([[maybe_unused]] ViewController& controller,
+                                        [[maybe_unused]] View& control,
+                                        [[maybe_unused]] ItemActivation event) noexcept
+    {
+    }
     virtual void
     onControlRadioSelectionChanged([[maybe_unused]] ViewController& controller,
                                    [[maybe_unused]] View& control,
@@ -146,6 +151,7 @@ private:
     }
     void checkedChanged(View& source, CheckedChange event) noexcept override;
     void selectionChanged(View& source, SelectionChange event) noexcept override;
+    void itemActivated(View& source, ItemActivation event) noexcept override;
     void radioSelectionChanged(View& source, RadioSelectionChange event) noexcept override;
     void editCommitted(View& source, SelectionEdit event) noexcept override;
     void editCancelled(View& source, SelectionEdit event) noexcept override;

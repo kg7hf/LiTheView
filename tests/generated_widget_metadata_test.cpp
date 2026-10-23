@@ -17,11 +17,11 @@ namespace lithe::tests
 namespace
 {
 
-constexpr std::size_t kExpectedWidgetCount{19U};
+constexpr std::size_t kExpectedWidgetCount{25U};
 constexpr std::size_t kExpectedPropertyCount{49U};
 constexpr std::int32_t kSupportedSchemaVersion{1};
 constexpr std::string_view kExpectedCatalogHash{
-    "7bba9e94b158a2e9795e3c3da7e353d512fd7458ce86f1c22c9e31d757b6cc5f"};
+    "0a62fd6a3f77b871d0c3a1e40c1cd6a5210ac4f1c3647b542fc3487d8ea03016"};
 
 template <ViewKind... Kinds> constexpr bool distinctKinds(WidgetSet<Kinds...> /*unused*/) noexcept
 {
@@ -50,7 +50,7 @@ bool generatedWidgetMetadataValid() noexcept
 {
     static_assert(designer::kWidgets.size() == kExpectedWidgetCount);
     static_assert(designer::kWidgetProperties.size() == kExpectedPropertyCount);
-    static_assert(std::to_underlying(ViewKind::dropDown) + 1U == kExpectedWidgetCount);
+    static_assert(std::to_underlying(ViewKind::meter) + 1U == kExpectedWidgetCount);
     // The default layout set names every kind: as many distinct kinds as ViewKind has.
     static_assert(AllWidgets::size == kExpectedWidgetCount && distinctKinds(AllWidgets{}));
 

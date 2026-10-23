@@ -1,0 +1,4 @@
+{
+  "device": "STM32H750XBH6",
+  "core": "Cortex-M7"
+}

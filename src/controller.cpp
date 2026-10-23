@@ -61,6 +61,14 @@ void ViewController::selectionChanged(View& source, SelectionChange event) noexc
     }
 }
 
+void ViewController::itemActivated(View& source, ItemActivation event) noexcept
+{
+    if (mDelegate != nullptr)
+    {
+        mDelegate->onControlItemActivated(*this, source, event);
+    }
+}
+
 void ViewController::radioSelectionChanged(View& source, RadioSelectionChange event) noexcept
 {
     if (mDelegate != nullptr)

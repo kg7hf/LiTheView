@@ -209,6 +209,18 @@ std::string_view className(ViewKind kind) noexcept
         return "LCDSCROLLVIEW";
     case ViewKind::table:
         return "LCDTABLEVIEW";
+    case ViewKind::list:
+        return "LCDLISTVIEW";
+    case ViewKind::plot:
+        return "LCDPLOTVIEW";
+    case ViewKind::waterfall:
+        return "LCDWATERFALLVIEW";
+    case ViewKind::axis:
+        return "LCDAXISVIEW";
+    case ViewKind::markerRange:
+        return "LCDMARKERRANGEVIEW";
+    case ViewKind::meter:
+        return "LCDMETERVIEW";
     case ViewKind::picker:
         return "LCDPICKERVIEW";
     case ViewKind::checkbox:
@@ -420,15 +432,19 @@ private:
         case ViewKind::tabBar:
         case ViewKind::tabView:
         case ViewKind::dropDown:
+        case ViewKind::list:
         case ViewKind::wheelPicker:
             stringAttribute(mWriter, "items", spec.text, spec.xmlEncodedText);
             unsignedAttribute(mWriter, "selectedIndex", spec.selectedIndex);
-            mWriter.append(spec.wraps ? " wrap=\"1\"" : " wrap=\"0\"");
+            if (spec.kind != ViewKind::list)
+            {
+                mWriter.append(spec.wraps ? " wrap=\"1\"" : " wrap=\"0\"");
+            }
             if (spec.kind == ViewKind::tabView)
             {
                 unsignedAttribute(mWriter, "tabHeight", spec.tabHeight);
             }
-            if (spec.kind == ViewKind::wheelPicker || spec.kind == ViewKind::dropDown)
+            if (spec.kind == ViewKind::wheelPicker || spec.kind == ViewKind::dropDown || spec.kind == ViewKind::list)
             {
                 unsignedAttribute(mWriter, "rowHeight", spec.rowHeight);
             }

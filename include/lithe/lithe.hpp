@@ -16,6 +16,7 @@
 #include "lithe/pixel_format.hpp"
 #include "lithe/render_config.hpp"
 #include "lithe/storage_layout.hpp"
+#include "lithe/telemetry_views.hpp"
 #include "lithe/tiled_renderer.hpp"
 #include "lithe/types.hpp"
 #include "lithe/view.hpp"
