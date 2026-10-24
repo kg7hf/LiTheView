@@ -16,6 +16,15 @@ itself is standard C++23 and has no Win32, STM32, or FreeRTOS dependency.
 The foreground window is the simulator using a board photograph; the Windows
 and STM32 targets share the application logic and generated UI.*
 
+The [H750 SDR example](examples/stm32h750b-dk-sdr/README.md) puts the designer,
+Windows simulator, and STM32H750B-DK hardware side by side. Its shared UI uses a
+live plot, markers, a calibrated meter, and a waterfall fed by synthetic samples.
+
+![H750 SDR UI in the LiTheView designer, Windows simulator, and on STM32H750B-DK hardware](docs/images/h750-sdr-designer-simulator-hardware.jpg)
+
+*The same application UI runs in Windows and on the board; the spectrum and
+waterfall use generated sample data, not a connected radio receiver.*
+
 ## Your application is the project root
 
 **LiTheView is a component of your application, not the superproject for your
